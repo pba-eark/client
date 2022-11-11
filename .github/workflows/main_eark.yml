@@ -54,3 +54,7 @@ jobs:
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_33FC30F3583D4BE4BB2E2A026C43B44B }}
           package: .
+
+      - name: start app
+        run: |
+          node .output/server/index.mjs
