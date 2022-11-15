@@ -1,55 +1,37 @@
 <script>
-export default {
+import { useAuthStore } from "~/store/auth";
+
+export default defineComponent({
   async setup() {
+    const runtimeConfig = useRuntimeConfig();
+    const store = useAuthStore();
+
     const data = reactive({
       email: "",
       password: "",
 
       newEmail: "",
+      newPassword: "",
       firstName: "",
       lastName: "",
     });
-    const runtimeConfig = useRuntimeConfig();
 
     /* If using async setup(), make sure to register lifecycle hooks before the first await statement. */
     onMounted(() => {
       console.log("api url", runtimeConfig.API_URL);
     });
 
-    const handleLogin = async () => {
-      const JWT = await $fetch(`${runtimeConfig.API_URL}/authentication`, {
-        method: "POST",
-        body: { email: data.email, password: data.password },
-      });
-      console.log("JWT:", JWT);
-    };
-
-    const handleSignUp = async () => {
-      const signUp = await $fetch(`${runtimeConfig.API_URL}/users`, {
-        method: "POST",
-        body: {
-          firstName: data.firstName,
-          lastName: data.lastName,
-          email: data.newEmail,
-          password: data.newPassword,
-        },
-      });
-
-      console.log("sign up res:", signUp);
-    };
-
     return {
       data,
-      handleLogin,
-      handleSignUp,
+      store,
     };
   },
-};
+});
 </script>
 
 <template>
   <div>
-    <form @submit.prevent="handleLogin">
+    <form @submit.prevent="store.handleLogin(data.email, data.password)">
       <h1>Login</h1>
       <label>
         <p>Email</p>
@@ -64,7 +46,17 @@ export default {
     </form>
   </div>
   <div>
-    <form @submit.prevent="handleSignUp">
+    <!-- <form @submit.prevent="handleSignUp"> -->
+    <form
+      @submit.prevent="
+        store.handleSignUp(
+          data.firstName,
+          data.lastName,
+          data.newEmail,
+          data.newPassword
+        )
+      "
+    >
       <h1>Create user</h1>
       <label>
         <p>First name</p>

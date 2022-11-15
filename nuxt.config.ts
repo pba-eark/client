@@ -7,6 +7,19 @@ export default defineNuxtConfig({
   //         ],
   //     },
   // },
+  modules: [
+    [
+      "@pinia/nuxt",
+      {
+        autoImports: [
+          // automatically imports `defineStore`
+          "defineStore", // import { defineStore } from 'pinia'
+          // automatically imports `defineStore` as `definePiniaStore`
+          ["defineStore", "definePiniaStore"], // import { defineStore as definePiniaStore } from 'pinia'
+        ],
+      },
+    ],
+  ],
   runtimeConfig: {
     // The private keys which are only available within server-side
     apiSecret: "123",
