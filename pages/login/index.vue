@@ -35,7 +35,6 @@ export default defineComponent({
       <h1>Login</h1>
       <label>
         <p>Email</p>
-        <!-- <input type="email" v-model="data.email" /> -->
         <input type="text" v-model="data.email" />
         <p>Password</p>
         <input type="password" v-model="data.password" />
@@ -46,7 +45,6 @@ export default defineComponent({
     </form>
   </div>
   <div>
-    <!-- <form @submit.prevent="handleSignUp"> -->
     <form
       @submit.prevent="
         store.handleSignUp(
