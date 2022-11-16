@@ -1,37 +1,22 @@
 <script>
-export default {
-  async setup() {
-    const data = reactive({
-      nWord: "naga",
-    });
+import { useAuthStore } from "~/store/auth";
 
-    /* If using async setup(), make sure to register lifecycle hooks before the first await statement. */
+export default defineComponent({
+  setup() {
     onMounted(() => {
-      console.log("app mounted");
+      const store = useAuthStore();
+      if (!store.IS_AUTHORIZED && localStorage.getItem("jwt")) {
+        store.setJwt(localStorage.getItem("jwt"));
+        navigateTo("/");
+      }
     });
-
-    const getCatFact = async () => {
-      const fetchData = await $fetch("/api/cat");
-      console.log("Cat fact", fetchData);
-    };
-
-    return {
-      data,
-      getCatFact,
-    };
   },
-};
+});
 </script>
 
 <template>
   <div>
-    <nav>
-      <NuxtLink to="/">home</NuxtLink>
-      <NuxtLink to="/about">page 1</NuxtLink>
-    </nav>
-    <button @click="getCatFact">Get cat fact</button>
-    <p>nWord: {{ data.nWord }}</p>
-    <input type="text" v-model="data.nWord" />
+    <Header />
     <LazyNuxtPage />
   </div>
 </template>
