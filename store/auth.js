@@ -15,12 +15,20 @@ export const useAuthStore = defineStore("auth-store", () => {
   const handleLogin = async (email, password) => {
     const runtimeConfig = useRuntimeConfig();
 
-    const JWT = await $fetch(`${runtimeConfig.public.API_URL}/authentication`, {
+    const JWT = await $fetch(`${runtimeConfig.public.API_URL}/auth/login`, {
       method: "POST",
       body: { email, password },
     });
 
     setJwt(JWT);
+    navigateTo("/");
+  };
+
+  const handleLogOut = () => {
+    jwt.value = "";
+    isAuthorized.value = false;
+    localStorage.removeItem("jwt");
+    navigateTo("/login");
   };
 
   const handleSignUp = async (firstName, lastName, email, password) => {
@@ -40,15 +48,16 @@ export const useAuthStore = defineStore("auth-store", () => {
     console.log("sign up res:", response);
   };
 
-  /* Lifecycle hooks */
-  onMounted(() => {
-    /* FIXME: need to validate JWT - create API endpoint for this */
-    if (localStorage.getItem("jwt")) setJwt(localStorage.getItem("jwt"));
-  });
-
   /* Getters */
   const API_TOKEN = computed(() => jwt.value);
   const IS_AUTHORIZED = computed(() => isAuthorized.value);
 
-  return { handleLogin, handleSignUp, API_TOKEN, IS_AUTHORIZED };
+  return {
+    handleLogin,
+    handleLogOut,
+    handleSignUp,
+    API_TOKEN,
+    IS_AUTHORIZED,
+    setJwt,
+  };
 });

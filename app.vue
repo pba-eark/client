@@ -1,7 +1,15 @@
 <script>
+import { useAuthStore } from "~/store/auth";
+
 export default defineComponent({
-  async setup() {
-    return {};
+  setup() {
+    onMounted(() => {
+      const store = useAuthStore();
+      if (!store.IS_AUTHORIZED && localStorage.getItem("jwt")) {
+        store.setJwt(localStorage.getItem("jwt"));
+        navigateTo("/");
+      }
+    });
   },
 });
 </script>

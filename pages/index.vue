@@ -1,8 +1,4 @@
-<script setup>
-// const data = await $fetch('https://api.publicapis.org/entries')
-
-// console.log("lol", data)
-</script>
+<script></script>
 
 <template>
   <h1>home</h1>

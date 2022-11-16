@@ -17,9 +17,9 @@ export default defineComponent({
     });
 
     /* If using async setup(), make sure to register lifecycle hooks before the first await statement. */
-    onMounted(() => {
-      console.log("api url", runtimeConfig.API_URL);
-    });
+    // onMounted(() => {
+    //   console.log("api url", runtimeConfig.API_URL);
+    // });
 
     return {
       data,

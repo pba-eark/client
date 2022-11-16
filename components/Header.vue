@@ -18,9 +18,9 @@ export default defineComponent({
     <nav>
       <NuxtLink to="/">Home</NuxtLink>
       <NuxtLink v-if="!store.IS_AUTHORIZED" to="/login">Login</NuxtLink>
-      <button v-else>Log out</button>
+      <button v-else @click="store.handleLogOut">Log out</button>
       <br />
-      <span>auth: {{ store.IS_AUTHORIZED }}</span>
+      <span>authorized: {{ store.IS_AUTHORIZED }}</span>
     </nav>
   </header>
 </template>
