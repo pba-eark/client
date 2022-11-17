@@ -6,6 +6,15 @@ export default defineComponent({
     const runtimeConfig = useRuntimeConfig();
     const store = useAuthStore();
 
+    /* Make sure user can't access this page, if logged in */
+    watchEffect(() => {
+      if (store.IS_AUTHORIZED) return navigateTo("/");
+    });
+    definePageMeta({
+      middleware: ["login-auth"],
+    });
+
+    /* State */
     const data = reactive({
       email: "",
       password: "",

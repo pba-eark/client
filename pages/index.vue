@@ -1,4 +1,12 @@
-<script></script>
+<script>
+export default defineComponent({
+  setup() {
+    definePageMeta({
+      middleware: ["auth"],
+    });
+  },
+});
+</script>
 
 <template>
   <h1>home</h1>

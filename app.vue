@@ -5,10 +5,12 @@ export default defineComponent({
   setup() {
     onMounted(() => {
       const store = useAuthStore();
-      if (!store.IS_AUTHORIZED && localStorage.getItem("jwt")) {
+
+      if (localStorage.getItem("jira"))
+        store.setJiraAccessToken(localStorage.getItem("jira"));
+
+      if (!store.IS_AUTHORIZED && localStorage.getItem("jwt"))
         store.setJwt(localStorage.getItem("jwt"));
-        navigateTo("/");
-      }
     });
   },
 });
