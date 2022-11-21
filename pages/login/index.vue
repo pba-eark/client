@@ -30,9 +30,14 @@ export default defineComponent({
     //   console.log("api url", runtimeConfig.API_URL);
     // });
 
+    const handleEmit = () => {
+      console.log("emitted!");
+    };
+
     return {
       data,
       store,
+      handleEmit,
     };
   },
 });
@@ -40,6 +45,9 @@ export default defineComponent({
 
 <template>
   <div>
+    <Button text="frol" icon="icon-arrow" @event="handleEmit" />
+    <Button text="frol" @event="handleEmit" />
+
     <form @submit.prevent="store.handleLogin(data.email, data.password)">
       <h1>Login</h1>
       <label>
@@ -49,7 +57,7 @@ export default defineComponent({
         <input type="password" v-model="data.password" />
 
         <br />
-        <button type="submit">Sign in</button>
+        <Button text="Sign in" type="submit" />
       </label>
     </form>
   </div>
@@ -76,7 +84,7 @@ export default defineComponent({
         <input type="password" v-model="data.newPassword" />
 
         <br />
-        <button type="submit">Sign up</button>
+        <Button text="Sign up" type="submit" />
       </label>
     </form>
   </div>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+
+    <symbol id="icon-arrow" viewBox="0 0 12 12.829" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <path d="M1 6.414h10" />
+            <path d="M6 1.414l5 5-5 5" />
+        </g>
+    </symbol>
+
+    <symbol id="icon-slash" fill="none" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M4.109 14L9.466 1h1.352L5.46 14H4.109z" fill="currentColor" />
+    </symbol>
+
+    <symbol id="icon-chevron" viewBox="0 0 12.828 7.414" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.414 1.414l5 5 5-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+    </symbol>
+
+    <symbol id="icon-magnifier" viewBox="0 0 25.621 25.621" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+            <path d="M21.056 11.278A9.778 9.778 0 1 1 11.278 1.5a9.778 9.778 0 0 1 9.778 9.778z" />
+            <path d="M23.5 23.5l-5.317-5.317" />
+        </g>
+    </symbol>
+
+    <symbol id="icon-cross" viewBox="0 0 26.243 26.243" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#000" stroke-linecap="round" stroke-width="3">
+            <path d="M2.121 2.121l22 22" />
+            <path d="M24.121 2.121l-22 22" />
+        </g>
+    </symbol>
+
+</svg>
