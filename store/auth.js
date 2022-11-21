@@ -73,6 +73,20 @@ export const useAuthStore = defineStore("auth-store", () => {
     console.log(cloudIds);
   };
 
+  /* TEST AUTHORIZED REQUEST */
+  const authRequest = async () => {
+    const res = await $fetch("https://localhost:7087/api/users", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt.value}`,
+      },
+    });
+
+    console.log("authorized request", res);
+  };
+
   /* Getters */
   const API_TOKEN = computed(() => jwt.value);
   const IS_AUTHORIZED = computed(() => isAuthorized.value);
@@ -88,5 +102,7 @@ export const useAuthStore = defineStore("auth-store", () => {
     setJwt,
     setJiraAccessToken,
     getCloudIds,
+
+    authRequest,
   };
 });
