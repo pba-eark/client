@@ -3,7 +3,7 @@
 <template>
   <div class="block">
     <div class="block__header">
-      <NuxtLink to="sheet">Nyt estimatark</NuxtLink>
+      <NuxtLink to="/sheet/create">Nyt estimatark</NuxtLink>
     </div>
     <div class="block__body"></div>
   </div>
