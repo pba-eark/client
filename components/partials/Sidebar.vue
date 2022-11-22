@@ -2,7 +2,9 @@
 
 <template>
   <div class="block">
-    <div class="block__header"></div>
+    <div class="block__header">
+      <NuxtLink to="sheet">Nyt estimatark</NuxtLink>
+    </div>
     <div class="block__body"></div>
   </div>
 </template>
@@ -11,7 +13,6 @@
 .block {
   height: calc(100vh - var(--header-height));
   overflow-y: scroll;
-  direction: rtl;
 
   &__header {
     height: 200px;

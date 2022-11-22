@@ -26,16 +26,16 @@ export default defineComponent({
     <div class="main">
       <LazyNuxtPage />
     </div>
-    <Sidebar v-if="store.IS_AUTHORIZED" class="sidebar-right" />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .layout {
   display: grid;
+  grid-template-columns: 200px auto 150px;
   grid-template-areas:
-    "header header header header header header"
-    "sidebarLeft main main main main sidebarRight";
+    "header header header"
+    "sidebarLeft main sidebarRight";
 }
 
 .header {
