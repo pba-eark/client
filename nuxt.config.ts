@@ -39,5 +39,12 @@ export default defineNuxtConfig({
     "@": "/<rootDir>",
   },
 
+  components: [
+    {
+      path: "~/components",
+      pathPrefix: false,
+    },
+  ],
+
   css: ["assets/scss/main.scss"],
 });

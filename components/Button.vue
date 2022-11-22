@@ -1,6 +1,9 @@
 <script setup>
 const props = defineProps({
-  text: String,
+  text: {
+    type: String,
+    required: true,
+  },
   icon: {
     type: String,
     required: false,
@@ -9,12 +12,19 @@ const props = defineProps({
     type: String,
     default: "button",
   },
+  emit: {
+    type: String,
+    required: false,
+  },
 });
 </script>
 
 <template>
   <div>
-    <button @click="$emit('event')" :type="type">
+    <button
+      @click="if (props.emit && props.emit.length) $emit(`${props.emit}`);"
+      :type="type"
+    >
       {{ props.text }}
       <Icon v-if="props.icon" :icon="props.icon" />
     </button>
