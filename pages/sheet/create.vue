@@ -1,17 +1,24 @@
 <script setup>
-import { useCustomerStore } from "~/store/customer";
+import { useCustomerStore } from "~/store/customers";
+import { useJiraStore } from "~/store/jira";
 
 definePageMeta({
   middleware: ["auth"],
 });
 
 const customerStore = useCustomerStore();
+const jiraStore = useJiraStore();
+
 let searchTerm = ref("");
 const customerSearchInput = ref(null);
 let isCustomerSelected = ref(false);
 const customerSelection = reactive({
   hidden: true,
   selected: {},
+});
+
+const sheet = reactive({
+  sheetStatusId: 1,
 });
 
 const handleClick = (event) => {
@@ -37,8 +44,6 @@ const handleSubmit = () => {
 };
 
 const createCustomer = (customer) => {
-  if (typeof customer === Object) return selectCustomer(customer);
-
   const obj = {
     customerName: customer,
   };
@@ -92,19 +97,25 @@ const handleUndoCustomer = () => {
   isCustomerSelected.value = false;
   searchTerm.value = "";
 };
+
+const handleSheetName = (val) => {
+  sheet.name = val;
+  console.log("sheet name", sheet.name);
+};
 </script>
 
 <template>
-  <div>
+  <div class="block">
     <form @submit.prevent="handleSubmit">
       <!-- Select project customer -->
-      <label
+      <div
         v-if="!isCustomerSelected"
-        class="selectCustomer customer-selection"
+        class="block__customer customer-selection"
       >
-        <span class="label customer-selection">Kunde</span>
         <div class="customer-selection">
           <Input
+            label="Kunde"
+            type="search"
             class="customer-selection"
             v-model="searchTerm"
             ref="customerSearchInput"
@@ -134,7 +145,7 @@ const handleUndoCustomer = () => {
           text="Opret kunde"
           @click.prevent="createCustomer(searchTerm)"
         />
-      </label>
+      </div>
 
       <div v-else>
         <p>
@@ -148,40 +159,48 @@ const handleUndoCustomer = () => {
       </div>
 
       <!-- Sheet info -->
-      <Input label="Navn på ark" placeholder="lol" />
+      <Input
+        required
+        label="Navn på ark"
+        emit="sheetName"
+        @sheetName="handleSheetName"
+        placeholder="lol"
+      />
 
       <!-- Jira -->
-      <a
+      <!-- <a
         href="https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=f0rb1sOMiQ9pPK860ygqqZ87hKHfHeyx&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work&redirect_uri=https%3A%2F%2Flocalhost%3A7087%2Fapi%2Fauth%2Fatlassian&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent"
         >Jira
-      </a>
+      </a> -->
     </form>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.selectCustomer {
-  display: flex;
-  flex-wrap: wrap;
-  position: relative;
-  .label {
-    width: 100%;
-  }
+.block {
+  &__customer {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    .label {
+      width: 100%;
+    }
 
-  input,
-  ul {
-    width: 200px;
-  }
-  ul {
-    position: absolute;
-    list-style: none;
-    background: #fff;
-    border: 1px solid #eee;
-    max-height: 150px;
-    overflow-y: scroll;
+    input,
+    ul {
+      width: 200px;
+    }
+    ul {
+      position: absolute;
+      list-style: none;
+      background: #fff;
+      border: 1px solid #eee;
+      max-height: 150px;
+      overflow-y: scroll;
 
-    li {
-      cursor: pointer;
+      li {
+        cursor: pointer;
+      }
     }
   }
 }

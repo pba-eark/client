@@ -1,11 +1,13 @@
 <script setup>
 import { useAuthStore } from "~/store/auth";
 import { useJiraStore } from "~/store/jira";
-import { useCustomerStore } from "~/store/customer";
+import { useCustomerStore } from "~/store/customers";
+import { useEstimateSheetStore } from "~~/store/estimateSheets";
 
 const authStore = useAuthStore();
 const jiraStore = useJiraStore();
 const customerStore = useCustomerStore();
+const estimateSheetStore = useEstimateSheetStore();
 
 onMounted(() => {
   /* Check if user is logged in */
@@ -18,6 +20,8 @@ onMounted(() => {
 
   /* Get and set customers in store */
   customerStore.getCustomers();
+  /* Get and set epics in store */
+  estimateSheetStore.getEstimateSheets();
 });
 </script>
 

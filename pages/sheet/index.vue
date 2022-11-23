@@ -1,1 +1,1 @@
-<template></template>
+<template>Silence is golden...</template>

@@ -27,7 +27,9 @@ export const useAuthStore = defineStore("auth-store", () => {
   const handleLogOut = () => {
     jwt.value = "";
     isAuthorized.value = false;
-    localStorage.removeItem("jwt");
+
+    if (localStorage.getItem("jwt")) localStorage.removeItem("jwt");
+    if (localStorage.getItem("lastPath")) localStorage.removeItem("lastPath");
     navigateTo("/login");
   };
 

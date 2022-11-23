@@ -4,6 +4,10 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  required: {
+    type: Boolean,
+    default: false,
+  },
   placeholder: {
     type: String,
     required: false,
@@ -12,6 +16,11 @@ const props = defineProps({
   type: {
     type: String,
     default: "text",
+  },
+  options: {
+    type: Array,
+    required: false,
+    default: [],
   },
   emit: {
     type: String,
@@ -25,9 +34,40 @@ const data = reactive({
 </script>
 
 <template>
-  <label>
-    {{ props.label ? props.label : "" }}
+  <label class="block">
+    <span class="block__label">
+      {{ props.label && props.label.length ? props.label : "" }}
+      <span v-if="required" class="required">*</span>
+    </span>
+
+    <textarea
+      v-if="props.type === 'textarea'"
+      v-model="data.value"
+      v-bind="$attrs"
+      @change="
+        if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
+      "
+      :type="props.type"
+      :placeholder="props.placeholder"
+    ></textarea>
+
+    <select
+      v-else-if="props.type === 'select'"
+      v-model="data.value"
+      v-bind="$attrs"
+      @change="
+        if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
+      "
+      :type="props.type"
+      :placeholder="props.placeholder"
+    >
+      <option v-for="option in props.options" :key="option.id">
+        {{ option.name ?? option }}
+      </option>
+    </select>
+
     <input
+      v-else-if="props.type === 'search'"
       v-model="data.value"
       v-bind="$attrs"
       @keyup="
@@ -36,5 +76,29 @@ const data = reactive({
       :type="props.type"
       :placeholder="props.placeholder"
     />
+
+    <input
+      v-else
+      v-model="data.value"
+      v-bind="$attrs"
+      @change="
+        if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
+      "
+      :type="props.type"
+      :placeholder="props.placeholder"
+    />
   </label>
 </template>
+
+<style lang="scss" scoped>
+.block {
+  &__label {
+    display: block;
+    user-select: none;
+  }
+}
+
+.required {
+  color: red;
+}
+</style>

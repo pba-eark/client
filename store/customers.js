@@ -5,8 +5,8 @@ export const useCustomerStore = defineStore("customer-store", () => {
   const customers = ref([]);
 
   /* Actions */
-  const setCustomers = (arr) => {
-    customers.value = arr;
+  const setCustomers = (payload) => {
+    customers.value = payload;
   };
 
   const getCustomers = async () => {
@@ -20,6 +20,7 @@ export const useCustomerStore = defineStore("customer-store", () => {
   const GET_CUSTOMERS = computed(() => customers.value);
 
   return {
+    customers,
     getCustomers,
     GET_CUSTOMERS,
   };
