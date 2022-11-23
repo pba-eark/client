@@ -1,28 +1,30 @@
-<script>
+<script setup>
 import { useAuthStore } from "~/store/auth";
+import { useJiraStore } from "~/store/jira";
+import { useCustomerStore } from "~/store/customer";
 
-export default defineComponent({
-  setup() {
-    const store = useAuthStore();
-    onMounted(() => {
-      if (localStorage.getItem("jira"))
-        store.setJiraAccessToken(localStorage.getItem("jira"));
+const authStore = useAuthStore();
+const jiraStore = useJiraStore();
+const customerStore = useCustomerStore();
 
-      if (!store.IS_AUTHORIZED && localStorage.getItem("jwt"))
-        store.setJwt(localStorage.getItem("jwt"));
-    });
+onMounted(() => {
+  /* Check if user is logged in */
+  if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt"))
+    authStore.setJwt(localStorage.getItem("jwt"));
 
-    return {
-      store,
-    };
-  },
+  /* Check for jira jwt in localstorage */
+  if (localStorage.getItem("jira"))
+    jiraStore.setJwt(localStorage.getItem("jira"));
+
+  /* Get and set customers in store */
+  customerStore.getCustomers();
 });
 </script>
 
 <template>
-  <div :class="store.IS_AUTHORIZED ? 'layout' : 'loginLayout'">
-    <Header v-if="store.IS_AUTHORIZED" class="header" />
-    <Sidebar v-if="store.IS_AUTHORIZED" class="sidebar-left" />
+  <div :class="authStore.IS_AUTHORIZED ? 'layout' : 'loginLayout'">
+    <Header v-if="authStore.IS_AUTHORIZED" class="header" />
+    <Sidebar v-if="authStore.IS_AUTHORIZED" class="sidebar-left" />
     <div class="main">
       <LazyNuxtPage />
     </div>

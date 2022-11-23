@@ -4,18 +4,12 @@ export const useAuthStore = defineStore("auth-store", () => {
   /* State */
   const jwt = ref("");
   const isAuthorized = ref(false);
-  const jiraAccessToken = ref("");
 
   /* Actions */
   const setJwt = (token) => {
     localStorage.setItem("jwt", token);
     jwt.value = token;
     isAuthorized.value = true;
-  };
-
-  const setJiraAccessToken = (token) => {
-    jiraAccessToken.value = token;
-    localStorage.setItem("jira", token);
   };
 
   const handleLogin = async (email, password) => {
@@ -54,25 +48,6 @@ export const useAuthStore = defineStore("auth-store", () => {
     console.log("sign up res:", response);
   };
 
-  /* TODO: Move to seperate store */
-  const getCloudIds = async () => {
-    if (!jiraAccessToken.value) return console.log("No access token!");
-
-    const cloudIds = await $fetch(
-      "https://api.atlassian.com/oauth/token/accessible-resources",
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jiraAccessToken.value}`,
-        },
-      }
-    );
-
-    console.log(cloudIds);
-  };
-
   /* TEST AUTHORIZED REQUEST */
   const authRequest = async () => {
     const res = await $fetch("https://localhost:7087/api/users", {
@@ -90,7 +65,6 @@ export const useAuthStore = defineStore("auth-store", () => {
   /* Getters */
   const API_TOKEN = computed(() => jwt.value);
   const IS_AUTHORIZED = computed(() => isAuthorized.value);
-  const JIRA_ACCESS_TOKEN = computed(() => jiraAccessToken.value);
 
   return {
     handleLogin,
@@ -98,10 +72,7 @@ export const useAuthStore = defineStore("auth-store", () => {
     handleSignUp,
     API_TOKEN,
     IS_AUTHORIZED,
-    JIRA_ACCESS_TOKEN,
     setJwt,
-    setJiraAccessToken,
-    getCloudIds,
 
     authRequest,
   };

@@ -3,15 +3,12 @@ import { useAuthStore } from "~/store/auth";
 
 export default defineComponent({
   async setup() {
-    const runtimeConfig = useRuntimeConfig();
     const store = useAuthStore();
 
     /* Make sure user can't access this page, if logged in */
     watchEffect(() => {
-      if (store.IS_AUTHORIZED) return navigateTo("/");
-    });
-    definePageMeta({
-      middleware: ["login-auth"],
+      if (store.IS_AUTHORIZED)
+        return navigateTo(localStorage.getItem("lastPath") ?? "/");
     });
 
     /* State */
@@ -27,7 +24,7 @@ export default defineComponent({
 
     /* If using async setup(), make sure to register lifecycle hooks before the first await statement. */
     // onMounted(() => {
-    //   console.log("api url", runtimeConfig.API_URL);
+    //   if (store.IS_AUTHORIZED) return navigateTo("/");
     // });
 
     return {
