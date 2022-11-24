@@ -35,11 +35,13 @@ const data = reactive({
 
 <template>
   <label class="block">
+    <!-- Label -->
     <span class="block__label">
       {{ props.label && props.label.length ? props.label : "" }}
       <span v-if="required" class="required">*</span>
     </span>
 
+    <!-- Textarea -->
     <textarea
       v-if="props.type === 'textarea'"
       v-model="data.value"
@@ -51,6 +53,7 @@ const data = reactive({
       :placeholder="props.placeholder"
     ></textarea>
 
+    <!-- Select -->
     <select
       v-else-if="props.type === 'select'"
       v-model="data.value"
@@ -58,14 +61,18 @@ const data = reactive({
       @change="
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
-      :type="props.type"
       :placeholder="props.placeholder"
     >
-      <option v-for="option in props.options" :key="option.id">
+      <option
+        v-for="option in props.options"
+        :key="option.id"
+        :value="option"
+      >
         {{ option.name ?? option }}
       </option>
     </select>
 
+    <!-- Search -->
     <input
       v-else-if="props.type === 'search'"
       v-model="data.value"
@@ -77,6 +84,7 @@ const data = reactive({
       :placeholder="props.placeholder"
     />
 
+    <!-- Text -->
     <input
       v-else
       v-model="data.value"

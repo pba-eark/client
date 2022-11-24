@@ -9,19 +9,26 @@ export const useCustomerStore = defineStore("customer-store", () => {
     customers.value = payload;
   };
 
-  const getCustomers = async () => {
+  const getCustomers = async (token) => {
+    if (!token) return [];
     const runtimeConfig = useRuntimeConfig();
-    const response = await $fetch(`${runtimeConfig.API_URL}/customers`);
+    const response = await $fetch(`${runtimeConfig.public.API_URL}/customers`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     setCustomers(response);
   };
 
   /* Getters */
-  const GET_CUSTOMERS = computed(() => customers.value);
+  const CUSTOMERS = computed(() => customers.value);
 
   return {
-    customers,
     getCustomers,
-    GET_CUSTOMERS,
+    CUSTOMERS,
   };
 });

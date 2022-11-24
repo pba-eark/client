@@ -1,32 +1,30 @@
 <script setup>
+import { useGlobalStore } from "~/store/index";
 import { useAuthStore } from "~/store/auth";
 import { useJiraStore } from "~/store/jira";
-import { useCustomerStore } from "~/store/customers";
-import { useEstimateSheetStore } from "~~/store/estimateSheets";
 
 const authStore = useAuthStore();
 const jiraStore = useJiraStore();
-const customerStore = useCustomerStore();
-const estimateSheetStore = useEstimateSheetStore();
+const globalStore = useGlobalStore();
 
-onMounted(() => {
+onMounted(async () => {
   /* Check if user is logged in */
   if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt"))
     authStore.setJwt(localStorage.getItem("jwt"));
 
   /* Check for jira jwt in localstorage */
-  if (localStorage.getItem("jira"))
-    jiraStore.setJwt(localStorage.getItem("jira"));
+  if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)
+    await jiraStore.setJwt(localStorage.getItem("jira"));
 
-  /* Get and set customers in store */
-  customerStore.getCustomers();
-  /* Get and set epics in store */
-  estimateSheetStore.getEstimateSheets();
+  globalStore.setLoaded(true);
 });
 </script>
 
 <template>
-  <div :class="authStore.IS_AUTHORIZED ? 'layout' : 'loginLayout'">
+  <div
+    v-if="globalStore.IS_LOADED"
+    :class="authStore.IS_AUTHORIZED ? 'layout' : 'loginLayout'"
+  >
     <Header v-if="authStore.IS_AUTHORIZED" class="header" />
     <Sidebar v-if="authStore.IS_AUTHORIZED" class="sidebar-left" />
     <div class="main">

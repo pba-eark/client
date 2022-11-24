@@ -1,13 +1,29 @@
 <script setup>
+import { useAuthStore } from "~/store/auth";
 import { useCustomerStore } from "~/store/customers";
-import { useJiraStore } from "~/store/jira";
+import { useEstimateSheetStore } from "~/store/estimateSheets";
+import { useUserStore } from "~/store/users";
+
+onBeforeMount(() => {
+  window.addEventListener("click", handleClick);
+});
+
+onMounted(async () => {
+  if (!userStore.USERS.length) await userStore.getUsers(authStore.API_TOKEN);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("click", handleClick);
+});
+
+const authStore = useAuthStore();
+const customerStore = useCustomerStore();
+const sheetStore = useEstimateSheetStore();
+const userStore = useUserStore();
 
 definePageMeta({
   middleware: ["auth"],
 });
-
-const customerStore = useCustomerStore();
-const jiraStore = useJiraStore();
 
 let searchTerm = ref("");
 const customerSearchInput = ref(null);
@@ -17,76 +33,39 @@ const customerSelection = reactive({
   selected: {},
 });
 
-const sheet = reactive({
-  sheetStatusId: 1,
+const postData = reactive({
+  sheet: {},
 });
 
-const handleClick = (event) => {
-  if (event.target.classList.contains("customer-selection")) return;
-  customerSelection.hidden = true;
-};
-
-onBeforeMount(() => {
-  window.addEventListener("click", handleClick);
-});
-
-onMounted(() => {
-  // console.log("ref", customerSearchInput);
-  // customerSearchInput.focus();
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("click", handleClick);
-});
+const selectedUsers = reactive([]);
 
 const handleSubmit = () => {
-  console.log("submit");
+  if (!postData.sheet.SheetName) return alert("Sheet name missing");
+
+  /* Set customer if selected */
+  if (isCustomerSelected.value) {
+    if (customerSelection.selected.id) {
+      postData.sheet.customerId = customerSelection.selected.id;
+    } else {
+      return console.log("CREATE CUSTOMER HERE");
+    }
+  }
+
+  sheetStore.createEstimateSheet(authStore.API_TOKEN, postData.sheet);
 };
 
-const createCustomer = (customer) => {
+const handleCreateCustomer = (customer) => {
   const obj = {
     customerName: customer,
   };
 
-  selectCustomer(obj);
-
-  console.log("Created & selected customer:", customerSelection.selected);
+  handleSelectCustomer(obj);
 };
 
-const searchCustomers = computed(() => {
-  if (searchTerm.value === "") return customerStore.GET_CUSTOMERS;
-
-  return customerStore.GET_CUSTOMERS.filter((customer) => {
-    if (
-      customer.customerName
-        .toLowerCase()
-        .includes(searchTerm.value.toLowerCase())
-    ) {
-      return customer;
-    }
-  });
-});
-
-const validateNewCustomer = computed(() => {
-  if (searchTerm.value === "") return false;
-
-  for (let i = 0; i < customerStore.GET_CUSTOMERS.length; i++) {
-    if (
-      customerStore.GET_CUSTOMERS[i].customerName.toLowerCase() ===
-      searchTerm.value.toLowerCase()
-    ) {
-      return false;
-    }
-  }
-
-  return true;
-});
-
-const selectCustomer = (customer) => {
+const handleSelectCustomer = (customer) => {
   customerSelection.selected = customer;
   searchTerm.value = customer.customerName;
   isCustomerSelected.value = true;
-  console.log("customer selected!", customer);
 };
 
 const handleCustomerSearch = (val) => {
@@ -98,10 +77,64 @@ const handleUndoCustomer = () => {
   searchTerm.value = "";
 };
 
-const handleSheetName = (val) => {
-  sheet.name = val;
-  console.log("sheet name", sheet.name);
+const handleSetSheetName = (val) => {
+  postData.sheet.SheetName = val;
 };
+
+const handleSelectedUser = (user) => {
+  console.log("selected user", user);
+  selectedUsers.push(user);
+  console.log("selected users", selectedUsers);
+};
+
+const validateUsersOption = (user) => {
+  !selectedUsers.includes(user) ? true : false;
+};
+
+const handleClick = (event) => {
+  if (event.target.classList.contains("customer-selection")) return;
+  customerSelection.hidden = true;
+};
+
+const searchCustomers = computed(() => {
+  if (searchTerm.value === "") return customerStore.CUSTOMERS;
+
+  return customerStore.CUSTOMERS.filter((customer) => {
+    if (
+      customer.customerName
+        .toLowerCase()
+        .includes(searchTerm.value.toLowerCase())
+    ) {
+      return customer;
+    }
+  });
+});
+
+/*
+ ******* FIXME: Return only users NOT in selectedUsers array!!!!!!!
+ ******* FIXME: Return only users NOT in selectedUsers array!!!!!!!
+ ******* FIXME: Return only users NOT in selectedUsers array!!!!!!!
+ */
+const usersOptions = computed(() => {
+  return userStore.USERS.map((user) => {
+    return { id: user.id, name: `${user.firstName} ${user.lastName}` };
+  });
+});
+
+const validateNewCustomer = computed(() => {
+  if (searchTerm.value === "") return false;
+
+  for (let i = 0; i < customerStore.CUSTOMERS.length; i++) {
+    if (
+      customerStore.CUSTOMERS[i].customerName.toLowerCase() ===
+      searchTerm.value.toLowerCase()
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+});
 </script>
 
 <template>
@@ -131,7 +164,7 @@ const handleSheetName = (val) => {
             <ul class="customer-selection">
               <li
                 v-for="customer in searchCustomers"
-                @click="selectCustomer(customer)"
+                @click="handleSelectCustomer(customer)"
               >
                 {{ customer.customerName }}
               </li>
@@ -143,7 +176,7 @@ const handleSheetName = (val) => {
           :disabled="!validateNewCustomer"
           class="customer-selection"
           text="Opret kunde"
-          @click.prevent="createCustomer(searchTerm)"
+          @click.prevent="handleCreateCustomer(searchTerm)"
         />
       </div>
 
@@ -163,8 +196,20 @@ const handleSheetName = (val) => {
         required
         label="Navn på ark"
         emit="sheetName"
-        @sheetName="handleSheetName"
-        placeholder="lol"
+        @sheetName="handleSetSheetName"
+        placeholder="Navn på ark"
+      />
+
+      <ul v-if="selectedUsers.length > 0">
+        <li v-for="user in selectedUsers">{{ user.name }}</li>
+      </ul>
+
+      <Input
+        label="Brugere"
+        type="select"
+        :options="usersOptions"
+        emit="selectedUser"
+        @selectedUser="handleSelectedUser"
       />
 
       <!-- Jira -->
@@ -172,6 +217,9 @@ const handleSheetName = (val) => {
         href="https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=f0rb1sOMiQ9pPK860ygqqZ87hKHfHeyx&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work&redirect_uri=https%3A%2F%2Flocalhost%3A7087%2Fapi%2Fauth%2Fatlassian&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent"
         >Jira
       </a> -->
+
+      <br />
+      <Button text="Opret estimatark" type="submit" />
     </form>
   </div>
 </template>
