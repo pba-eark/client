@@ -1,4 +1,6 @@
 <script setup>
+const select = ref(null);
+
 const props = defineProps({
   label: {
     type: String,
@@ -17,6 +19,11 @@ const props = defineProps({
     type: String,
     default: "text",
   },
+  classes: {
+    type: String,
+    required: false,
+    default: "",
+  },
   options: {
     type: Array,
     required: false,
@@ -31,6 +38,13 @@ const props = defineProps({
 const data = reactive({
   value: "",
 });
+
+watch(
+  () => props.options.length,
+  () => {
+    data.value = "";
+  }
+);
 </script>
 
 <template>
@@ -38,7 +52,7 @@ const data = reactive({
     <!-- Label -->
     <span class="block__label">
       {{ props.label && props.label.length ? props.label : "" }}
-      <span v-if="required" class="required">*</span>
+      <span v-if="required" class="required" :class="classes">*</span>
     </span>
 
     <!-- Textarea -->
@@ -51,6 +65,7 @@ const data = reactive({
       "
       :type="props.type"
       :placeholder="props.placeholder"
+      :class="classes"
     ></textarea>
 
     <!-- Select -->
@@ -61,8 +76,10 @@ const data = reactive({
       @change="
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
+      :class="classes"
+      ref="select"
     >
-      <option value="" selected disabled hidden>{{ props.placeholder }}</option>
+      <option value="" selected disabled>{{ props.placeholder }}</option>
       <option v-for="option in props.options" :key="option.id" :value="option">
         {{ option.firstName + " " + option.lastName ?? option.name ?? option }}
       </option>
@@ -78,6 +95,7 @@ const data = reactive({
       "
       :type="props.type"
       :placeholder="props.placeholder"
+      :class="classes"
     />
 
     <!-- Text -->
@@ -90,6 +108,7 @@ const data = reactive({
       "
       :type="props.type"
       :placeholder="props.placeholder"
+      :class="classes"
     />
   </label>
 </template>

@@ -90,6 +90,7 @@ const handleSetSheetName = (val) => {
 };
 
 const handleSelectUser = (user) => {
+  console.log("USER", user);
   userOptions.selected.push(user);
 
   const userIndex = userOptions.available.findIndex(
