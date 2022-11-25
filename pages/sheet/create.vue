@@ -9,7 +9,12 @@ onBeforeMount(() => {
 });
 
 onMounted(async () => {
-  if (!userStore.USERS.length) await userStore.getUsers(authStore.API_TOKEN);
+  if (!userStore.USERS.length) {
+    await userStore.getUsers(authStore.API_TOKEN);
+    userOptions.available = userStore.USERS;
+
+    console.log("user options", userOptions);
+  }
 });
 
 onBeforeUnmount(() => {
@@ -37,7 +42,10 @@ const postData = reactive({
   sheet: {},
 });
 
-const selectedUsers = reactive([]);
+const userOptions = reactive({
+  available: [],
+  selected: [],
+});
 
 const handleSubmit = () => {
   if (!postData.sheet.SheetName) return alert("Sheet name missing");
@@ -81,14 +89,22 @@ const handleSetSheetName = (val) => {
   postData.sheet.SheetName = val;
 };
 
-const handleSelectedUser = (user) => {
-  console.log("selected user", user);
-  selectedUsers.push(user);
-  console.log("selected users", selectedUsers);
+const handleSelectUser = (user) => {
+  userOptions.selected.push(user);
+
+  const userIndex = userOptions.available.findIndex(
+    (obj) => obj.id === user.id
+  );
+
+  userOptions.available.splice(userIndex, 1);
 };
 
-const validateUsersOption = (user) => {
-  !selectedUsers.includes(user) ? true : false;
+const handleRemoveSelectedUser = (user) => {
+  userOptions.available.push(user);
+
+  const userIndex = userOptions.selected.findIndex((obj) => obj.id === user.id);
+
+  userOptions.selected.splice(userIndex, 1);
 };
 
 const handleClick = (event) => {
@@ -115,11 +131,11 @@ const searchCustomers = computed(() => {
  ******* FIXME: Return only users NOT in selectedUsers array!!!!!!!
  ******* FIXME: Return only users NOT in selectedUsers array!!!!!!!
  */
-const usersOptions = computed(() => {
-  return userStore.USERS.map((user) => {
-    return { id: user.id, name: `${user.firstName} ${user.lastName}` };
-  });
-});
+// const computedUserOptions = computed(() => {
+//   return userOptions.available.map((user) => {
+//     return { id: user.id, name: `${user.firstName} ${user.lastName}` };
+//   });
+// });
 
 const validateNewCustomer = computed(() => {
   if (searchTerm.value === "") return false;
@@ -200,16 +216,20 @@ const validateNewCustomer = computed(() => {
         placeholder="Navn på ark"
       />
 
-      <ul v-if="selectedUsers.length > 0">
-        <li v-for="user in selectedUsers">{{ user.name }}</li>
+      <ul v-if="userOptions.selected.length > 0">
+        <li v-for="user in userOptions.selected">
+          {{ `${user.firstName} ${user.lastName}` }}
+          <Button text="X" @click="handleRemoveSelectedUser(user)" />
+        </li>
       </ul>
 
       <Input
         label="Brugere"
         type="select"
-        :options="usersOptions"
+        :options="userOptions.available"
         emit="selectedUser"
-        @selectedUser="handleSelectedUser"
+        placeholder="Vælg brugere"
+        @selectedUser="handleSelectUser"
       />
 
       <!-- Jira -->

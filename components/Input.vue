@@ -61,14 +61,10 @@ const data = reactive({
       @change="
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
-      :placeholder="props.placeholder"
     >
-      <option
-        v-for="option in props.options"
-        :key="option.id"
-        :value="option"
-      >
-        {{ option.name ?? option }}
+      <option value="" selected disabled hidden>{{ props.placeholder }}</option>
+      <option v-for="option in props.options" :key="option.id" :value="option">
+        {{ option.firstName + " " + option.lastName ?? option.name ?? option }}
       </option>
     </select>
 
