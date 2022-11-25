@@ -1,6 +1,4 @@
 <script setup>
-const select = ref(null);
-
 const props = defineProps({
   label: {
     type: String,
@@ -77,7 +75,6 @@ watch(
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
       :class="classes"
-      ref="select"
     >
       <option value="" selected disabled>{{ props.placeholder }}</option>
       <option v-for="option in props.options" :key="option.id" :value="option">

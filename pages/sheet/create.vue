@@ -2,29 +2,18 @@
 import { useAuthStore } from "~/store/auth";
 import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
-import { useUserStore } from "~/store/users";
+
+const authStore = useAuthStore();
+const customerStore = useCustomerStore();
+const sheetStore = useEstimateSheetStore();
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);
 });
 
-onMounted(async () => {
-  if (!userStore.USERS.length) {
-    await userStore.getUsers(authStore.API_TOKEN);
-    userOptions.available = userStore.USERS;
-
-    console.log("user options", userOptions);
-  }
-});
-
 onBeforeUnmount(() => {
   window.removeEventListener("click", handleClick);
 });
-
-const authStore = useAuthStore();
-const customerStore = useCustomerStore();
-const sheetStore = useEstimateSheetStore();
-const userStore = useUserStore();
 
 definePageMeta({
   middleware: ["auth"],
@@ -37,14 +26,8 @@ const customerSelection = reactive({
   hidden: true,
   selected: {},
 });
-
 const postData = reactive({
   sheet: {},
-});
-
-const userOptions = reactive({
-  available: [],
-  selected: [],
 });
 
 const handleSubmit = () => {
@@ -89,28 +72,19 @@ const handleSetSheetName = (val) => {
   postData.sheet.SheetName = val;
 };
 
-const handleSelectUser = (user) => {
-  console.log("USER", user);
-  userOptions.selected.push(user);
-
-  const userIndex = userOptions.available.findIndex(
-    (obj) => obj.id === user.id
-  );
-
-  userOptions.available.splice(userIndex, 1);
-};
-
-const handleRemoveSelectedUser = (user) => {
-  userOptions.available.push(user);
-
-  const userIndex = userOptions.selected.findIndex((obj) => obj.id === user.id);
-
-  userOptions.selected.splice(userIndex, 1);
-};
-
 const handleClick = (event) => {
   if (event.target.classList.contains("customer-selection")) return;
   customerSelection.hidden = true;
+};
+
+const handleSelectEstimatedBy = (val) => {
+  postData.estimatedBy = val;
+  console.log(postData);
+};
+
+const handleSelectDoneBy = (val) => {
+  console.log(postData);
+  postData.doneBy = val;
 };
 
 const searchCustomers = computed(() => {
@@ -126,17 +100,6 @@ const searchCustomers = computed(() => {
     }
   });
 });
-
-/*
- ******* FIXME: Return only users NOT in selectedUsers array!!!!!!!
- ******* FIXME: Return only users NOT in selectedUsers array!!!!!!!
- ******* FIXME: Return only users NOT in selectedUsers array!!!!!!!
- */
-// const computedUserOptions = computed(() => {
-//   return userOptions.available.map((user) => {
-//     return { id: user.id, name: `${user.firstName} ${user.lastName}` };
-//   });
-// });
 
 const validateNewCustomer = computed(() => {
   if (searchTerm.value === "") return false;
@@ -217,21 +180,9 @@ const validateNewCustomer = computed(() => {
         placeholder="Navn på ark"
       />
 
-      <ul v-if="userOptions.selected.length > 0">
-        <li v-for="user in userOptions.selected">
-          {{ `${user.firstName} ${user.lastName}` }}
-          <Button text="X" @click="handleRemoveSelectedUser(user)" />
-        </li>
-      </ul>
+      <SelectUsers label="Estimeret af" @update="handleSelectEstimatedBy" />
 
-      <Input
-        label="Brugere"
-        type="select"
-        :options="userOptions.available"
-        emit="selectedUser"
-        placeholder="Vælg brugere"
-        @selectedUser="handleSelectUser"
-      />
+      <SelectUsers label="Udført af" @update="handleSelectDoneBy" />
 
       <!-- Jira -->
       <!-- <a
