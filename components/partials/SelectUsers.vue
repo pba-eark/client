@@ -27,8 +27,6 @@ onMounted(async () => {
   if (!userStore.USERS.length) {
     await userStore.getUsers(authStore.API_TOKEN);
     userOptions.available = userStore.USERS;
-
-    console.log("user options", userOptions);
   }
 });
 
@@ -40,7 +38,6 @@ const handleSelectUser = (user) => {
   );
 
   userOptions.available.splice(userIndex, 1);
-
   emit("update", userOptions.selected);
 };
 

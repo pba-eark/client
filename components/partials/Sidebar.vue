@@ -1,24 +1,23 @@
 <script setup>
-import { useGlobalStore } from "~/store/index";
 import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~~/store/estimateSheets";
 import { useAuthStore } from "~/store/auth";
 
-const globalStore = useGlobalStore();
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
 const authStore = useAuthStore();
 
-let customers = ref([]);
+const customers = ref([]);
 
-watchEffect(async () => {
-  /* Merge customers and projects */
-  if (globalStore.IS_LOADED) {
-    /* Get and set customers in store */
-    await customerStore.getCustomers(authStore.API_TOKEN);
-    /* Get and set epics in store */
-    await sheetStore.getEstimateSheets(authStore.API_TOKEN);
+onMounted(async () => {
+  await customerStore.getCustomers(authStore.API_TOKEN);
+  await sheetStore.getEstimateSheets(authStore.API_TOKEN);
+});
 
+watch(
+  () => sheetStore.GET_ESTIMATE_SHEETS,
+  async () => {
+    customers.value = [];
     customerStore.CUSTOMERS.map((c) => {
       const userSheets = sheetStore.GET_ESTIMATE_SHEETS.filter((s) => {
         if (s.customerId === c.id) return s;
@@ -27,6 +26,26 @@ watchEffect(async () => {
       customers.value.push({ ...c, sheets: userSheets });
     });
   }
+);
+
+watch(
+  () => customerStore.CUSTOMERS,
+  async () => {
+    customers.value = [];
+    customerStore.CUSTOMERS.map((c) => {
+      const userSheets = sheetStore.GET_ESTIMATE_SHEETS.filter((s) => {
+        if (s.customerId === c.id) return s;
+      });
+
+      customers.value.push({ ...c, sheets: userSheets });
+    });
+  }
+);
+
+const sheetsWithoutCustomers = computed(() => {
+  return sheetStore.GET_ESTIMATE_SHEETS.filter((sheet) => {
+    return !sheet.customerId;
+  });
 });
 </script>
 
@@ -45,6 +64,15 @@ watchEffect(async () => {
           <!-- Projects for customer -->
           <ul>
             <li v-for="sheet in customer.sheets">* {{ sheet.sheetName }}</li>
+          </ul>
+        </li>
+
+        <li>
+          Mangler kunde
+          <ul>
+            <li v-for="sheet in sheetsWithoutCustomers">
+              *{{ sheet.sheetName }}
+            </li>
           </ul>
         </li>
       </ul>
