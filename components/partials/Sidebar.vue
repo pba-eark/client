@@ -67,7 +67,7 @@ const sheetsWithoutCustomers = computed(() => {
           </ul>
         </li>
 
-        <li>
+        <li v-if="sheetsWithoutCustomers && sheetsWithoutCustomers.length">
           Mangler kunde
           <ul>
             <li v-for="sheet in sheetsWithoutCustomers">
