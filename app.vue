@@ -26,6 +26,7 @@ onMounted(async () => {
     :class="authStore.IS_AUTHORIZED ? 'layout' : 'loginLayout'"
   >
     <Header v-if="authStore.IS_AUTHORIZED" class="header" />
+    <Tabs v-if="authStore.IS_AUTHORIZED" class="tabs" />
     <Sidebar v-if="authStore.IS_AUTHORIZED" class="sidebar-left" />
     <div class="main">
       <LazyNuxtPage />
@@ -37,11 +38,16 @@ onMounted(async () => {
 .layout {
   display: grid;
   grid-template-columns: 200px auto 150px;
+  grid-template-rows: 1fr auto;
   grid-template-areas:
     "header header header"
+    "sidebarLeft tabs sidebarRight"
     "sidebarLeft main sidebarRight";
 }
 
+.tabs {
+  grid-area: tabs;
+}
 .header {
   grid-area: header;
 }

@@ -63,7 +63,11 @@ const sheetsWithoutCustomers = computed(() => {
 
           <!-- Projects for customer -->
           <ul>
-            <li v-for="sheet in customer.sheets">* {{ sheet.sheetName }}</li>
+            <li v-for="sheet in customer.sheets">
+              <NuxtLink :to="`/sheet/${sheet.id}`">
+                {{ sheet.sheetName }}
+              </NuxtLink>
+            </li>
           </ul>
         </li>
 
@@ -71,7 +75,9 @@ const sheetsWithoutCustomers = computed(() => {
           Mangler kunde
           <ul>
             <li v-for="sheet in sheetsWithoutCustomers">
-              *{{ sheet.sheetName }}
+              <NuxtLink :to="`/sheet/${sheet.id}`">
+                {{ sheet.sheetName }}
+              </NuxtLink>
             </li>
           </ul>
         </li>
@@ -92,8 +98,8 @@ const sheetsWithoutCustomers = computed(() => {
 
   &__projects {
     height: 100%;
-    background: purple;
-    color: #fff;
+
+    color: firebrick;
   }
 }
 </style>
