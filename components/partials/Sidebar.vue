@@ -68,7 +68,7 @@ const sheetsWithoutCustomers = computed(() => {
             <li v-for="sheet in customer.sheets">
               <NuxtLink
                 :to="`/sheet/${sheet.id}`"
-                @click="tabStore.openTab(sheet)"
+                @click="tabStore.handleOpenTab(sheet)"
               >
                 {{ sheet.sheetName }}
               </NuxtLink>
@@ -82,7 +82,7 @@ const sheetsWithoutCustomers = computed(() => {
             <li v-for="sheet in sheetsWithoutCustomers">
               <NuxtLink
                 :to="`/sheet/${sheet.id}`"
-                @click="tabStore.openTab(sheet)"
+                @click="tabStore.handleOpenTab(sheet)"
               >
                 {{ sheet.sheetName }}
               </NuxtLink>

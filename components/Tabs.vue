@@ -17,6 +17,19 @@ const tabStore = useTabsStore();
         />
       </NuxtLink>
     </li>
+
+    <!-- Temporary tab -->
+    <li v-if="tabStore.TEMP_TAB !== null" class="tabs__tab tab temp">
+      <NuxtLink :to="`/sheet/${tabStore.TEMP_TAB.id}`">
+        <span class="name">{{ tabStore.TEMP_TAB.sheetName }}</span>
+
+        <Icon
+          icon="icon-cross"
+          class="close"
+          @click.prevent="tabStore.closeTempTab"
+        />
+      </NuxtLink>
+    </li>
   </ul>
 </template>
 
@@ -28,6 +41,13 @@ const tabStore = useTabsStore();
 
   &__tab {
     margin-right: 5px;
+
+    &.temp {
+      font-style: italic;
+      &.router-link-exact-active {
+        background: blue;
+      }
+    }
 
     a {
       height: 100%;
