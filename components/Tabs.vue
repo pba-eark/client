@@ -6,6 +6,12 @@ const tabStore = useTabsStore();
 
 <template>
   <ul class="tabs">
+    <li class="tabs__tab tab">
+      <NuxtLink :to="`/`">
+        <Icon icon="icon-home" class="home" />
+      </NuxtLink>
+    </li>
+
     <li v-for="tab in tabStore.TABS" class="tabs__tab tab">
       <NuxtLink :to="`/sheet/${tab.id}`">
         <span class="name">{{ tab.sheetName }}</span>
@@ -34,6 +40,10 @@ const tabStore = useTabsStore();
 </template>
 
 <style lang="scss" scoped>
+.home {
+  height: 30px;
+  width: 30px;
+}
 .tabs {
   background: pink;
   display: flex;
