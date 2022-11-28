@@ -31,6 +31,8 @@ onMounted(async () => {
     <div class="main">
       <LazyNuxtPage />
     </div>
+
+    <div class="sidebar-right">right side bar</div>
   </div>
 </template>
 
@@ -38,7 +40,7 @@ onMounted(async () => {
 .layout {
   display: grid;
   grid-template-columns: 200px auto 150px;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: auto minmax(auto, 50px);
   grid-template-areas:
     "header header header"
     "sidebarLeft tabs sidebarRight"
