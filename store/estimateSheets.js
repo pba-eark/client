@@ -5,7 +5,7 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
   const estimateSheets = ref([]);
 
   /* Actions */
-  const setEpics = (payload) => {
+  const setEstimateSheets = (payload) => {
     estimateSheets.value = payload;
   };
 
@@ -25,7 +25,7 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
       }
     );
 
-    setEpics(estimateSheets);
+    setEstimateSheets(estimateSheets);
   };
 
   const createEstimateSheet = async (token, obj) => {
