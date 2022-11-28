@@ -13,14 +13,16 @@ export default defineComponent({
 </script>
 
 <template>
-  <header>
-    <h1>Oxygen</h1>
-    <nav>
-      <NuxtLink to="/">Home</NuxtLink>
-      <NuxtLink v-if="!store.IS_AUTHORIZED" to="/login">Login</NuxtLink>
-      <Button v-else text="Log out" @click="store.handleLogOut" />
-    </nav>
-  </header>
+  <div>
+    <header>
+      <h1>Oxygen</h1>
+      <nav>
+        <NuxtLink to="/">Home</NuxtLink>
+        <NuxtLink v-if="!store.IS_AUTHORIZED" to="/login">Login</NuxtLink>
+        <Button v-else text="Log out" @click="store.handleLogOut" />
+      </nav>
+    </header>
+  </div>
 
   <!-- <span>authorized: {{ store.IS_AUTHORIZED }}</span>
       <p>jira token: {{ store.JIRA_ACCESS_TOKEN }}</p>
