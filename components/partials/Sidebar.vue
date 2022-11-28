@@ -2,10 +2,12 @@
 import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~~/store/estimateSheets";
 import { useAuthStore } from "~/store/auth";
+import { useTabsStore } from "~/store/tabs";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
 const authStore = useAuthStore();
+const tabStore = useTabsStore();
 
 const customers = ref([]);
 
@@ -64,7 +66,10 @@ const sheetsWithoutCustomers = computed(() => {
           <!-- Projects for customer -->
           <ul>
             <li v-for="sheet in customer.sheets">
-              <NuxtLink :to="`/sheet/${sheet.id}`">
+              <NuxtLink
+                :to="`/sheet/${sheet.id}`"
+                @click="tabStore.openTab(sheet)"
+              >
                 {{ sheet.sheetName }}
               </NuxtLink>
             </li>
@@ -75,7 +80,10 @@ const sheetsWithoutCustomers = computed(() => {
           Mangler kunde
           <ul>
             <li v-for="sheet in sheetsWithoutCustomers">
-              <NuxtLink :to="`/sheet/${sheet.id}`">
+              <NuxtLink
+                :to="`/sheet/${sheet.id}`"
+                @click="tabStore.openTab(sheet)"
+              >
                 {{ sheet.sheetName }}
               </NuxtLink>
             </li>
