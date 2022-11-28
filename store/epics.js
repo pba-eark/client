@@ -29,6 +29,7 @@ export const useEpicStore = defineStore("epic-store", () => {
     };
 
     const createEpic = async (token, obj) => {
+        console.log(obj)
         if (!token) return [];
         const runtimeConfig = useRuntimeConfig();
 
