@@ -33,7 +33,7 @@ watch(
   async () => {
     customers.value = [];
     customerStore.CUSTOMERS.map((c) => {
-      const userSheets = sheetStore.GET_ESTIMATE_SHEETS.filter((s) => {
+      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
         if (s.customerId === c.id) return s;
       });
 
