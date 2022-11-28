@@ -20,13 +20,11 @@ const props = defineProps({
 </script>
 
 <template>
-  <div>
-    <button
-      @click="if (props.emit && props.emit.length) $emit(`${props.emit}`);"
-      :type="type"
-    >
-      {{ props.text }}
-      <Icon v-if="props.icon" :icon="props.icon" />
-    </button>
-  </div>
+  <button
+    @click="if (props.emit && props.emit.length) $emit(`${props.emit}`);"
+    :type="type"
+  >
+    {{ props.text }}
+    <Icon v-if="props.icon" :icon="props.icon" />
+  </button>
 </template>
