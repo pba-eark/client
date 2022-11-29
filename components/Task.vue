@@ -1,15 +1,14 @@
 <script setup>
 
-import { useAuthStore } from "~/store/auth";
-import { useRoleStore } from "~/store/roles";
-import { useRiskProfileStore } from "~/store/riskprofiles";
-
-const authStore = useAuthStore();
-const roleStore = useRoleStore();
-const riskProfileStore = useRiskProfileStore();
+const props = defineProps({
+  data: {
+    type: Object,
+    required: true,
+  }
+});
 
 </script>
 
 <template>
-    <p>Task Her</p>
+    <p>{{ props.data.taskName }}</p>
 </template>

@@ -29,10 +29,10 @@ export const useTaskStore = defineStore("task-store", () => {
     };
 
     /* Getters */
-    const TASK_STATUS = computed(() => tasks.value);
+    const TASKS = computed(() => tasks.value);
 
     return {
         getTasks,
-        TASK_STATUS
+        TASKS
     };
 });

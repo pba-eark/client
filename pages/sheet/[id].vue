@@ -3,14 +3,10 @@
 import { useAuthStore } from "~/store/auth";
 import { useEpicStore } from "~/store/epics";
 import { useEpicStatusStore } from "~/store/epicstatus";
-import { useEstimateSheetStore } from "~/store/estimatesheets";
-import { useTaskStore } from "~/store/tasks";
 
 const authStore = useAuthStore();
 const epicStore = useEpicStore();
 const epicStatusStore = useEpicStatusStore();
-const estimateSheetStore = useEstimateSheetStore();
-const taskStore = useTaskStore();
 
 const route = useRoute()
 
@@ -22,9 +18,10 @@ const postData = reactive({
     },
 });
 
+const epics = reactive([])
+
 onMounted(async () => {
     await epicStatusStore.getEpicStatus(authStore.API_TOKEN);
-    await estimateSheetStore.getEstimateSheets(authStore.API_TOKEN);
 
     epicStatusStore.EPIC_STATUS.forEach(element => {
         if (element.default) {
@@ -33,23 +30,17 @@ onMounted(async () => {
     });
 
     await epicStore.getEpics(authStore.API_TOKEN);
-
-    epicStore.EPIC_STATUS.forEach( async element => {
-        await taskStore.getTasks(authStore.API_TOKEN, element.id);
+    epicStore.EPIC_STATUS.forEach(element => {
+        epics.push(element);
     });
-    
+
 })
 
 </script>
 
 <template>
     <div>
+        <Epic v-for="epic in epics" :key="epic.id" :data="epic" />
         <Button text="Click mig for fanden" @click="epicStore.createEpic(authStore.API_TOKEN, postData.epic)"></Button>
-        <div>
-            <p v-for="status in epicStatusStore.EPIC_STATUS">{{ status }}</p>
-            <div>
-                <Task v-for="task in taskStore.TASK_STATUS">{{ task }}</Task>
-            </div>
-        </div>
     </div>
 </template>
