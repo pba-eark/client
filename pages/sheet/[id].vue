@@ -23,14 +23,14 @@ const epics = reactive([])
 onMounted(async () => {
     await epicStatusStore.getEpicStatus(authStore.API_TOKEN);
 
-    epicStatusStore.EPIC_STATUS.forEach(element => {
+    epicStatusStore.EPICS.forEach(element => {
         if (element.default) {
             postData.epic.epicStatusId = element.id;
         }
     });
-
-    await epicStore.getEpics(authStore.API_TOKEN);
-    epicStore.EPIC_STATUS.forEach(element => {
+console.log(postData)
+    await epicStore.getEpics(authStore.API_TOKEN, route.params.id);
+    epicStore.EPICS.forEach(element => {
         epics.push(element);
     });
 
