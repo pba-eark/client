@@ -15,7 +15,7 @@ onMounted(async () => {
 });
 
 watch(
-  () => sheetStore.GET_ESTIMATE_SHEETS,
+  () => sheetStore.ESTIMATE_SHEETS,
   async () => {
     customers.value = [];
     customerStore.CUSTOMERS.map((c) => {
@@ -43,7 +43,7 @@ watch(
 );
 
 const sheetsWithoutCustomers = computed(() => {
-  return sheetStore.GET_ESTIMATE_SHEETS.filter((sheet) => {
+  return sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
     return !sheet.customerId;
   });
 });

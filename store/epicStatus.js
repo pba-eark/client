@@ -7,7 +7,6 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
     /* Actions */
     const setEpicStatus = (payload) => {
         epicStatus.value = payload;
-        console.log("payload", payload)
     };
 
     const getEpicStatus = async (token) => {
@@ -25,7 +24,6 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
                 },
             }
         );
-        console.log("response", response)
         setEpicStatus(response);
     };
 

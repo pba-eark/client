@@ -49,8 +49,13 @@ export const useEpicStore = defineStore("epic-store", () => {
         console.log("post epic res", response);
     };
 
+    /* Getters */
+    const EPIC_STATUS = computed(() => epics.value);
+
     return {
+        getEpics,
         createEpic,
+        EPIC_STATUS
     };
 
 });
