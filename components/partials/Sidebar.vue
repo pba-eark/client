@@ -139,6 +139,8 @@ const sheetsWithoutCustomers = computed(() => {
     <div class="block__epics">
       
     </div>
+
+    <div class="block__epics"></div>
   </div>
 </template>
 
