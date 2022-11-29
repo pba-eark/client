@@ -49,11 +49,11 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
   };
 
   /* Getters */
-  const GET_ESTIMATE_SHEETS = computed(() => estimateSheets.value);
+  const ESTIMATE_SHEETS = computed(() => estimateSheets.value);
 
   return {
     getEstimateSheets,
     createEstimateSheet,
-    GET_ESTIMATE_SHEETS,
+    ESTIMATE_SHEETS,
   };
 });

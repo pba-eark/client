@@ -1,1 +1,7 @@
-<template>Silence is golden...</template>
+<script setup>
+
+</script>
+
+<template>
+        
+</template>

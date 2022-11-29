@@ -17,11 +17,11 @@ onMounted(async () => {
 });
 
 watch(
-  () => sheetStore.GET_ESTIMATE_SHEETS,
+  () => sheetStore.ESTIMATE_SHEETS,
   async () => {
     customers.value = [];
     customerStore.CUSTOMERS.map((c) => {
-      const userSheets = sheetStore.GET_ESTIMATE_SHEETS.filter((s) => {
+      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
         if (s.customerId === c.id) return s;
       });
 
@@ -35,7 +35,7 @@ watch(
   async () => {
     customers.value = [];
     customerStore.CUSTOMERS.map((c) => {
-      const userSheets = sheetStore.GET_ESTIMATE_SHEETS.filter((s) => {
+      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
         if (s.customerId === c.id) return s;
       });
 
@@ -45,7 +45,7 @@ watch(
 );
 
 const sheetsWithoutCustomers = computed(() => {
-  return sheetStore.GET_ESTIMATE_SHEETS.filter((sheet) => {
+  return sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
     return !sheet.customerId;
   });
 });
