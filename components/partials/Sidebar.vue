@@ -21,36 +21,16 @@ onMounted(async () => {
   //   "--test",
   //   `${window.innerHeight}px`
   // );
+  customers.value = [];
+  customerStore.CUSTOMERS.map((c) => {
+    c.visible = false;
+    const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
+      if (s.customerId === c.id) return s;
+    });
+
+    customers.value.push({ ...c, sheets: userSheets });
+  });
 });
-
-watch(
-  () => sheetStore.ESTIMATE_SHEETS,
-  async () => {
-    customers.value = [];
-    customerStore.CUSTOMERS.map((c) => {
-      c.visible = false;
-      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
-        if (s.customerId === c.id) return s;
-      });
-
-      customers.value.push({ ...c, sheets: userSheets });
-    });
-  }
-);
-
-watch(
-  () => customerStore.CUSTOMERS,
-  async () => {
-    customers.value = [];
-    customerStore.CUSTOMERS.map((c) => {
-      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
-        if (s.customerId === c.id) return s;
-      });
-
-      customers.value.push({ ...c, sheets: userSheets });
-    });
-  }
-);
 
 const sheetsWithoutCustomers = computed(() => {
   return sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
