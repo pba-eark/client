@@ -52,7 +52,6 @@ const postData = reactive({
   },
 });
 
-const epics = reactive([]);
 const sheetElement = ref(null);
 
 onBeforeMount(() => {
@@ -61,26 +60,6 @@ onBeforeMount(() => {
 
 onBeforeUnmount(() => {
   window.removeEventListener("click", handleClick);
-});
-
-onMounted(async () => {
-  await epicStatusStore.getEpicStatus(authStore.API_TOKEN);
-
-  epicStatusStore.EPIC_STATUS.forEach((element) => {
-    if (element.default) {
-      postData.epic.epicStatusId = element.id;
-    }
-  });
-
-  await epicStore.getEpics(authStore.API_TOKEN, route.params.id);
-
-  epicStore.EPICS.forEach((element) => {
-    epics.push(element);
-  });
-
-  epics.forEach(async (element) => {
-    await taskStore.getTasks(authStore.API_TOKEN, element.id);
-  });
 });
 
 const gemIstore = () => {
@@ -115,6 +94,12 @@ const getParents = (node) => {
   }
   return list;
 };
+
+const sheetEpics = computed(() => {
+  return epicStore.EPICS.filter((epic) => {
+    return epic.estimateSheetId == route.params.id;
+  });
+});
 </script>
 
 <template>

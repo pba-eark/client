@@ -2,13 +2,11 @@
 import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~~/store/estimateSheets";
 import { useEpicStore } from "~/store/epics";
-import { useAuthStore } from "~/store/auth";
 import { useTabsStore } from "~/store/tabs";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
 const epicStore = useEpicStore();
-const authStore = useAuthStore();
 const tabStore = useTabsStore();
 
 const customers = ref([]);
@@ -17,15 +15,12 @@ const showMissingCustomerSheets = ref(false);
 const isEpicsOpen = ref(false);
 
 onMounted(async () => {
-  await customerStore.getCustomers(authStore.API_TOKEN);
-  await sheetStore.getEstimateSheets(authStore.API_TOKEN);
-
   /* Værsgo gæd */
-  console.log(window.innerHeight);
-  document.documentElement.style.setProperty(
-    "--test",
-    `${window.innerHeight}px`
-  );
+  // console.log(window.innerHeight);
+  // document.documentElement.style.setProperty(
+  //   "--test",
+  //   `${window.innerHeight}px`
+  // );
 });
 
 watch(

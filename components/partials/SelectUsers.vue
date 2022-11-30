@@ -1,8 +1,6 @@
 <script setup>
 import { useUserStore } from "~/store/users";
-import { useAuthStore } from "~/store/auth";
 
-const authStore = useAuthStore();
 const userStore = useUserStore();
 
 const userOptions = reactive({
@@ -23,9 +21,8 @@ const props = defineProps({
 
 const emit = defineEmits(["update"]);
 
-onMounted(async () => {
-  if (userStore.USERS.length < 1) await userStore.getUsers(authStore.API_TOKEN);
-  userOptions.available = userStore.USERS;
+onMounted(() => {
+  if (userStore.USERS.length > 0) userOptions.available = [...userStore.USERS];
 });
 
 const handleSelectUser = (user) => {
