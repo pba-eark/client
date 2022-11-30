@@ -9,7 +9,7 @@ export const useEpicStore = defineStore("epic-store", () => {
     epics.value = payload;
   };
 
-  const getAllEpics = async (token) => {
+  const getEpics = async (token) => {
     if (!token) return [];
     const runtimeConfig = useRuntimeConfig();
 
@@ -21,25 +21,6 @@ export const useEpicStore = defineStore("epic-store", () => {
         Authorization: `Bearer ${token}`,
       },
     });
-
-    setEpics(epics);
-  };
-
-  const getEpics = async (token, sheetId) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
-    const epics = await $fetch(
-      `${runtimeConfig.public.API_URL}/epics/sheet/${sheetId}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
 
     setEpics(epics);
   };
@@ -66,7 +47,6 @@ export const useEpicStore = defineStore("epic-store", () => {
   const EPICS = computed(() => epics.value);
 
   return {
-    getAllEpics,
     getEpics,
     createEpic,
     EPICS,
