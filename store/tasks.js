@@ -9,7 +9,9 @@ export const useTaskStore = defineStore("task-store", () => {
     tasks.value = payload;
   };
 
-  const updateTask = (id, obj) => {
+  const updateTask = (obj) => {
+    const { id } = obj;
+
     tasks.value.map((task) => {
       if (task.id === id) Object.assign(task, obj);
     });

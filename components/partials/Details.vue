@@ -17,8 +17,6 @@ let item = reactive({
   isToggled: false,
 });
 
-onMounted(() => {});
-
 watch(
   () => detailsStore.DETAILS,
   () => {
@@ -45,12 +43,6 @@ watch(
     });
   }
 );
-
-// const epicOptions = computed(() => {
-//   return epicStore.EPICS.map((epic) => {
-//     return { id: epic.id, name: epic.epicName };
-//   });
-// });
 </script>
 
 <template>
@@ -78,15 +70,15 @@ watch(
         <label v-if="item.type === 'task'">
           <p>Beskrivelse</p>
           <textarea
-            v-model="item.taskDescription"
-            @change="taskStore.updateTask(item.id, item)"
+            v-model="item.data.taskDescription"
+            @change="taskStore.updateTask(item.data)"
           ></textarea>
         </label>
 
         <label v-if="item.type === 'task'">
           <p>Begrundelse for estimat</p>
           <textarea
-            v-model="item.estimateReasoning"
+            v-model="item.data.estimateReasoning"
             @change="handleEstimateReasoningChange"
           ></textarea>
         </label>
