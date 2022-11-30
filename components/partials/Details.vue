@@ -7,32 +7,56 @@ const detailsStore = useDetailsStore();
 const epicStore = useEpicStore();
 const taskStore = useTaskStore();
 
-const item = reactive({
-  type: null,
-  data: null,
+const route = useRoute();
+const epicOptions = reactive({
+  value: [],
 });
+let item = reactive({
+  data: null,
+  type: null,
+  isToggled: false,
+});
+
+onMounted(() => {});
 
 watch(
   () => detailsStore.DETAILS,
   () => {
-    item.data = { ...detailsStore.DETAILS };
+    if (detailsStore.DETAILS === null) return (item.isToggled = false);
+    item.isToggled = true;
 
-    detailsStore.DETAILS && detailsStore.DETAILS.hasOwnProperty("epicName")
-      ? (item.type = "epic")
-      : (item.type = "task");
+    item.data = {
+      ...detailsStore.DETAILS,
+    };
+
+    if (item.data.epicName === undefined) {
+      item.type = "task";
+    } else {
+      item.type = "epic";
+    }
+
+    epicOptions.value = [];
+    epicStore.EPICS.map((epic) => {
+      if (epic.estimateSheetId == route.params.id)
+        epicOptions.value = [
+          ...epicOptions.value,
+          { id: epic.id, name: epic.epicName },
+        ];
+    });
   }
 );
 
-const epicOptions = computed(() => {
-  return epicStore.EPICS.map((epic) => {
-    return { id: epic.id, name: epic.epicName };
-  });
-});
+// const epicOptions = computed(() => {
+//   return epicStore.EPICS.map((epic) => {
+//     return { id: epic.id, name: epic.epicName };
+//   });
+// });
 </script>
 
 <template>
   <div class="block">
-    <div v-show="item.data">
+    {{ item.type }}
+    <div v-if="item.isToggled">
       <div class="block__header">
         <div>
           <h1>Detaljer</h1>
@@ -54,24 +78,25 @@ const epicOptions = computed(() => {
         <label v-if="item.type === 'task'">
           <p>Beskrivelse</p>
           <textarea
-            v-model="item.data.taskDescription"
-            @change="taskStore.updateTask(item.data.id, item.data)"
+            v-model="item.taskDescription"
+            @change="taskStore.updateTask(item.id, item)"
           ></textarea>
         </label>
 
         <label v-if="item.type === 'task'">
           <p>Begrundelse for estimat</p>
           <textarea
-            v-model="item.data.estimateReasoning"
+            v-model="item.estimateReasoning"
             @change="handleEstimateReasoningChange"
           ></textarea>
         </label>
 
         <Input
+          v-if="item.type === 'task'"
           label="Flyt til anden epic"
           placeholder="Vælg epic"
           type="select"
-          :options="epicOptions"
+          :options="epicOptions.value"
         />
       </div>
     </div>
