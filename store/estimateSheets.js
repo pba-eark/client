@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 
 export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
+  const route = useRoute();
+
   /* State */
   const estimateSheets = ref([]);
 
@@ -50,10 +52,16 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
 
   /* Getters */
   const ESTIMATE_SHEETS = computed(() => estimateSheets.value);
+  const CURRENT_ESTIMATE_SHEET = computed(() =>
+    estimateSheets.value.filter((s) => {
+      if (s.id == route.params.id) return s;
+    })
+  );
 
   return {
     getEstimateSheets,
     createEstimateSheet,
     ESTIMATE_SHEETS,
+    CURRENT_ESTIMATE_SHEET,
   };
 });
