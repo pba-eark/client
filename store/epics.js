@@ -48,7 +48,6 @@ export const useEpicStore = defineStore("epic-store", () => {
     };
 
     const createEpic = async (token, obj) => {
-        console.log(obj)
         if (!token) return [];
         const runtimeConfig = useRuntimeConfig();
 
@@ -65,7 +64,7 @@ export const useEpicStore = defineStore("epic-store", () => {
             }
         );
 
-        console.log("post epic res", response);
+        epics.value = [...epics.value, response]
     };
 
     /* Getters */
