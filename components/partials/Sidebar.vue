@@ -1,17 +1,20 @@
 <script setup>
 import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~~/store/estimateSheets";
+import { useEpicStore } from "~/store/epics";
 import { useAuthStore } from "~/store/auth";
 import { useTabsStore } from "~/store/tabs";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
+const epicStore = useEpicStore();
 const authStore = useAuthStore();
 const tabStore = useTabsStore();
 
 const customers = ref([]);
 const isProjectsOpen = ref(false);
 const showMissingCustomerSheets = ref(false);
+const isEpicsOpen = ref(false);
 
 onMounted(async () => {
   await customerStore.getCustomers(authStore.API_TOKEN);
@@ -136,11 +139,27 @@ const sheetsWithoutCustomers = computed(() => {
       />
     </div>
 
-    <div class="block__epics">
-      
-    </div>
-
     <div class="block__epics"></div>
+
+    <div
+      v-show="
+        sheetStore.CURRENT_ESTIMATE_SHEET &&
+        sheetStore.CURRENT_ESTIMATE_SHEET.length
+      "
+      class="block__epics"
+    >
+      <p>show epics: {{ isEpicsOpen }}</p>
+      <Button
+        :text="sheetStore.CURRENT_ESTIMATE_SHEET[0]?.sheetName"
+        icon="icon-chevron"
+        @click="isEpicsOpen = !isEpicsOpen"
+      />
+      <ul v-show="isEpicsOpen">
+        <li v-for="epic in epicStore.EPICS">
+          {{ epic.epicName }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -209,6 +228,14 @@ const sheetsWithoutCustomers = computed(() => {
           padding: 3px 0;
         }
       }
+    }
+  }
+
+  &__epics {
+    color: #fff;
+
+    button {
+      width: 100%;
     }
   }
 }

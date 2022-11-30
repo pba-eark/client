@@ -78,7 +78,11 @@ watch(
     >
       <option value="" selected disabled>{{ props.placeholder }}</option>
       <option v-for="option in props.options" :key="option.id" :value="option">
-        {{ option.firstName + " " + option.lastName ?? option.name ?? option }}
+        {{
+          option.firstName && option.lastName
+            ? `${option.firstName} ${option.lastName}`
+            : option.name
+        }}
       </option>
     </select>
 

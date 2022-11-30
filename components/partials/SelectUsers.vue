@@ -24,10 +24,8 @@ const props = defineProps({
 const emit = defineEmits(["update"]);
 
 onMounted(async () => {
-  if (!userStore.USERS.length) {
-    await userStore.getUsers(authStore.API_TOKEN);
-    userOptions.available = userStore.USERS;
-  }
+  if (userStore.USERS.length < 1) await userStore.getUsers(authStore.API_TOKEN);
+  userOptions.available = userStore.USERS;
 });
 
 const handleSelectUser = (user) => {
