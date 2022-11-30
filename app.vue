@@ -7,7 +7,7 @@ const authStore = useAuthStore();
 const jiraStore = useJiraStore();
 const globalStore = useGlobalStore();
 
-onMounted(async () => {
+onBeforeMount(async () => {
   /* Check if user is logged in */
   if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt"))
     authStore.setJwt(localStorage.getItem("jwt"));
