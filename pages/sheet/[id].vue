@@ -83,9 +83,9 @@ onMounted(async () => {
   });
 });
 
-const gemIArray = () => {
-  saveStore.saveToArray("epic", epicObj);
-  saveStore.saveToArray("task", taskObj);
+const gemIstore = () => {
+  saveStore.saveToObject("epic", epicObj);
+  saveStore.saveToObject("task", taskObj);
 }
 
 const gemIDb = () => {
@@ -124,7 +124,7 @@ const getParents = (node) => {
     <div>
       <h1>Epics:</h1>
       <Epic v-for="epic in epics" :key="epic.id" :data="epic" />
-      <Button text="GEM I ARRAY" @click="gemIArray"></Button>
+      <Button text="GEM I ARRAY" @click="gemIstore"></Button>
       <Button text="GEM I DB" @click="gemIDb"></Button>
       <Button text="Click mig for fanden" @click="epicStore.createEpic(authStore.API_TOKEN, postData.epic)"></Button>
 
