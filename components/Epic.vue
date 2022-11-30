@@ -21,6 +21,7 @@ onMounted(async () => {
     tasks.push(element);
   });
 });
+
 </script>
 
 <template>

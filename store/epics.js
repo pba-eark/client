@@ -44,10 +44,9 @@ export const useEpicStore = defineStore("epic-store", () => {
     setEpics(epics);
   };
 
-  const createEpic = async (token, obj) => {
-    console.log(obj);
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+    const createEpic = async (token, obj) => {
+        if (!token) return [];
+        const runtimeConfig = useRuntimeConfig();
 
     const response = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
       method: "POST",
@@ -59,8 +58,8 @@ export const useEpicStore = defineStore("epic-store", () => {
       body: obj,
     });
 
-    console.log("post epic res", response);
-  };
+        epics.value = [...epics.value, response]
+    };
 
   /* Getters */
   const EPICS = computed(() => epics.value);
