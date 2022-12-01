@@ -43,6 +43,16 @@ watch(
     });
   }
 );
+
+const handleUpdateTaskDescription = async (val) => {
+  item.data.taskDescription = val;
+  await taskStore.updateTask(item.data);
+};
+
+const handleUpdateEstimateReasoning = async (val) => {
+  item.data.estimateReasoning = val;
+  await taskStore.updateTask(item.data);
+};
 </script>
 
 <template>
@@ -69,18 +79,22 @@ watch(
       <div class="meta__body">
         <label v-if="item.type === 'task'">
           <p>Beskrivelse</p>
-          <textarea
-            v-model="item.data.taskDescription"
-            @change="taskStore.updateTask(item.data)"
-          ></textarea>
+          <Input
+            type="textarea"
+            :default="item.data.taskDescription"
+            emit="updateTaskDescription"
+            @updateTaskDescription="handleUpdateTaskDescription"
+          />
         </label>
 
         <label v-if="item.type === 'task'">
           <p>Begrundelse for estimat</p>
-          <textarea
-            v-model="item.data.estimateReasoning"
-            @change="handleEstimateReasoningChange"
-          ></textarea>
+          <Input
+            type="textarea"
+            :default="item.data.estimateReasoning"
+            emit="updateEstimateReasoning"
+            @updateEstimateReasoning="handleUpdateEstimateReasoning"
+          />
         </label>
 
         <Input

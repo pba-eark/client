@@ -13,12 +13,21 @@ let hoursRealistic = 2.25;
 let priceRealistic = 1125.0;
 let hoursPessimistic = 2.5;
 let pricePessimistic = 1250.0;
+
+const handleUpdateTaskName = (val) => {
+  props.data.taskName = val;
+  taskStore.updateTask(props.data);
+};
 </script>
 
 <template>
   <div class="task__row" :class="{ 'task--disabled': props.data.optOut }">
     <div class="task__col">
-      <Input :default="props.data.taskName" />
+      <Input
+        :default="props.data.taskName"
+        emit="update"
+        @update="handleUpdateTaskName"
+      />
     </div>
 
     <div class="task__col">

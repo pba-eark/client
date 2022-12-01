@@ -16,7 +16,7 @@ export const useTaskStore = defineStore("task-store", () => {
   const updateTask = async (obj) => {
     const { id } = obj;
 
-    await $fetch(`${runtimeConfig.public.API_URL}/tasks/${id}`, {
+    const res = await $fetch(`${runtimeConfig.public.API_URL}/tasks/${id}`, {
       method: "PUT",
       headers: {
         Accept: "application/json",
@@ -27,7 +27,10 @@ export const useTaskStore = defineStore("task-store", () => {
     });
 
     tasks.value.map((task) => {
-      if (task.id === id) Object.assign(task, obj);
+      if (task.id == id) {
+        console.log("DENNE HER", task);
+        Object.assign(task, res);
+      }
     });
   };
 

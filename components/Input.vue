@@ -47,6 +47,13 @@ watch(
     if (props.type === "select") data.value = "";
   }
 );
+
+watch(
+  () => props.default,
+  () => {
+    data.value = props.default;
+  }
+);
 </script>
 
 <template>
