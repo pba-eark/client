@@ -39,8 +39,9 @@ onBeforeMount(async () => {
 <style lang="scss" scoped>
 .layout {
   display: grid;
+  gap: 0 5px;
   grid-template-columns: 200px auto 300px;
-  grid-template-rows: auto minmax(auto, 50px);
+  grid-template-rows: var(--header-height) var(--tabs-height) auto;
   grid-template-areas:
     "header header header"
     "sidebarLeft tab-section sidebarRight"
