@@ -46,11 +46,11 @@ watch(
 </script>
 
 <template>
-  <div class="block">
+  <div class="meta">
     {{ item.type }}
     <div v-if="item.isToggled">
-      <div class="block__header">
-        <div>
+      <div class="meta__header">
+        <div class="flex">
           <h1>Detaljer</h1>
           <Button text="X" @click="detailsStore.setDetails(null)" />
         </div>
@@ -66,7 +66,7 @@ watch(
         </h2>
       </div>
 
-      <div class="block__body">
+      <div class="meta__body">
         <label v-if="item.type === 'task'">
           <p>Beskrivelse</p>
           <textarea
@@ -96,7 +96,19 @@ watch(
 </template>
 
 <style lang="scss" scoped>
-.block {
-  background: deeppink;
+.meta {
+  background: #2e3032;
+  padding: 15px;
+  color: white;
+
+  textarea {
+    width: 100%;
+    height: 100px;
+  }
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
