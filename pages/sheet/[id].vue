@@ -108,11 +108,6 @@ const sheetEpics = computed(() => {
         text="Click mig for fanden"
         @click="epicStore.createEpic(authStore.API_TOKEN, postData.epic)"
       ></Button>
-
-      <p v-for="status in epicStatusStore.EPIC_STATUS">{{ status }}</p>
-      <div>
-        <Task v-for="task in taskStore.TASK_STATUS">{{ task }}</Task>
-      </div>
     </div>
   </div>
 </template>
@@ -130,7 +125,7 @@ const sheetEpics = computed(() => {
   }
 
   &::-webkit-scrollbar {
-      width: 10px;
-    }
+    width: 10px;
+  }
 }
 </style>

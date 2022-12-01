@@ -18,7 +18,7 @@ const handleCreateTask = async () => {
   const obj = {
     parentId: 0,
     taskName: "Ny task",
-    hourEstimate: 0,
+    hourEstimate: 2,
     estimateReasoning: "Begrundelse for estimat...",
     optOut: false,
     taskDescription: "Beskrivelse...",
@@ -35,7 +35,6 @@ const tasksForEpic = computed(() => {
     return task.epicId === props.data.id;
   });
 });
-
 </script>
 
 <template>
@@ -63,11 +62,16 @@ const tasksForEpic = computed(() => {
     </div>
 
     <div class="epic__table">
-      <Task v-for="task in tasksForEpic" :key="task.id" :data="task" @click="detailsStore.setDetails(task)"/>
+      <Task
+        v-for="task in tasksForEpic"
+        :key="task.id"
+        :data="task"
+        @click="detailsStore.setDetails(task)"
+      />
     </div>
 
     <div class="epic__footer">
-      
+      <Button text="Ny task" @click="handleCreateTask" />
     </div>
   </div>
 </template>

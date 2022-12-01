@@ -16,8 +16,8 @@ export const useTaskStore = defineStore("task-store", () => {
       if (task.id === id) Object.assign(task, obj);
     });
 
-    console.log(`task id ${id} updated!`, obj);
-    console.log("new tasks", tasks.value);
+    // console.log(`task id ${id} updated!`, obj);
+    // console.log("new tasks", tasks.value);
   };
 
   const getTasks = async (token) => {
