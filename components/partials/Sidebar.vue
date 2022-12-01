@@ -28,16 +28,16 @@ onMounted(() => {
 
 watch(
   () => [customerStore.CUSTOMERS, sheetStore.ESTIMATE_SHEETS],
-  () => {
-    customers.value = [];
-    customerStore.CUSTOMERS.map((c) => {
-      c.visible = false;
-      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
-        if (s.customerId === c.id) return s;
+  ([newCustomers, newSheets], [oldCustomers, oldSheets]) => {
+    /* If sheet was added, update customer sheets */
+    if (newSheets.length > oldSheets.length) {
+      const newSheet =
+        sheetStore.ESTIMATE_SHEETS[sheetStore.ESTIMATE_SHEETS.length - 1];
+      customers.value.map((customer) => {
+        if (customer.id === newSheet.customerId)
+          return (customer.sheets = [...customer.sheets, newSheet]);
       });
-
-      customers.value.push({ ...c, sheets: userSheets });
-    });
+    }
   }
 );
 
