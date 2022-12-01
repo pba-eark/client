@@ -46,9 +46,9 @@ watch(
 </script>
 
 <template>
-  <label class="block">
+  <label class="input">
     <!-- Label -->
-    <span class="block__label">
+    <span class="input__label">
       {{ props.label && props.label.length ? props.label : "" }}
       <span v-if="required" class="required" :class="classes">*</span>
     </span>
@@ -74,7 +74,8 @@ watch(
       @change="
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
-      :class="classes"
+      :class="props.type"
+      class="input__field"
     >
       <option value="" selected disabled>{{ props.placeholder }}</option>
       <option v-for="option in props.options" :key="option.id" :value="option">
@@ -99,7 +100,7 @@ watch(
       :class="classes"
     />
 
-    <!-- Text -->
+    <!-- Default Input -->
     <input
       v-else
       v-model="data.value"
@@ -109,17 +110,57 @@ watch(
       "
       :type="props.type"
       :placeholder="props.placeholder"
-      :class="classes"
+      :class="props.type"
+      class="input__field"
     />
   </label>
 </template>
 
 <style lang="scss" scoped>
-.block {
+.input {
   &__label {
     display: block;
     user-select: none;
   }
+
+  &__field {
+    font-size: 1rem;
+    width: 100%;
+    height: 100%;
+    padding: 4px;
+    border: 1px solid gray;
+    background-color: none;
+    border-radius: 0;
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5) inset;
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5) inset;
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5) inset;
+
+    &:focus-visible {
+      outline: 1px solid black;
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+.number {
+  text-align: right;
+}
+
+.checkbox {
+  height: 25px;
+  width: 25px;
+}
+
+.select {
+  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+  -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+  background-color: none;
 }
 
 .required {

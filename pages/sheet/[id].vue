@@ -80,22 +80,34 @@ const getParents = (node) => {
 </script>
 
 <template>
-  <div ref="sheetElement">
+  <div ref="sheetElement" class="sheet">
     {{ $route.params.id }}
 
     <div>
-      <h1>Epics:</h1>
       <Epic v-for="epic in epics" :key="epic.id" :data="epic" />
 
       <Button
         text="Click mig for fanden"
         @click="epicStore.createEpic(authStore.API_TOKEN, postData.epic)"
       />
-
-      <p v-for="status in epicStatusStore.EPIC_STATUS">{{ status }}</p>
-      <div>
-        <Task v-for="task in taskStore.TASK_STATUS">{{ task }}</Task>
-      </div>
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.sheet {
+  height: calc(100vh - var(--header-height) - var(--tabs-height));
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar-track {
+    background-color: black;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: gray;
+  }
+
+  &::-webkit-scrollbar {
+      width: 10px;
+    }
+}
+</style>
