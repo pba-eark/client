@@ -10,7 +10,6 @@ export const useCustomerStore = defineStore("customer-store", () => {
   };
 
   const getCustomers = async (token) => {
-    console.log("TRYING TO GET CUSTOMERS HHHNNNNGGGG", token);
     if (!token) return [];
     const runtimeConfig = useRuntimeConfig();
     const response = await $fetch(`${runtimeConfig.public.API_URL}/customers`, {

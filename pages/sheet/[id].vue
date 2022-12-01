@@ -5,10 +5,9 @@ import { useEpicStore } from "~/store/epics";
 import { useEpicStatusStore } from "~/store/epicstatus";
 import { useTaskStore } from "~/store/tasks";
 
-import { useSaveStore} from "~/store/save";
+import { useSaveStore } from "~/store/save";
 
 import { useTabsStore } from "~/store/tabs";
-
 
 const authStore = useAuthStore();
 const sheetStore = useEstimateSheetStore();
@@ -19,16 +18,13 @@ const tabStore = useTabsStore();
 
 const route = useRoute();
 
-
-
-
 const saveStore = useSaveStore();
 
 const epicObj = {
   epicName: "Episk navn",
   estimateSheetId: 1,
-  epicStatusId: 1
-}
+  epicStatusId: 1,
+};
 
 const taskObj = {
   parentId: 0,
@@ -39,10 +35,8 @@ const taskObj = {
   taskDescription: "En beskrivelse",
   epicId: 1,
   roleId: 1,
-  riskProfileId: 1
-}
-
-
+  riskProfileId: 1,
+};
 
 const postData = reactive({
   epic: {
@@ -65,11 +59,11 @@ onBeforeUnmount(() => {
 const gemIstore = () => {
   saveStore.saveToObject("epic", epicObj);
   saveStore.saveToObject("task", taskObj);
-}
+};
 
 const gemIDb = () => {
   saveStore.saveToDatabase();
-}
+};
 
 /* Add sheet to tabs if clicked within */
 const handleClick = (e) => {
@@ -108,10 +102,13 @@ const sheetEpics = computed(() => {
 
     <div>
       <h1>Epics:</h1>
-      <Epic v-for="epic in epics" :key="epic.id" :data="epic" />
+      <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
       <Button text="GEM I ARRAY" @click="gemIstore"></Button>
       <Button text="GEM I DB" @click="gemIDb"></Button>
-      <Button text="Click mig for fanden" @click="epicStore.createEpic(authStore.API_TOKEN, postData.epic)"></Button>
+      <Button
+        text="Click mig for fanden"
+        @click="epicStore.createEpic(authStore.API_TOKEN, postData.epic)"
+      ></Button>
 
       <p v-for="status in epicStatusStore.EPIC_STATUS">{{ status }}</p>
       <div>
