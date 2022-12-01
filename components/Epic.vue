@@ -41,7 +41,7 @@ const tasksForEpic = computed(() => {
 <template>
   <div class="epic">
     <div class="epic__header">
-      <div>
+      <div class="flex">
         <h2>{{ props.data.epicName }}</h2>
         <Button text="Edit" @click="detailsStore.setDetails(props.data)" />
       </div>
@@ -108,6 +108,12 @@ const tasksForEpic = computed(() => {
       background-color: blue;
       display: grid;
       grid-template-columns: 70px 100px;
+    }
+  }
+
+  &__header {
+    .flex {
+      display: flex;
     }
   }
 }
