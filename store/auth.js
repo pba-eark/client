@@ -4,6 +4,7 @@ export const useAuthStore = defineStore("auth-store", () => {
   /* State */
   const jwt = ref("");
   const isAuthorized = ref(false);
+  const runtimeConfig = useRuntimeConfig();
 
   /* Actions */
   const setJwt = (token) => {
@@ -13,8 +14,6 @@ export const useAuthStore = defineStore("auth-store", () => {
   };
 
   const handleLogin = async (email, password) => {
-    const runtimeConfig = useRuntimeConfig();
-
     const JWT = await $fetch(`${runtimeConfig.public.API_URL}/auth/login`, {
       method: "POST",
       body: { email, password },
@@ -34,8 +33,6 @@ export const useAuthStore = defineStore("auth-store", () => {
   };
 
   const handleSignUp = async (firstName, lastName, email, password) => {
-    const runtimeConfig = useRuntimeConfig();
-
     const response = await $fetch(`${runtimeConfig.API_URL}/users`, {
       method: "POST",
       body: {
@@ -50,20 +47,6 @@ export const useAuthStore = defineStore("auth-store", () => {
     console.log("sign up res:", response);
   };
 
-  /* TEST AUTHORIZED REQUEST */
-  const authRequest = async () => {
-    const res = await $fetch("https://localhost:7087/api/users", {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt.value}`,
-      },
-    });
-
-    console.log("authorized request", res);
-  };
-
   /* Getters */
   const API_TOKEN = computed(() => jwt.value);
   const IS_AUTHORIZED = computed(() => isAuthorized.value);
@@ -75,7 +58,5 @@ export const useAuthStore = defineStore("auth-store", () => {
     API_TOKEN,
     IS_AUTHORIZED,
     setJwt,
-
-    authRequest,
   };
 });

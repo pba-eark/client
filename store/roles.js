@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
-
+import { useAuthStore } from "./auth";
 export const useRoleStore = defineStore("role-store", () => {
+  const runtimeConfig = useRuntimeConfig();
+  const authStore = useAuthStore();
   /* State */
   const roles = ref([]);
 
@@ -9,16 +11,13 @@ export const useRoleStore = defineStore("role-store", () => {
     roles.value = payload;
   };
 
-  const getRoles = async (token) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
+  const getRoles = async () => {
     const roles = await $fetch(`${runtimeConfig.public.API_URL}/roles`, {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
       },
     });
 

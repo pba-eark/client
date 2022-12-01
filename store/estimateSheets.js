@@ -1,7 +1,10 @@
 import { defineStore } from "pinia";
+import { useAuthStore } from "./auth";
 
 export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
   const route = useRoute();
+  const runtimeConfig = useRuntimeConfig();
+  const authStore = useAuthStore();
 
   /* State */
   const estimateSheets = ref([]);
@@ -11,10 +14,7 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
     estimateSheets.value = payload;
   };
 
-  const getEstimateSheets = async (token) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
+  const getEstimateSheets = async () => {
     const estimateSheets = await $fetch(
       `${runtimeConfig.public.API_URL}/estimatesheets`,
       {
@@ -22,7 +22,7 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
       }
     );
@@ -30,10 +30,7 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
     setEstimateSheets(estimateSheets);
   };
 
-  const createEstimateSheet = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
+  const createEstimateSheet = async (obj) => {
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/estimatesheets`,
       {
@@ -41,7 +38,7 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       }
