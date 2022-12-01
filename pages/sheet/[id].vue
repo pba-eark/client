@@ -97,11 +97,10 @@ const sheetEpics = computed(() => {
 </script>
 
 <template>
-  <div ref="sheetElement">
+  <div ref="sheetElement" class="sheet">
     {{ $route.params.id }}
 
     <div>
-      <h1>Epics:</h1>
       <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
       <Button text="GEM I ARRAY" @click="gemIstore"></Button>
       <Button text="GEM I DB" @click="gemIDb"></Button>
@@ -117,3 +116,21 @@ const sheetEpics = computed(() => {
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.sheet {
+  height: calc(100vh - var(--header-height) - var(--tabs-height));
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar-track {
+    background-color: black;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: gray;
+  }
+
+  &::-webkit-scrollbar {
+      width: 10px;
+    }
+}
+</style>
