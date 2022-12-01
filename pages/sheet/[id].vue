@@ -1,50 +1,50 @@
 <script setup>
-import { useAuthStore } from "~/store/auth";
+// import { useAuthStore } from "~/store/auth";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
 import { useEpicStore } from "~/store/epics";
-import { useEpicStatusStore } from "~/store/epicstatus";
-import { useTaskStore } from "~/store/tasks";
+// import { useEpicStatusStore } from "~/store/epicstatus";
+// import { useTaskStore } from "~/store/tasks";
 
-import { useSaveStore } from "~/store/save";
+// import { useSaveStore } from "~/store/save";
 
 import { useTabsStore } from "~/store/tabs";
 
-const authStore = useAuthStore();
+// const authStore = useAuthStore();
 const sheetStore = useEstimateSheetStore();
 const epicStore = useEpicStore();
-const epicStatusStore = useEpicStatusStore();
-const taskStore = useTaskStore();
+// const epicStatusStore = useEpicStatusStore();
+// const taskStore = useTaskStore();
 const tabStore = useTabsStore();
 
 const route = useRoute();
 
-const saveStore = useSaveStore();
+// const saveStore = useSaveStore();
 
-const epicObj = {
-  epicName: "Episk navn",
-  estimateSheetId: 1,
-  epicStatusId: 1,
-};
+// const epicObj = {
+//   epicName: "Episk navn",
+//   estimateSheetId: 1,
+//   epicStatusId: 1,
+// };
 
-const taskObj = {
-  parentId: 0,
-  taskName: "Lav noget database",
-  hourEstimate: 5.5,
-  estimateReasoning: "En resonering",
-  optOut: false,
-  taskDescription: "En beskrivelse",
-  epicId: 1,
-  roleId: 1,
-  riskProfileId: 1,
-};
+// const taskObj = {
+//   parentId: 0,
+//   taskName: "Lav noget database",
+//   hourEstimate: 5.5,
+//   estimateReasoning: "En resonering",
+//   optOut: false,
+//   taskDescription: "En beskrivelse",
+//   epicId: 1,
+//   roleId: 1,
+//   riskProfileId: 1,
+// };
 
-const postData = reactive({
-  epic: {
-    epicName: "Test epic",
-    estimateSheetId: route.params.id,
-    epicStatusId: null,
-  },
-});
+// const postData = reactive({
+//   epic: {
+//     epicName: "Test epic",
+//     estimateSheetId: route.params.id,
+//     epicStatusId: null,
+//   },
+// });
 
 const sheetElement = ref(null);
 
@@ -56,14 +56,14 @@ onBeforeUnmount(() => {
   window.removeEventListener("click", handleClick);
 });
 
-const gemIstore = () => {
-  saveStore.saveToObject("epic", epicObj);
-  saveStore.saveToObject("task", taskObj);
-};
+// const gemIstore = () => {
+//   saveStore.saveToObject("epic", epicObj);
+//   saveStore.saveToObject("task", taskObj);
+// };
 
-const gemIDb = () => {
-  saveStore.saveToDatabase();
-};
+// const gemIDb = () => {
+//   saveStore.saveToDatabase();
+// };
 
 /* Add sheet to tabs if clicked within */
 const handleClick = (e) => {
@@ -102,12 +102,12 @@ const sheetEpics = computed(() => {
 
     <div>
       <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
-      <Button text="GEM I ARRAY" @click="gemIstore"></Button>
+      <!-- <Button text="GEM I ARRAY" @click="gemIstore"></Button>
       <Button text="GEM I DB" @click="gemIDb"></Button>
       <Button
         text="Click mig for fanden"
-        @click="epicStore.createEpic(authStore.API_TOKEN, postData.epic)"
-      ></Button>
+        @click="epicStore.createEpic(postData.epic)"
+      ></Button> -->
     </div>
   </div>
 </template>

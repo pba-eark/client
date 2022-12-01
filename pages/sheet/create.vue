@@ -42,7 +42,7 @@ const handleSubmit = () => {
     }
   }
 
-  sheetStore.createEstimateSheet(authStore.API_TOKEN, postData.sheet);
+  sheetStore.createEstimateSheet(postData.sheet);
 };
 
 const handleCreateCustomer = (customer) => {

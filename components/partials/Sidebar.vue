@@ -14,13 +14,7 @@ const isProjectsOpen = ref(false);
 const showMissingCustomerSheets = ref(false);
 const isEpicsOpen = ref(false);
 
-onMounted(async () => {
-  /* Værsgo gæd */
-  // console.log(window.innerHeight);
-  // document.documentElement.style.setProperty(
-  //   "--test",
-  //   `${window.innerHeight}px`
-  // );
+onMounted(() => {
   customers.value = [];
   customerStore.CUSTOMERS.map((c) => {
     c.visible = false;
@@ -31,6 +25,21 @@ onMounted(async () => {
     customers.value.push({ ...c, sheets: userSheets });
   });
 });
+
+watch(
+  () => [customerStore.CUSTOMERS, sheetStore.ESTIMATE_SHEETS],
+  () => {
+    customers.value = [];
+    customerStore.CUSTOMERS.map((c) => {
+      c.visible = false;
+      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
+        if (s.customerId === c.id) return s;
+      });
+
+      customers.value.push({ ...c, sheets: userSheets });
+    });
+  }
+);
 
 const sheetsWithoutCustomers = computed(() => {
   return sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
@@ -51,7 +60,6 @@ const sheetsWithoutCustomers = computed(() => {
           @click="isProjectsOpen = !isProjectsOpen"
           class="projects"
         />
-
         <transition name="fade">
           <ul v-show="isProjectsOpen">
             <!-- Customer list -->
