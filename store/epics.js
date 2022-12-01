@@ -1,123 +1,110 @@
 import { defineStore } from "pinia";
 
 export const useEpicStore = defineStore("epic-store", () => {
-    /* State */
-    const epics = ref([]);
+  /* State */
+  const epics = ref([]);
 
-    /* Actions */
-    const setEpics = (payload) => {
-        epics.value = payload;
-    };
+  /* Actions */
+  const setEpics = (payload) => {
+    epics.value = payload;
+  };
 
-    const getAllEpics = async (token) => {
-        if (!token) return [];
-        const runtimeConfig = useRuntimeConfig();
+  const getEpics = async (token) => {
+    if (!token) return [];
+    const runtimeConfig = useRuntimeConfig();
 
-        const epics = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
-            method: "GET",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        });
+    const epics = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-        setEpics(epics);
-    };
+    setEpics(epics);
+  };
 
-    const getEpics = async (token, sheetId) => {
-        if (!token) return [];
-        const runtimeConfig = useRuntimeConfig();
+  const createEpic = async (token, obj) => {
+    console.log(obj);
+    if (!token) return [];
+    const runtimeConfig = useRuntimeConfig();
 
-        const epics = await $fetch(
-            `${runtimeConfig.public.API_URL}/epics/sheet/${sheetId}`,
-            {
-                method: "GET",
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+    const response = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: obj,
+    });
 
-        setEpics(epics);
-    };
+    epics.value = [...epics.value, response];
+  };
 
-    const createEpic = async (token, obj) => {
-        if (!token) return [];
-        const runtimeConfig = useRuntimeConfig();
+  const editEpic = async (token, epicId, obj) => {
+    if (!token) return [];
+    const runtimeConfig = useRuntimeConfig();
 
-        const response = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
-            method: "POST",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: obj,
-        });
+    const response = await $fetch(
+      `${runtimeConfig.public.API_URL}/epics/${epicId}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: obj,
+      }
+    );
 
-        epics.value = [...epics.value, response];
-    };
+    updateEpic(epicId, response);
+  };
 
-    const editEpic = async (token, epicId, obj) => {
-        if (!token) return [];
-        const runtimeConfig = useRuntimeConfig();
+  const deleteEpic = async (token, epicId) => {
+    if (!token) return [];
+    const runtimeConfig = useRuntimeConfig();
 
-        const response = await $fetch(`${runtimeConfig.public.API_URL}/epics/${epicId}`, {
-            method: "PUT",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: obj,
-        });
+    const response = await $fetch(
+      `${runtimeConfig.public.API_URL}/epics/${epicId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-        updateEpic(epicId, response)
-    };
+    removeEpic(epicId);
+  };
 
-    const deleteEpic = async (token, epicId) => {
-        if (!token) return [];
-        const runtimeConfig = useRuntimeConfig();
+  const updateEpic = (id, obj) => {
+    epics.value.map((epic) => {
+      if (epic.id === id) Object.assign(epic, obj);
+    });
+  };
 
-        const response = await $fetch(`${runtimeConfig.public.API_URL}/epics/${epicId}`, {
-            method: "DELETE",
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            }
-        });
+  const removeEpic = (epicId) => {
+    epics.value.forEach((element) => {
+      element.id;
+      if (element.id == epicId) {
+        let index = epics.value.findIndex(element);
+        epics.value.splice(index, 1);
+      }
+    });
+  };
 
-        removeEpic(epicId);
-    };
+  /* Getters */
+  const EPICS = computed(() => epics.value);
 
-    const updateEpic = (id, obj) => {
-        epics.value.map((epic) => {
-            if (epic.id === id) Object.assign(epic, obj);
-        });
-    };
-
-    const removeEpic = (epicId) => {
-        epics.value.forEach(element => {
-            element.id
-            if (element.id == epicId) {
-                let index = epics.value.findIndex(element);
-                epics.value.splice(index, 1)
-            }
-        });
-    };
-
-    /* Getters */
-    const EPICS = computed(() => epics.value);
-
-    return {
-        getAllEpics,
-        getEpics,
-        createEpic,
-        editEpic,
-        EPICS
-    };
+  return {
+    getEpics,
+    createEpic,
+    editEpic,
+    EPICS,
+  };
 });

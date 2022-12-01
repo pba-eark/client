@@ -31,16 +31,20 @@ const props = defineProps({
     type: String,
     required: false,
   },
+  default: {
+    type: String,
+    required: false,
+  },
 });
 
 const data = reactive({
-  value: "",
+  value: props.default || "",
 });
 
 watch(
   () => props.options.length,
   () => {
-    data.value = "";
+    if (props.type === "select") data.value = "";
   }
 );
 </script>
@@ -56,15 +60,15 @@ watch(
     <!-- Textarea -->
     <textarea
       v-if="props.type === 'textarea'"
-      v-model="data.value"
       v-bind="$attrs"
+      v-model="data.value"
       @change="
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
-      :type="props.type"
       :placeholder="props.placeholder"
       :class="classes"
-    ></textarea>
+      >{{ data.value }}</textarea
+    >
 
     <!-- Select -->
     <select

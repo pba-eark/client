@@ -1,14 +1,18 @@
 <script>
 import { useAuthStore } from "~/store/auth";
+import { useGlobalStore } from "~/store";
 
 export default defineComponent({
   async setup() {
-    const store = useAuthStore();
+    const globalStore = useGlobalStore();
+    const authStore = useAuthStore();
 
     /* Make sure user can't access this page, if logged in */
-    watchEffect(() => {
-      if (store.IS_AUTHORIZED)
+    watchEffect(async () => {
+      if (authStore.IS_AUTHORIZED) {
+        await globalStore.fetchData(authStore.API_TOKEN);
         return navigateTo(localStorage.getItem("lastPath") ?? "/");
+      }
     });
 
     /* State */
@@ -24,12 +28,12 @@ export default defineComponent({
 
     /* If using async setup(), make sure to register lifecycle hooks before the first await statement. */
     // onMounted(() => {
-    //   if (store.IS_AUTHORIZED) return navigateTo("/");
+    //   if (authStore.IS_AUTHORIZED) return navigateTo("/");
     // });
 
     return {
       data,
-      store,
+      authStore,
     };
   },
 });
@@ -38,7 +42,7 @@ export default defineComponent({
 <template>
   <div class="block">
     <div class="login">
-      <form @submit.prevent="store.handleLogin(data.email, data.password)">
+      <form @submit.prevent="authStore.handleLogin(data.email, data.password)">
         <h1>Login</h1>
         <label>
           <p>Email</p>
@@ -55,7 +59,7 @@ export default defineComponent({
     <div class="register">
       <form
         @submit.prevent="
-          store.handleSignUp(
+          authStore.handleSignUp(
             data.firstName,
             data.lastName,
             data.newEmail,

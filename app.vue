@@ -7,7 +7,7 @@ const authStore = useAuthStore();
 const jiraStore = useJiraStore();
 const globalStore = useGlobalStore();
 
-onMounted(async () => {
+onBeforeMount(async () => {
   /* Check if user is logged in */
   if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt"))
     authStore.setJwt(localStorage.getItem("jwt"));
@@ -16,7 +16,7 @@ onMounted(async () => {
   if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)
     await jiraStore.setJwt(localStorage.getItem("jira"));
 
-  globalStore.setLoaded(true);
+  await globalStore.fetchData(authStore.API_TOKEN);
 });
 </script>
 
@@ -32,14 +32,14 @@ onMounted(async () => {
       <LazyNuxtPage />
     </div>
 
-    <div class="sidebar-right">right side bar</div>
+    <Details class="sidebar-right" />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .layout {
   display: grid;
-  grid-template-columns: 200px auto 150px;
+  grid-template-columns: 200px auto 300px;
   grid-template-rows: auto minmax(auto, 50px);
   grid-template-areas:
     "header header header"
