@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
+import { useAuthStore } from "./auth";
 
 export const useEpicStore = defineStore("epic-store", () => {
+  const runtimeConfig = useRuntimeConfig();
+  const authStore = useAuthStore();
   /* State */
   const epics = ref([]);
 
@@ -9,33 +12,28 @@ export const useEpicStore = defineStore("epic-store", () => {
     epics.value = payload;
   };
 
-  const getEpics = async (token) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
+  const getEpics = async () => {
     const epics = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
       },
     });
 
     setEpics(epics);
   };
 
-  const createEpic = async (token, obj) => {
-    console.log(obj);
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createEpic = async (obj) => {
+    console.log("creating epic", obj);
 
     const response = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
       },
       body: obj,
     });
@@ -43,10 +41,7 @@ export const useEpicStore = defineStore("epic-store", () => {
     epics.value = [...epics.value, response];
   };
 
-  const editEpic = async (token, epicId, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
+  const editEpic = async (epicId, obj) => {
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/epics/${epicId}`,
       {
@@ -54,7 +49,7 @@ export const useEpicStore = defineStore("epic-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       }
@@ -63,10 +58,7 @@ export const useEpicStore = defineStore("epic-store", () => {
     updateEpic(epicId, response);
   };
 
-  const deleteEpic = async (token, epicId) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
+  const deleteEpic = async (epicId) => {
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/epics/${epicId}`,
       {
@@ -74,7 +66,7 @@ export const useEpicStore = defineStore("epic-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
       }
     );

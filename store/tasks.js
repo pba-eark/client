@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
+import { useAuthStore } from "./auth";
 
 export const useTaskStore = defineStore("task-store", () => {
+  const runtimeConfig = useRuntimeConfig();
+  const authStore = useAuthStore();
+
   /* State */
   const tasks = ref([]);
 
@@ -20,32 +24,26 @@ export const useTaskStore = defineStore("task-store", () => {
     // console.log("new tasks", tasks.value);
   };
 
-  const getTasks = async (token) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
+  const getTasks = async () => {
     const tasks = await $fetch(`${runtimeConfig.public.API_URL}/tasks`, {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
       },
     });
 
     setTasks(tasks);
   };
 
-  const createTask = async (token, obj) => {
-    if (!token) return console.log("Missing access token!");
-    const runtimeConfig = useRuntimeConfig();
-
+  const createTask = async (obj) => {
     const response = await $fetch(`${runtimeConfig.public.API_URL}/tasks`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
       },
       body: obj,
     });

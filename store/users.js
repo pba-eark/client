@@ -1,6 +1,9 @@
 import { defineStore } from "pinia";
-
+import { useAuthStore } from "./auth";
 export const useUserStore = defineStore("user-store", () => {
+  const runtimeConfig = useRuntimeConfig();
+  const authStore = useAuthStore();
+
   /* State */
   const users = ref([]);
 
@@ -9,15 +12,13 @@ export const useUserStore = defineStore("user-store", () => {
     users.value = payload;
   };
 
-  const getUsers = async (token) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const getUsers = async () => {
     const response = await $fetch(`${runtimeConfig.public.API_URL}/users`, {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
       },
     });
 

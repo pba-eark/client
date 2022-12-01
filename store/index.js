@@ -21,17 +21,15 @@ export const useGlobalStore = defineStore("global-store", () => {
   /* State */
   const isLoaded = ref(false);
 
-  const fetchData = async (token) => {
-    await userStore.getUsers(token);
-    await customerStore.getCustomers(token);
-    await sheetStore.getEstimateSheets(token);
-    await epicStatusStore.getEpicStatus(token);
-    await epicStore.getEpics(token);
-    await riskProfileStore.getRiskProfiles(token);
-    // await roleStore.getRoles(token);
-    await taskStore.getTasks(token);
-
-    setLoaded(true);
+  const fetchData = async () => {
+    await userStore.getUsers();
+    await customerStore.getCustomers();
+    await sheetStore.getEstimateSheets();
+    await epicStatusStore.getEpicStatus();
+    await epicStore.getEpics();
+    await riskProfileStore.getRiskProfiles();
+    // await roleStore.getRoles();
+    await taskStore.getTasks();
   };
 
   /* Actions */

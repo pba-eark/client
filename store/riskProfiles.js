@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
-
+import { useAuthStore } from "./auth";
 export const useRiskProfileStore = defineStore("risk-profile-store", () => {
+  const runtimeConfig = useRuntimeConfig();
+  const authStore = useAuthStore();
   /* State */
   const riskProfiles = ref([]);
 
@@ -9,10 +11,7 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
     riskProfiles.value = payload;
   };
 
-  const getRiskProfiles = async (token) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
-
+  const getRiskProfiles = async () => {
     const riskProfiles = await $fetch(
       `${runtimeConfig.public.API_URL}/riskprofiles`,
       {
@@ -20,7 +19,7 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
       }
     );

@@ -16,7 +16,9 @@ onBeforeMount(async () => {
   if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)
     await jiraStore.setJwt(localStorage.getItem("jira"));
 
-  await globalStore.fetchData(authStore.API_TOKEN);
+  if (authStore.IS_AUTHORIZED) await globalStore.fetchData();
+
+  return globalStore.setLoaded(true);
 });
 </script>
 
