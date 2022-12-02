@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
+
 export const useRiskProfileStore = defineStore("risk-profile-store", () => {
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
+
   /* State */
   const riskProfiles = ref([]);
 

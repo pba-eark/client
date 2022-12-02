@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
+
 export const useRoleStore = defineStore("role-store", () => {
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();

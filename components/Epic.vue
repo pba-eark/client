@@ -23,11 +23,11 @@ const handleCreateTask = async () => {
     optOut: false,
     taskDescription: "Beskrivelse...",
     epicId: props.data.id,
-    roleId: 1,
+    roleId: null,
     riskProfileId: 1,
   };
 
-  await taskStore.createTask(authStore.API_TOKEN, obj);
+  await taskStore.createTask(obj);
 };
 
 const tasksForEpic = computed(() => {
@@ -71,7 +71,11 @@ const tasksForEpic = computed(() => {
     </div>
 
     <div class="epic__footer">
-      <Button text="Ny task" @click="handleCreateTask" />
+      <!-- <Button text="Ny task" @click="handleCreateTask" /> -->
+      <Button
+        text="Ny task"
+        @click="taskStore.createTask(parseInt(props.data.id))"
+      />
     </div>
   </div>
 </template>

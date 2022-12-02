@@ -38,6 +38,21 @@ watch(
           return (customer.sheets = [...customer.sheets, newSheet]);
       });
     }
+
+    /* If customer was added, update customer sheets */
+    if (newCustomers.length > oldCustomers.length) {
+      const newCustomer =
+        customerStore.CUSTOMERS[customerStore.CUSTOMERS.length - 1];
+
+      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
+        if (s.customerId === newCustomer.id) return s;
+      });
+
+      newCustomer.sheets = userSheets;
+      newCustomer.visible = false;
+
+      customers.value = [...customers.value, newCustomer];
+    }
   }
 );
 

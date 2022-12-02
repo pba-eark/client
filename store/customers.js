@@ -26,11 +26,26 @@ export const useCustomerStore = defineStore("customer-store", () => {
     setCustomers(response);
   };
 
+  const createCustomer = async (customer) => {
+    const res = await $fetch(`${runtimeConfig.public.API_URL}/customers`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
+      },
+      body: customer,
+    });
+
+    setCustomers([...customers.value, res]);
+  };
+
   /* Getters */
   const CUSTOMERS = computed(() => customers.value);
 
   return {
     getCustomers,
+    createCustomer,
     CUSTOMERS,
   };
 });
