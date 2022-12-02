@@ -90,7 +90,9 @@ const currentRole = computed(() => {
     <div class="task__col">
       <Input
         type="select"
-        :placeholder="currentRole[0].roleName"
+        :placeholder="
+          currentRole[0]?.roleName ? currentRole[0].roleName : 'Vælg rolle'
+        "
         :options="roleOptions"
         emit="updateRole"
         @updateRole="handleUpdateRole"
@@ -98,8 +100,6 @@ const currentRole = computed(() => {
     </div>
 
     <div class="task__col task--number">
-      <!-- <Input type="number" :default="props.data.hourEstimate.toFixed(2)" /> -->
-
       <Input
         :default="props.data.hourEstimate"
         emit="updateEstimate"

@@ -25,20 +25,26 @@ export const useEpicStore = defineStore("epic-store", () => {
     setEpics(epics);
   };
 
-  const createEpic = async (obj) => {
-    console.log("creating epic", obj);
+  const createEpic = async (sheetId) => {
+    sheetId = parseInt(sheetId);
 
-    const response = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
+    const newEpic = {
+      epicName: "Ny Epic",
+      estimateSheetId: sheetId,
+      epicStatusId: 1,
+    };
+
+    const res = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
       method: "POST",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
         Authorization: `Bearer ${authStore.API_TOKEN}`,
       },
-      body: obj,
+      body: newEpic,
     });
 
-    epics.value = [...epics.value, response];
+    epics.value = [...epics.value, res];
   };
 
   const editEpic = async (epicId, obj) => {

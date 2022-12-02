@@ -18,34 +18,6 @@ const tabStore = useTabsStore();
 
 const route = useRoute();
 
-// const saveStore = useSaveStore();
-
-// const epicObj = {
-//   epicName: "Episk navn",
-//   estimateSheetId: 1,
-//   epicStatusId: 1,
-// };
-
-// const taskObj = {
-//   parentId: 0,
-//   taskName: "Lav noget database",
-//   hourEstimate: 5.5,
-//   estimateReasoning: "En resonering",
-//   optOut: false,
-//   taskDescription: "En beskrivelse",
-//   epicId: 1,
-//   roleId: 1,
-//   riskProfileId: 1,
-// };
-
-// const postData = reactive({
-//   epic: {
-//     epicName: "Test epic",
-//     estimateSheetId: route.params.id,
-//     epicStatusId: null,
-//   },
-// });
-
 const sheetElement = ref(null);
 
 onBeforeMount(() => {
@@ -55,15 +27,6 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("click", handleClick);
 });
-
-// const gemIstore = () => {
-//   saveStore.saveToObject("epic", epicObj);
-//   saveStore.saveToObject("task", taskObj);
-// };
-
-// const gemIDb = () => {
-//   saveStore.saveToDatabase();
-// };
 
 /* Add sheet to tabs if clicked within */
 const handleClick = (e) => {
@@ -102,12 +65,11 @@ const sheetEpics = computed(() => {
 
     <div>
       <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
-      <!-- <Button text="GEM I ARRAY" @click="gemIstore"></Button>
-      <Button text="GEM I DB" @click="gemIDb"></Button>
+
       <Button
-        text="Click mig for fanden"
-        @click="epicStore.createEpic(postData.epic)"
-      ></Button> -->
+        text="Ny epic"
+        @click="epicStore.createEpic($route.params.id)"
+      ></Button>
     </div>
   </div>
 </template>

@@ -47,18 +47,34 @@ export const useTaskStore = defineStore("task-store", () => {
     setTasks(tasks);
   };
 
-  const createTask = async (obj) => {
-    const response = await $fetch(`${runtimeConfig.public.API_URL}/tasks`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authStore.API_TOKEN}`,
-      },
-      body: obj,
-    });
+  const createTask = async (epicId) => {
+    const obj = {
+      parentId: 0,
+      taskName: "Ny task",
+      hourEstimate: 0,
+      estimateReasoning: "Begrundelse for estimat...",
+      optOut: false,
+      taskDescription: "Beskrivelse...",
+      epicId,
+      roleId: 0,
+      riskProfileId: 1,
+    };
 
-    tasks.value = [...tasks.value, response];
+    try {
+      const res = await $fetch(`${runtimeConfig.public.API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+        body: obj,
+      });
+
+      tasks.value = [...tasks.value, res];
+    } catch (e) {
+      console.log("ERROR", e);
+    }
   };
 
   /* Getters */
