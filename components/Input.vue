@@ -121,7 +121,6 @@ watch(
       "
       :type="props.type"
       :placeholder="props.placeholder"
-      :class="props.type"
       class="input__field"
     />
   </label>

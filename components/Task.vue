@@ -27,7 +27,7 @@ const handleUpdateTaskName = (val) => {
 const handleUpdateEstimate = (val) => {
   if (val.includes(",")) val = val.replace(",", ".");
   val = parseFloat(val).toFixed(2);
-  console.log("val", val, typeof parseFloat(val).toFixed(2));
+
   props.data.hourEstimate = val;
   taskStore.updateTask(props.data);
 };
@@ -65,6 +65,10 @@ const currentRole = computed(() => {
     return role.id == props.data.roleId;
   });
 });
+
+const currentEstimate = computed(() => {
+  return parseFloat(props.data.hourEstimate).toFixed(2).replace(".", ",");
+});
 </script>
 
 <template>
@@ -101,7 +105,8 @@ const currentRole = computed(() => {
 
     <div class="task__col task--number">
       <Input
-        :default="props.data.hourEstimate"
+        class="number"
+        :default="currentEstimate"
         emit="updateEstimate"
         @updateEstimate="handleUpdateEstimate"
       />
