@@ -27,10 +27,7 @@ export const useTaskStore = defineStore("task-store", () => {
     });
 
     tasks.value.map((task) => {
-      if (task.id == id) {
-        console.log("DENNE HER", task);
-        Object.assign(task, res);
-      }
+      if (task.id == id) Object.assign(task, res);
     });
   };
 

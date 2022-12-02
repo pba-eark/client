@@ -34,7 +34,7 @@ export const useEpicStore = defineStore("epic-store", () => {
       epicStatusId: 1,
     };
 
-    const res = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
+    const response = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -44,24 +44,24 @@ export const useEpicStore = defineStore("epic-store", () => {
       body: newEpic,
     });
 
-    epics.value = [...epics.value, res];
+    epics.value = [...epics.value, response];
   };
 
-  const editEpic = async (epicId, obj) => {
-    const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/epics/${epicId}`,
-      {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authStore.API_TOKEN}`,
-        },
-        body: obj,
-      }
-    );
+  const updateEpic = async (obj) => {
+    const { id } = obj;
+    const res = await $fetch(`${runtimeConfig.public.API_URL}/epics/${id}`, {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
+      },
+      body: obj,
+    });
 
-    updateEpic(epicId, response);
+    epics.value.map((epic) => {
+      if (epic.id === id) Object.assign(epic, res);
+    });
   };
 
   const deleteEpic = async (epicId) => {
@@ -80,12 +80,6 @@ export const useEpicStore = defineStore("epic-store", () => {
     removeEpic(epicId);
   };
 
-  const updateEpic = (id, obj) => {
-    epics.value.map((epic) => {
-      if (epic.id === id) Object.assign(epic, obj);
-    });
-  };
-
   const removeEpic = (epicId) => {
     epics.value.forEach((element) => {
       element.id;
@@ -102,7 +96,7 @@ export const useEpicStore = defineStore("epic-store", () => {
   return {
     getEpics,
     createEpic,
-    editEpic,
+    updateEpic,
     EPICS,
   };
 });

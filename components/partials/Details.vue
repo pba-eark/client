@@ -53,6 +53,16 @@ const handleUpdateEstimateReasoning = async (val) => {
   item.data.estimateReasoning = val;
   await taskStore.updateTask(item.data);
 };
+
+const handleUpdateEpicName = async (val) => {
+  item.data.epicName = val;
+  await epicStore.updateEpic(item.data);
+};
+
+const handleUpdateEpicComment = async (val) => {
+  item.data.comment = val;
+  await epicStore.updateEpic(item.data);
+};
 </script>
 
 <template>
@@ -65,41 +75,51 @@ const handleUpdateEstimateReasoning = async (val) => {
           <Button text="X" @click="detailsStore.setDetails(null)" />
         </div>
 
-        <h2 v-if="item.type === 'epic'">
-          {{ detailsStore.DETAILS.epicName }} - Epic
-        </h2>
-
-        <h2 v-else>
-          {{ detailsStore.DETAILS?.taskName }} - Task ({{
-            detailsStore.DETAILS?.id
-          }})
-        </h2>
+        <h2 v-if="item.type === 'epic'">{{ item.data.epicName }} - Epic</h2>
+        <h2 v-else>{{ item.data.taskName }} - Task ({{ item.data.id }})</h2>
       </div>
 
       <div class="meta__body">
-        <label v-if="item.type === 'task'">
-          <p>Beskrivelse</p>
+        <div v-if="item.type === 'epic'">
           <Input
+            label="brumbrum"
+            :default="item.data.epicName"
+            emit="updateEpicName"
+            @updateEpicName="handleUpdateEpicName"
+          />
+
+          <Input
+            type="textarea"
+            label="episk beskrivelse"
+            :default="item.data.comment"
+            emit="updateEpicComment"
+            @updateEpicComment="handleUpdateEpicComment"
+          />
+        </div>
+
+        <div v-if="item.type === 'task'">
+          <Input
+            label="Beskrivelse"
             type="textarea"
             :default="item.data.taskDescription"
             emit="updateTaskDescription"
             @updateTaskDescription="handleUpdateTaskDescription"
           />
-        </label>
+        </div>
 
-        <label v-if="item.type === 'task'">
-          <p>Begrundelse for estimat</p>
+        <div v-if="item.type === 'task'">
           <Input
+            label="Begrundelse for estimat"
             type="textarea"
             :default="item.data.estimateReasoning"
             emit="updateEstimateReasoning"
             @updateEstimateReasoning="handleUpdateEstimateReasoning"
           />
-        </label>
+        </div>
 
         <Input
-          v-if="item.type === 'task'"
           label="Flyt til anden epic"
+          v-if="item.type === 'task'"
           placeholder="Vælg epic"
           type="select"
           :options="epicOptions.value"
