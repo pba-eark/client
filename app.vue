@@ -7,7 +7,7 @@ const authStore = useAuthStore();
 const jiraStore = useJiraStore();
 const globalStore = useGlobalStore();
 
-onBeforeMount(async () => {
+onMounted(async () => {
   /* Check if user is logged in */
   if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt"))
     authStore.setJwt(localStorage.getItem("jwt"));
@@ -34,7 +34,7 @@ onBeforeMount(async () => {
       <LazyNuxtPage />
     </div>
 
-    <Details class="sidebar-right" />
+    <Details class="sidebar-right" v-if="authStore.IS_AUTHORIZED" />
   </div>
 </template>
 

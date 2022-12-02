@@ -28,7 +28,7 @@ export const useGlobalStore = defineStore("global-store", () => {
     await epicStatusStore.getEpicStatus();
     await epicStore.getEpics();
     await riskProfileStore.getRiskProfiles();
-    // await roleStore.getRoles();
+    await roleStore.getRoles();
     await taskStore.getTasks();
   };
 

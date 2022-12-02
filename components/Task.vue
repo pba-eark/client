@@ -1,6 +1,11 @@
 <script setup>
 import { useTaskStore } from "~/store/tasks";
+import { useRoleStore } from "~/store/roles";
+import { useRiskProfileStore } from "~/store/riskProfiles";
+
 const taskStore = useTaskStore();
+const roleStore = useRoleStore();
+const riskProfileStore = useRiskProfileStore();
 
 const props = defineProps({
   data: {
@@ -18,6 +23,48 @@ const handleUpdateTaskName = (val) => {
   props.data.taskName = val;
   taskStore.updateTask(props.data);
 };
+
+const handleUpdateEstimate = (val) => {
+  if (val.includes(",")) val = val.replace(",", ".");
+  val = parseFloat(val).toFixed(2);
+  console.log("val", val, typeof parseFloat(val).toFixed(2));
+  props.data.hourEstimate = val;
+  taskStore.updateTask(props.data);
+};
+
+const handleUpdateRiskProfile = ({ id }) => {
+  props.data.riskProfileId = id;
+  taskStore.updateTask(props.data);
+};
+
+const handleUpdateRole = ({ id }) => {
+  props.data.roleId = id;
+  taskStore.updateTask(props.data);
+};
+
+const roleOptions = computed(() => {
+  return roleStore.ROLES.map((role) => {
+    return { id: role.id, name: role.roleName };
+  });
+});
+
+const riskProfileOptions = computed(() => {
+  return riskProfileStore.RISK_PROFILES.map((riskProfile) => {
+    return { id: riskProfile.id, name: riskProfile.profileName };
+  });
+});
+
+const currentRiskProfile = computed(() => {
+  return riskProfileStore.RISK_PROFILES.filter((riskProfile) => {
+    return riskProfile.id == props.data.riskProfileId;
+  });
+});
+
+const currentRole = computed(() => {
+  return roleStore.ROLES.filter((role) => {
+    return role.id == props.data.roleId;
+  });
+});
 </script>
 
 <template>
@@ -25,37 +72,39 @@ const handleUpdateTaskName = (val) => {
     <div class="task__col">
       <Input
         :default="props.data.taskName"
-        emit="update"
-        @update="handleUpdateTaskName"
+        emit="updateTaskName"
+        @updateTaskName="handleUpdateTaskName"
       />
     </div>
 
     <div class="task__col">
       <Input
         type="select"
-        :options="[
-          { id: 1, name: 'Lav' },
-          { id: 2, name: 'Middel' },
-          { id: 3, name: 'Høj' },
-        ]"
+        :options="riskProfileOptions"
+        emit="updateRiskProfile"
+        :placeholder="currentRiskProfile[0].profileName"
+        @updateRiskProfile="handleUpdateRiskProfile"
       />
     </div>
 
     <div class="task__col">
       <Input
         type="select"
-        :options="[
-          { id: 1, name: 'Vælg rolle' },
-          { id: 2, name: 'Frontend developer' },
-          { id: 3, name: 'Backend developer' },
-          { id: 4, name: 'Projektleder' },
-          { id: 5, name: 'Partner' },
-        ]"
+        :placeholder="currentRole[0].roleName"
+        :options="roleOptions"
+        emit="updateRole"
+        @updateRole="handleUpdateRole"
       />
     </div>
 
     <div class="task__col task--number">
-      <Input type="number" :default="props.data.hourEstimate.toFixed(2)" />
+      <!-- <Input type="number" :default="props.data.hourEstimate.toFixed(2)" /> -->
+
+      <Input
+        :default="props.data.hourEstimate"
+        emit="updateEstimate"
+        @updateEstimate="handleUpdateEstimate"
+      />
     </div>
 
     <div class="task__col task--number task--realistic">

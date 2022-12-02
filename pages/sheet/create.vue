@@ -1,9 +1,7 @@
 <script setup>
-import { useAuthStore } from "~/store/auth";
 import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
 
-const authStore = useAuthStore();
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
 
@@ -30,7 +28,7 @@ const postData = reactive({
   sheet: {},
 });
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   if (!postData.sheet.SheetName) return alert("Sheet name missing");
 
   /* Set customer if selected */
@@ -38,7 +36,10 @@ const handleSubmit = () => {
     if (customerSelection.selected.id) {
       postData.sheet.customerId = customerSelection.selected.id;
     } else {
-      return console.log("CREATE CUSTOMER HERE");
+      await customerStore.createCustomer(customerSelection.selected);
+
+      postData.sheet.customerId =
+        customerStore.CUSTOMERS[customerStore.CUSTOMERS.length - 1].id;
     }
   }
 
