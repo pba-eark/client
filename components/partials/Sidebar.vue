@@ -56,9 +56,26 @@ watch(
   }
 );
 
+/* If new sheet is opened, hide projects and show epic navigation */
+watch(
+  () => tabStore.TABS,
+  (newTabs, oldTabs) => {
+    if (newTabs.length > oldTabs.length) {
+      isEpicsOpen.value = true;
+      isProjectsOpen.value = false;
+    }
+  }
+);
+
 const sheetsWithoutCustomers = computed(() => {
   return sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
     return !sheet.customerId;
+  });
+});
+
+const sheetEpics = computed(() => {
+  return epicStore.EPICS.filter((epic) => {
+    return epic.estimateSheetId == sheetStore.CURRENT_ESTIMATE_SHEET[0]?.id;
   });
 });
 </script>
@@ -146,14 +163,14 @@ const sheetsWithoutCustomers = computed(() => {
       "
       class="block__epics"
     >
-      <p>show epics: {{ isEpicsOpen }}</p>
+      <!-- Sheet epic nav -->
       <Button
         :text="sheetStore.CURRENT_ESTIMATE_SHEET[0]?.sheetName"
         icon="icon-chevron"
         @click="isEpicsOpen = !isEpicsOpen"
       />
       <ul v-show="isEpicsOpen">
-        <li v-for="epic in epicStore.EPICS">
+        <li v-for="epic in sheetEpics">
           {{ epic.epicName }}
         </li>
       </ul>
