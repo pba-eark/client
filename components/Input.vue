@@ -37,6 +37,7 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits();
 const data = reactive({
   value: props.default || "",
 });
@@ -54,6 +55,13 @@ watch(
     data.value = props.default;
   }
 );
+
+const handleSelect = () => {
+  if (props.emit && props.emit.length) emit(`${props.emit}`, data.value);
+
+  /* Reset select when updating task epicId */
+  if (props.emit == "updateTaskEpicId") data.value = "";
+};
 </script>
 
 <template>
@@ -82,9 +90,7 @@ watch(
       v-else-if="props.type === 'select'"
       v-model="data.value"
       v-bind="$attrs"
-      @change="
-        if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
-      "
+      @change="handleSelect"
       :class="props.type"
       class="input__field"
     >

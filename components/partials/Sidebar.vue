@@ -18,8 +18,8 @@ onMounted(() => {
   customers.value = [];
   customerStore.CUSTOMERS.map((c) => {
     c.visible = false;
-    const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
-      if (s.customerId === c.id) return s;
+    const userSheets = sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
+      if (sheet.customerId === c.id) return sheet;
     });
 
     customers.value.push({ ...c, sheets: userSheets });
@@ -44,8 +44,8 @@ watch(
       const newCustomer =
         customerStore.CUSTOMERS[customerStore.CUSTOMERS.length - 1];
 
-      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((s) => {
-        if (s.customerId === newCustomer.id) return s;
+      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
+        if (sheet.customerId === newCustomer.id) return sheet;
       });
 
       newCustomer.sheets = userSheets;
@@ -63,6 +63,7 @@ watch(
     if (newTabs.length > oldTabs.length) {
       isEpicsOpen.value = true;
       isProjectsOpen.value = false;
+      console.log("opening epics");
     }
   }
 );
@@ -163,6 +164,7 @@ const sheetEpics = computed(() => {
       "
       class="block__epics"
     >
+      isEpicsOpen: {{ isEpicsOpen }}
       <!-- Sheet epic nav -->
       <Button
         :text="sheetStore.CURRENT_ESTIMATE_SHEET[0]?.sheetName"

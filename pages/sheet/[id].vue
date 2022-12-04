@@ -61,8 +61,6 @@ const sheetEpics = computed(() => {
 
 <template>
   <div ref="sheetElement" class="sheet">
-    {{ $route.params.id }}
-
     <div>
       <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
 

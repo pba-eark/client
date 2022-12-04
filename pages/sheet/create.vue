@@ -80,11 +80,9 @@ const handleClick = (event) => {
 
 const handleSelectEstimatedBy = (val) => {
   postData.estimatedBy = val;
-  console.log(postData);
 };
 
 const handleSelectDoneBy = (val) => {
-  console.log(postData);
   postData.doneBy = val;
 };
 

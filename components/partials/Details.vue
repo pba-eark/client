@@ -12,7 +12,6 @@ const epicOptions = reactive({
   value: [],
 });
 let item = reactive({
-  data: null,
   type: null,
   isToggled: false,
 });
@@ -20,14 +19,15 @@ let item = reactive({
 watch(
   () => detailsStore.DETAILS,
   () => {
+    console.log("DETAILS CHANGED");
     if (detailsStore.DETAILS === null) return (item.isToggled = false);
     item.isToggled = true;
 
-    item.data = {
-      ...detailsStore.DETAILS,
-    };
+    // detailsStore.DETAILS = {
+    //   ...detailsStore.DETAILS,
+    // };
 
-    if (item.data.epicName === undefined) {
+    if (detailsStore.DETAILS.epicName === undefined) {
       item.type = "task";
     } else {
       item.type = "epic";
@@ -45,29 +45,39 @@ watch(
 );
 
 const handleUpdateTaskDescription = async (val) => {
-  item.data.taskDescription = val;
-  await taskStore.updateTask(item.data);
+  detailsStore.DETAILS.taskDescription = val;
+  await taskStore.updateTask(detailsStore.DETAILS);
+};
+
+const handleUpdateTaskEpicId = async ({ id }) => {
+  detailsStore.DETAILS.epicId = id;
+  await taskStore.updateTask(detailsStore.DETAILS);
 };
 
 const handleUpdateEstimateReasoning = async (val) => {
-  item.data.estimateReasoning = val;
-  await taskStore.updateTask(item.data);
+  detailsStore.DETAILS.estimateReasoning = val;
+  await taskStore.updateTask(detailsStore.DETAILS);
 };
 
 const handleUpdateEpicName = async (val) => {
-  item.data.epicName = val;
-  await epicStore.updateEpic(item.data);
+  detailsStore.DETAILS.epicName = val;
+  await epicStore.updateEpic(detailsStore.DETAILS);
 };
 
 const handleUpdateEpicComment = async (val) => {
-  item.data.comment = val;
-  await epicStore.updateEpic(item.data);
+  detailsStore.DETAILS.comment = val;
+  await epicStore.updateEpic(detailsStore.DETAILS);
 };
+
+const currentEpic = computed(() => {
+  return epicStore.EPICS.filter((epic) => {
+    return epic.id == detailsStore.DETAILS.epicId;
+  });
+});
 </script>
 
 <template>
   <div class="meta">
-    {{ item.type }}
     <div v-if="item.isToggled">
       <div class="meta__header">
         <div class="flex">
@@ -75,15 +85,21 @@ const handleUpdateEpicComment = async (val) => {
           <Button text="X" @click="detailsStore.setDetails(null)" />
         </div>
 
-        <h2 v-if="item.type === 'epic'">{{ item.data.epicName }} - Epic</h2>
-        <h2 v-else>{{ item.data.taskName }} - Task ({{ item.data.id }})</h2>
+        <h2 v-if="item.type === 'epic'">
+          {{ detailsStore.DETAILS.epicName }} - Epic
+        </h2>
+        <h2 v-else>
+          {{ detailsStore.DETAILS.taskName }} - Task ({{
+            detailsStore.DETAILS.id
+          }})
+        </h2>
       </div>
 
       <div class="meta__body">
         <div v-if="item.type === 'epic'">
           <Input
-            label="brumbrum"
-            :default="item.data.epicName"
+            label="Epic titel"
+            :default="detailsStore.DETAILS.epicName"
             emit="updateEpicName"
             @updateEpicName="handleUpdateEpicName"
           />
@@ -91,7 +107,7 @@ const handleUpdateEpicComment = async (val) => {
           <Input
             type="textarea"
             label="episk beskrivelse"
-            :default="item.data.comment"
+            :default="detailsStore.DETAILS.comment"
             emit="updateEpicComment"
             @updateEpicComment="handleUpdateEpicComment"
           />
@@ -101,7 +117,7 @@ const handleUpdateEpicComment = async (val) => {
           <Input
             label="Beskrivelse"
             type="textarea"
-            :default="item.data.taskDescription"
+            :default="detailsStore.DETAILS.taskDescription"
             emit="updateTaskDescription"
             @updateTaskDescription="handleUpdateTaskDescription"
           />
@@ -111,7 +127,7 @@ const handleUpdateEpicComment = async (val) => {
           <Input
             label="Begrundelse for estimat"
             type="textarea"
-            :default="item.data.estimateReasoning"
+            :default="detailsStore.DETAILS.estimateReasoning"
             emit="updateEstimateReasoning"
             @updateEstimateReasoning="handleUpdateEstimateReasoning"
           />
@@ -120,9 +136,11 @@ const handleUpdateEpicComment = async (val) => {
         <Input
           label="Flyt til anden epic"
           v-if="item.type === 'task'"
-          placeholder="Vælg epic"
+          :placeholder="currentEpic[0].epicName"
           type="select"
           :options="epicOptions.value"
+          emit="updateTaskEpicId"
+          @updateTaskEpicId="handleUpdateTaskEpicId"
         />
       </div>
     </div>

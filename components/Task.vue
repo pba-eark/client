@@ -2,7 +2,9 @@
 import { useTaskStore } from "~/store/tasks";
 import { useRoleStore } from "~/store/roles";
 import { useRiskProfileStore } from "~/store/riskProfiles";
+import { useDetailsStore } from "~/store/details";
 
+const detailsStore = useDetailsStore();
 const taskStore = useTaskStore();
 const roleStore = useRoleStore();
 const riskProfileStore = useRiskProfileStore();
@@ -22,6 +24,7 @@ let pricePessimistic = 1250.0;
 const handleUpdateTaskName = (val) => {
   props.data.taskName = val;
   taskStore.updateTask(props.data);
+  detailsStore.setDetails(props.data);
 };
 
 const handleUpdateEstimate = (val) => {
@@ -30,16 +33,19 @@ const handleUpdateEstimate = (val) => {
 
   props.data.hourEstimate = val;
   taskStore.updateTask(props.data);
+  detailsStore.setDetails(props.data);
 };
 
 const handleUpdateRiskProfile = ({ id }) => {
   props.data.riskProfileId = id;
   taskStore.updateTask(props.data);
+  detailsStore.setDetails(props.data);
 };
 
 const handleUpdateRole = ({ id }) => {
   props.data.roleId = id;
   taskStore.updateTask(props.data);
+  detailsStore.setDetails(props.data);
 };
 
 const roleOptions = computed(() => {
