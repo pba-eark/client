@@ -19,13 +19,8 @@ let item = reactive({
 watch(
   () => detailsStore.DETAILS,
   () => {
-    console.log("DETAILS CHANGED");
     if (detailsStore.DETAILS === null) return (item.isToggled = false);
     item.isToggled = true;
-
-    // detailsStore.DETAILS = {
-    //   ...detailsStore.DETAILS,
-    // };
 
     if (detailsStore.DETAILS.epicName === undefined) {
       item.type = "task";
