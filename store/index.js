@@ -37,12 +37,23 @@ export const useGlobalStore = defineStore("global-store", () => {
     isLoaded.value = payload;
   };
 
+  const scrollToEpic = ({ id }) => {
+    const element = document.querySelectorAll(`[data-epic-id="${id}"]`);
+
+    console.log("scroll to", element);
+    element[0].scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   /* Getters */
   const IS_LOADED = computed(() => isLoaded.value);
 
   return {
     fetchData,
     setLoaded,
+    scrollToEpic,
     IS_LOADED,
   };
 });

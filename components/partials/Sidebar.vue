@@ -3,11 +3,13 @@ import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~~/store/estimateSheets";
 import { useEpicStore } from "~/store/epics";
 import { useTabsStore } from "~/store/tabs";
+import { useGlobalStore } from "~/store";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
 const epicStore = useEpicStore();
 const tabStore = useTabsStore();
+const globalStore = useGlobalStore();
 
 const customers = ref([]);
 const isProjectsOpen = ref(false);
@@ -172,7 +174,9 @@ const sheetEpics = computed(() => {
       />
       <ul v-show="isEpicsOpen">
         <li v-for="epic in sheetEpics">
-          {{ epic.epicName }}
+          <button @click="globalStore.scrollToEpic(epic)">
+            {{ epic.epicName }}
+          </button>
         </li>
       </ul>
     </div>

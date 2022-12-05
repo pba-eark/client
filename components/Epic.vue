@@ -38,7 +38,7 @@ const tasksForEpic = computed(() => {
 </script>
 
 <template>
-  <div class="epic">
+  <div class="epic" :data-epic-id="props.data.id">
     <div class="epic__header">
       <div class="flex">
         <h2>{{ props.data.epicName }}</h2>
