@@ -24,8 +24,7 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
-      }
-    );
+      });
 
     setEstimateSheets(estimateSheets);
   };
@@ -41,10 +40,43 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
-      }
-    );
+      });
 
     setEstimateSheets([...estimateSheets.value, response]);
+  };
+
+  const updateEstimateSheet = async (obj) => {
+    const { id } = obj;
+
+    const response = await $fetch(
+      `${runtimeConfig.public.API_URL}/estimatesheets/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+        body: obj,
+      });
+
+    helper.update(id, response);
+
+  };
+
+  const deleteEstimateSheet = async (id) => {
+    await $fetch(
+      `${runtimeConfig.public.API_URL}/estimatesheets/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+      });
+
+    remove(id);
   };
 
   /* Getters */
@@ -58,7 +90,9 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
   return {
     getEstimateSheets,
     createEstimateSheet,
+    updateEstimateSheet,
+    deleteEstimateSheet,
     ESTIMATE_SHEETS,
-    CURRENT_ESTIMATE_SHEET,
+    CURRENT_ESTIMATE_SHEET
   };
 });

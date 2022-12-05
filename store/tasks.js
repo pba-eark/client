@@ -13,7 +13,7 @@ export const useTaskStore = defineStore("task-store", () => {
     tasks.value = payload;
   };
 
-  const updateTask = async (obj) => {
+  /*const updateTask = async (obj) => {
     const { id } = obj;
 
     const res = await $fetch(`${runtimeConfig.public.API_URL}/tasks/${id}`, {
@@ -29,7 +29,7 @@ export const useTaskStore = defineStore("task-store", () => {
     tasks.value.map((task) => {
       if (task.id == id) Object.assign(task, res);
     });
-  };
+  };*/
 
   const getTasks = async () => {
     const tasks = await $fetch(`${runtimeConfig.public.API_URL}/tasks`, {
@@ -74,6 +74,67 @@ export const useTaskStore = defineStore("task-store", () => {
     }
   };
 
+  const updateTask = async (obj) => {
+    const { id } = obj;
+
+    const response = await $fetch(
+      `${runtimeConfig.public.API_URL}/tasks/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+        body: obj,
+      });
+
+    update(id, response);
+  };
+
+  const deleteTask = async (id) => {
+    await $fetch(
+      `${runtimeConfig.public.API_URL}/tasks/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+      });
+
+    remove(id);
+  };
+
+  /* Helper functions */
+  const update = (id, obj) => {
+
+    tasks.value.map((task) => {
+
+      if (task.id === typeCheck(id)) Object.assign(task, obj);
+
+    });
+
+  };
+
+  const remove = (id) => {
+
+    tasks.value.forEach((element) => {
+
+      element.id;
+
+      if (element.id === typeCheck(id)) {
+
+        let index = tasks.value.findIndex(element);
+        tasks.value.splice(index, 1);
+
+      }
+
+    });
+
+  };
+
   /* Getters */
   const TASKS = computed(() => tasks.value);
 
@@ -81,6 +142,7 @@ export const useTaskStore = defineStore("task-store", () => {
     getTasks,
     createTask,
     updateTask,
-    TASKS,
+    deleteTask,
+    TASKS
   };
 });

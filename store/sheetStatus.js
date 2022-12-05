@@ -2,40 +2,38 @@ import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
 import { typeCheck } from "../helpers/functions";
 
-export const useRiskProfileStore = defineStore("risk-profile-store", () => {
+export const useSheetStatus = defineStore("sheet-status-store", () => {
 
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
 
   /* State */
-  const riskProfiles = ref([]);
+  const sheetStatus = ref([]);
 
   /* Actions */
-  const setRiskProfiles = (payload) => {
-    riskProfiles.value = payload;
+  const setSheetStatus = (payload) => {
+    sheetStatus.value = payload;
   };
 
-  const getRiskProfiles = async () => {
-    const riskProfiles = await $fetch(
-      `${runtimeConfig.public.API_URL}/riskprofiles`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authStore.API_TOKEN}`,
-        },
-      });
+  const getSheetStatus = async () => {
+    const response = await $fetch(`${runtimeConfig.public.API_URL}/sheetstatus`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
+      },
+    });
 
-    setRiskProfiles(riskProfiles);
+    setSheetStatus(response);
   };
 
-  const createRiskProfiles = async (token, obj) => {
+  const createSheetStatus = async (token, obj) => {
     if (!token) return [];
     const runtimeConfig = useRuntimeConfig();
 
     const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/riskprofiles`,
+      `${runtimeConfig.public.API_URL}/sheetstatus`,
       {
         method: "POST",
         headers: {
@@ -46,14 +44,14 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
         body: obj,
       });
 
-      riskProfiles.value = [...riskProfiles.value, response];
+    sheetStatus.value = [...sheetStatus.value, response];
   };
 
-  const updateRiskProfiles = async (obj) => {
+  const updateSheetStatus = async (obj) => {
     const { id } = obj;
 
     const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/riskprofiles/${id}`,
+      `${runtimeConfig.public.API_URL}/sheetstatus/${id}`,
       {
         method: "PUT",
         headers: {
@@ -67,7 +65,7 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
     update(id, response);
   };
 
-  const deleteRiskProfiles = async (id) => {
+  const deleteSheetStatus = async (id) => {
     await $fetch(
       `${runtimeConfig.public.API_URL}/sheetstatus/${id}`,
       {
@@ -85,9 +83,9 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
   /* Helper functions */
   const update = (id, obj) => {
 
-    riskProfiles.value.map((riskProfile) => {
+    sheetStatus.value.map((sheetStat) => {
 
-      if (riskProfile.id === typeCheck(id)) Object.assign(riskProfile, obj);
+      if (sheetStat.id === typeCheck(id)) Object.assign(sheetStat, obj);
 
     });
 
@@ -95,14 +93,14 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
 
   const remove = (id) => {
 
-    riskProfiles.value.forEach((element) => {
+    sheetStatus.value.forEach((element) => {
 
       element.id;
 
       if (element.id === typeCheck(id)) {
 
-        let index = riskProfiles.value.findIndex(element);
-        riskProfiles.value.splice(index, 1);
+        let index = sheetStatus.value.findIndex(element);
+        sheetStatus.value.splice(index, 1);
 
       }
 
@@ -111,13 +109,13 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
   };
 
   /* Getters */
-  const RISK_PROFILES = computed(() => riskProfiles.value);
+  const SHEET_STATUS = computed(() => additionalExpenses.value);
 
   return {
-    getRiskProfiles,
-    createRiskProfiles,
-    updateRiskProfiles,
-    deleteRiskProfiles,
-    RISK_PROFILES
+    getSheetStatus,
+    createSheetStatus,
+    updateSheetStatus,
+    deleteSheetStatus,
+    SHEET_STATUS
   };
 });

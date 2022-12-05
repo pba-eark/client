@@ -1,9 +1,12 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
+import { typeCheck } from "../helpers/functions";
 
 export const useEpicStore = defineStore("epic-store", () => {
+
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
+
   /* State */
   const epics = ref([]);
 
@@ -49,24 +52,25 @@ export const useEpicStore = defineStore("epic-store", () => {
 
   const updateEpic = async (obj) => {
     const { id } = obj;
-    const res = await $fetch(`${runtimeConfig.public.API_URL}/epics/${id}`, {
-      method: "PUT",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authStore.API_TOKEN}`,
-      },
-      body: obj,
-    });
 
-    epics.value.map((epic) => {
-      if (epic.id === id) Object.assign(epic, res);
-    });
+    const response = await $fetch(
+      `${runtimeConfig.public.API_URL}/epics/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+        body: obj,
+      });
+
+    update(id, response);
   };
 
-  const deleteEpic = async (epicId) => {
-    const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/epics/${epicId}`,
+  const deleteEpic = async (id) => {
+    await $fetch(
+      `${runtimeConfig.public.API_URL}/epics/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -74,20 +78,37 @@ export const useEpicStore = defineStore("epic-store", () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
-      }
-    );
+      });
 
-    removeEpic(epicId);
+    remove(id);
   };
 
-  const removeEpic = (epicId) => {
+  /* Helper functions */
+  const update = (id, obj) => {
+
+    epics.value.map((epic) => {
+
+      if (epic.id === typeCheck(id)) Object.assign(epic, obj);
+
+    });
+
+  };
+
+  const remove = (id) => {
+
     epics.value.forEach((element) => {
+
       element.id;
-      if (element.id == epicId) {
+
+      if (element.id === typeCheck(id)) {
+
         let index = epics.value.findIndex(element);
         epics.value.splice(index, 1);
+
       }
+
     });
+
   };
 
   /* Getters */
@@ -97,6 +118,7 @@ export const useEpicStore = defineStore("epic-store", () => {
     getEpics,
     createEpic,
     updateEpic,
-    EPICS,
+    deleteEpic,
+    EPICS
   };
 });
