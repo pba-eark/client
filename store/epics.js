@@ -16,6 +16,7 @@ export const useEpicStore = defineStore("epic-store", () => {
   };
 
   const getEpics = async () => {
+    
     const epics = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
       method: "GET",
       headers: {
@@ -29,7 +30,7 @@ export const useEpicStore = defineStore("epic-store", () => {
   };
 
   const createEpic = async (sheetId) => {
-    
+
     sheetId = parseInt(sheetId);
 
     const newEpic = {

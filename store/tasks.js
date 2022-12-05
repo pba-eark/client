@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
+import { typeCheck } from "../helpers/functions";
 
 export const useTaskStore = defineStore("task-store", () => {
   const runtimeConfig = useRuntimeConfig();
