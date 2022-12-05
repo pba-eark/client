@@ -2,21 +2,21 @@ import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
 import { typeCheck } from "../helpers/functions";
 
-export const useRoleStore = defineStore("role-store", () => {
+export const useAdditionalExpenseStore = defineStore("additional-expense-store", () => {
 
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
 
   /* State */
-  const roles = ref([]);
+  const additionalExpenses = ref([]);
 
   /* Actions */
-  const setRoles = (payload) => {
-    roles.value = payload;
+  const setAdditionalExpenses = (payload) => {
+    additionalExpenses.value = payload;
   };
 
-  const getRoles = async () => {
-    const response = await $fetch(`${runtimeConfig.public.API_URL}/roles`, {
+  const getAdditionalExpenses = async () => {
+    const response = await $fetch(`${runtimeConfig.public.API_URL}/additionalexpenses`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -25,15 +25,15 @@ export const useRoleStore = defineStore("role-store", () => {
       },
     });
 
-    setRoles(response);
+    setAdditionalExpenses(response);
   };
 
-  const createRole = async (token, obj) => {
+  const createAdditionalExpense = async (token, obj) => {
     if (!token) return [];
     const runtimeConfig = useRuntimeConfig();
 
     const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/roles`,
+      `${runtimeConfig.public.API_URL}/additionalexpenses`,
       {
         method: "POST",
         headers: {
@@ -44,14 +44,14 @@ export const useRoleStore = defineStore("role-store", () => {
         body: obj,
       });
 
-      roles.value = [...roles.value, response];
+    additionalExpenses.value = [...additionalExpenses.value, response];
   };
 
-  const updateRole = async (obj) => {
+  const updateAdditionalExpense = async (obj) => {
     const { id } = obj;
 
     const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/roles/${id}`,
+      `${runtimeConfig.public.API_URL}/additionalexpense/${id}`,
       {
         method: "PUT",
         headers: {
@@ -65,9 +65,9 @@ export const useRoleStore = defineStore("role-store", () => {
     update(id, response);
   };
 
-  const deleteRole = async (id) => {
+  const deleteAdditionalExpense = async (id) => {
     await $fetch(
-      `${runtimeConfig.public.API_URL}/roles/${id}`,
+      `${runtimeConfig.public.API_URL}/additionalexpense/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -83,9 +83,9 @@ export const useRoleStore = defineStore("role-store", () => {
   /* Helper functions */
   const update = (id, obj) => {
 
-    roles.value.map((role) => {
+    additionalExpenses.value.map((additionalExpense) => {
 
-      if (role.id === typeCheck(id)) Object.assign(role, obj);
+      if (additionalExpense.id === typeCheck(id)) Object.assign(additionalExpense, obj);
 
     });
 
@@ -93,14 +93,14 @@ export const useRoleStore = defineStore("role-store", () => {
 
   const remove = (id) => {
 
-    roles.value.forEach((element) => {
+    additionalExpenses.value.forEach((element) => {
 
       element.id;
 
       if (element.id === typeCheck(id)) {
 
-        let index = roles.value.findIndex(element);
-        roles.value.splice(index, 1);
+        let index = additionalExpenses.value.findIndex(element);
+        additionalExpenses.value.splice(index, 1);
 
       }
 
@@ -109,13 +109,13 @@ export const useRoleStore = defineStore("role-store", () => {
   };
 
   /* Getters */
-  const ROLES = computed(() => roles.value);
+  const ADDITIONAL_EXPENSES = computed(() => additionalExpenses.value);
 
   return {
-    getRoles,
-    createRole,
-    updateRole,
-    deleteRole,
-    ROLES
+    getAdditionalExpenses,
+    createAdditionalExpense,
+    updateAdditionalExpense,
+    deleteAdditionalExpense,
+    ADDITIONAL_EXPENSES
   };
 });

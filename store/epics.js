@@ -1,9 +1,12 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
+import { typeCheck } from "../helpers/functions";
 
 export const useEpicStore = defineStore("epic-store", () => {
+
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
+
   /* State */
   const epics = ref([]);
 
@@ -41,9 +44,11 @@ export const useEpicStore = defineStore("epic-store", () => {
     epics.value = [...epics.value, response];
   };
 
-  const editEpic = async (epicId, obj) => {
+  const updateEpic = async (obj) => {
+    const { id } = obj;
+
     const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/epics/${epicId}`,
+      `${runtimeConfig.public.API_URL}/epics/${id}`,
       {
         method: "PUT",
         headers: {
@@ -52,15 +57,14 @@ export const useEpicStore = defineStore("epic-store", () => {
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
-      }
-    );
+      });
 
-    updateEpic(epicId, response);
+    update(id, response);
   };
 
-  const deleteEpic = async (epicId) => {
-    const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/epics/${epicId}`,
+  const deleteEpic = async (id) => {
+    await $fetch(
+      `${runtimeConfig.public.API_URL}/epics/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -68,26 +72,37 @@ export const useEpicStore = defineStore("epic-store", () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
-      }
-    );
+      });
 
-    removeEpic(epicId);
+    remove(id);
   };
 
-  const updateEpic = (id, obj) => {
+  /* Helper functions */
+  const update = (id, obj) => {
+
     epics.value.map((epic) => {
-      if (epic.id === id) Object.assign(epic, obj);
+
+      if (epic.id === typeCheck(id)) Object.assign(epic, obj);
+
     });
+
   };
 
-  const removeEpic = (epicId) => {
+  const remove = (id) => {
+
     epics.value.forEach((element) => {
+
       element.id;
-      if (element.id == epicId) {
+
+      if (element.id === typeCheck(id)) {
+
         let index = epics.value.findIndex(element);
         epics.value.splice(index, 1);
+
       }
+
     });
+
   };
 
   /* Getters */
@@ -96,7 +111,8 @@ export const useEpicStore = defineStore("epic-store", () => {
   return {
     getEpics,
     createEpic,
-    editEpic,
-    EPICS,
+    updateEpic,
+    deleteEpic,
+    EPICS
   };
 });

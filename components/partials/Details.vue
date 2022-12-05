@@ -67,6 +67,7 @@ watch(
       </div>
 
       <div class="meta__body">
+
         <label v-if="item.type === 'task'">
           <p>Beskrivelse</p>
           <textarea
