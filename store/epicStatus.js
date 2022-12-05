@@ -15,9 +15,7 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
     epicStatus.value = payload;
   };
 
-  const getEpicStatus = async (token) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const getEpicStatus = async () => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/epicstatus`,
@@ -26,7 +24,7 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
       });
 
