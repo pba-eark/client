@@ -2,21 +2,21 @@ import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
 import { typeCheck } from "../helpers/functions";
 
-export const useCustomerStore = defineStore("customer-store", () => {
+export const useSheetStatus = defineStore("sheet-status-store", () => {
 
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
 
   /* State */
-  const customers = ref([]);
+  const sheetStatus = ref([]);
 
   /* Actions */
-  const setCustomers = (payload) => {
-    customers.value = payload;
+  const setSheetStatus = (payload) => {
+    sheetStatus.value = payload;
   };
 
-  const getCustomers = async () => {
-    const response = await $fetch(`${runtimeConfig.public.API_URL}/customers`, {
+  const getSheetStatus = async () => {
+    const response = await $fetch(`${runtimeConfig.public.API_URL}/sheetstatus`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -25,13 +25,13 @@ export const useCustomerStore = defineStore("customer-store", () => {
       },
     });
 
-    setCustomers(response);
+    setSheetStatus(response);
   };
 
-  const createCustomer = async (obj) => {
+  const createSheetStatus = async (obj) => {
 
     const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/customers`,
+      `${runtimeConfig.public.API_URL}/sheetstatus`,
       {
         method: "POST",
         headers: {
@@ -42,14 +42,14 @@ export const useCustomerStore = defineStore("customer-store", () => {
         body: obj,
       });
 
-    customers.value = [...customers.value, response];
+    sheetStatus.value = [...sheetStatus.value, response];
   };
 
-  const updateCustomer = async (obj) => {
+  const updateSheetStatus = async (obj) => {
     const { id } = obj;
 
     const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/customers/${id}`,
+      `${runtimeConfig.public.API_URL}/sheetstatus/${id}`,
       {
         method: "PUT",
         headers: {
@@ -63,9 +63,9 @@ export const useCustomerStore = defineStore("customer-store", () => {
     update(id, response);
   };
 
-  const deleteCustomer = async (id) => {
+  const deleteSheetStatus = async (id) => {
     await $fetch(
-      `${runtimeConfig.public.API_URL}/customers/${id}`,
+      `${runtimeConfig.public.API_URL}/sheetstatus/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -81,9 +81,9 @@ export const useCustomerStore = defineStore("customer-store", () => {
   /* Helper functions */
   const update = (id, obj) => {
 
-    customers.value.map((customer) => {
+    sheetStatus.value.map((sheetStat) => {
 
-      if (customer.id === typeCheck(id)) Object.assign(customer, obj);
+      if (sheetStat.id === typeCheck(id)) Object.assign(sheetStat, obj);
 
     });
 
@@ -91,14 +91,14 @@ export const useCustomerStore = defineStore("customer-store", () => {
 
   const remove = (id) => {
 
-    customers.value.forEach((element) => {
+    sheetStatus.value.forEach((element) => {
 
       element.id;
 
       if (element.id === typeCheck(id)) {
 
-        let index = customers.value.findIndex(element);
-        customers.value.splice(index, 1);
+        let index = sheetStatus.value.findIndex(element);
+        sheetStatus.value.splice(index, 1);
 
       }
 
@@ -107,13 +107,13 @@ export const useCustomerStore = defineStore("customer-store", () => {
   };
 
   /* Getters */
-  const CUSTOMERS = computed(() => customers.value);
+  const SHEET_STATUS = computed(() => additionalExpenses.value);
 
   return {
-    getCustomers,
-    createCustomer,
-    updateCustomer,
-    deleteCustomer,
-    CUSTOMERS
+    getSheetStatus,
+    createSheetStatus,
+    updateSheetStatus,
+    deleteSheetStatus,
+    SHEET_STATUS
   };
 });

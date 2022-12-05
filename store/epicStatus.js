@@ -1,6 +1,12 @@
 import { defineStore } from "pinia";
+import { useAuthStore } from "./auth";
+import { typeCheck } from "../helpers/functions";
 
 export const useEpicStatusStore = defineStore("epic-status-store", () => {
+
+  const runtimeConfig = useRuntimeConfig();
+  const authStore = useAuthStore();
+
   /* State */
   const epicStatus = ref([]);
 
@@ -22,14 +28,12 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
+      });
+
     setEpicStatus(response);
   };
 
-  const createEpicStatus = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createEpicStatus = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/epicstatus`,
@@ -38,13 +42,73 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
-      }
-    );
+      });
 
-    console.log("post epic res", response);
+    epics.value = [...epics.value, response];
+  };
+
+  const updateEpicStatus = async (obj) => {
+    const { id } = obj;
+
+    const response = await $fetch(
+      `${runtimeConfig.public.API_URL}/epicstatus/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+        body: obj,
+      });
+
+    update(id, response);
+  };
+
+  const deleteEpicStatus = async (id) => {
+    await $fetch(
+      `${runtimeConfig.public.API_URL}/epicstatus/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+      });
+
+    remove(id);
+  };
+
+  /* Helper functions */
+  const update = (id, obj) => {
+
+    epicStatus.value.map((epicStat) => {
+
+      if (epicStat.id === typeCheck(id)) Object.assign(epicStat, obj);
+
+    });
+
+  };
+
+  const remove = (id) => {
+
+    epicStatus.value.forEach((element) => {
+
+      element.id;
+
+      if (element.id === typeCheck(id)) {
+
+        let index = epicStatus.value.findIndex(element);
+        epicStatus.value.splice(index, 1);
+
+      }
+
+    });
+
   };
 
   /* Getters */
@@ -53,6 +117,8 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
   return {
     getEpicStatus,
     createEpicStatus,
-    EPIC_STATUS,
+    updateEpicStatus,
+    deleteEpicStatus,
+    EPIC_STATUS
   };
 });
