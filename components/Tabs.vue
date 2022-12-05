@@ -56,7 +56,12 @@ const getCustomerName = ({ customerId }) => {
       <!-- Temporary tab -->
       <li v-if="tabStore.TEMP_TAB !== null" class="tabs__tab tab temp">
         <NuxtLink :to="`/sheet/${tabStore.TEMP_TAB.id}`">
-          <span class="name">{{ tabStore.TEMP_TAB.sheetName }}</span>
+          <div>
+            <span class="name">{{ tabStore.TEMP_TAB.sheetName }}</span>
+            <br /><small>
+              {{ getCustomerName(tabStore.TEMP_TAB) || "Mangler kunde" }}
+            </small>
+          </div>
 
           <Icon
             icon="icon-cross"
