@@ -30,9 +30,7 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
     setRiskProfiles(riskProfiles);
   };
 
-  const createRiskProfiles = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createRiskProfiles = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/riskprofiles`,
@@ -41,7 +39,7 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       });

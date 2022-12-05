@@ -28,9 +28,7 @@ export const useRoleStore = defineStore("role-store", () => {
     setRoles(response);
   };
 
-  const createRole = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createRole = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/roles`,
@@ -39,7 +37,7 @@ export const useRoleStore = defineStore("role-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       });

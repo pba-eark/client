@@ -28,9 +28,7 @@ export const useEstimateSheetRiskProfileStore = defineStore("estimate-sheet-risk
     setEstimateSheetRiskProfiles(response);
   };
 
-  const createEstimateSheetRiskProfile = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createEstimateSheetRiskProfile = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/estimatesheetriskprofiles`,
@@ -39,7 +37,7 @@ export const useEstimateSheetRiskProfileStore = defineStore("estimate-sheet-risk
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       });

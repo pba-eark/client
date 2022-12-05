@@ -28,9 +28,7 @@ export const useEstimateSheetUserStore = defineStore("estimate-sheet-user-store"
     setEstimateSheetUsers(response);
   };
 
-  const createEstimateSheetUser = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createEstimateSheetUser = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/estimatesheetusers`,
@@ -39,7 +37,7 @@ export const useEstimateSheetUserStore = defineStore("estimate-sheet-user-store"
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       });

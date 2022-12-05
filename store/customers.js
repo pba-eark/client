@@ -28,9 +28,7 @@ export const useCustomerStore = defineStore("customer-store", () => {
     setCustomers(response);
   };
 
-  const createCustomer = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createCustomer = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/customers`,
@@ -39,7 +37,7 @@ export const useCustomerStore = defineStore("customer-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       });

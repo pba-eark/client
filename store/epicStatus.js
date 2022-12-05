@@ -33,9 +33,7 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
     setEpicStatus(response);
   };
 
-  const createEpicStatus = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createEpicStatus = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/epicstatus`,
@@ -44,7 +42,7 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       });

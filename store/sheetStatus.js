@@ -28,9 +28,7 @@ export const useSheetStatus = defineStore("sheet-status-store", () => {
     setSheetStatus(response);
   };
 
-  const createSheetStatus = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createSheetStatus = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/sheetstatus`,
@@ -39,7 +37,7 @@ export const useSheetStatus = defineStore("sheet-status-store", () => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       });

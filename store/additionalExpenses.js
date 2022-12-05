@@ -28,9 +28,7 @@ export const useAdditionalExpenseStore = defineStore("additional-expense-store",
     setAdditionalExpenses(response);
   };
 
-  const createAdditionalExpense = async (token, obj) => {
-    if (!token) return [];
-    const runtimeConfig = useRuntimeConfig();
+  const createAdditionalExpense = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/additionalexpenses`,
@@ -39,7 +37,7 @@ export const useAdditionalExpenseStore = defineStore("additional-expense-store",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
       });
