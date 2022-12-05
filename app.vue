@@ -27,7 +27,6 @@ onMounted(async () => {
     v-if="globalStore.IS_LOADED"
     :class="authStore.IS_AUTHORIZED ? 'layout' : 'loginLayout'"
   >
-    <Header v-if="authStore.IS_AUTHORIZED" class="header" />
     <Tabs v-if="authStore.IS_AUTHORIZED" class="tab-section" />
     <Sidebar v-if="authStore.IS_AUTHORIZED" class="sidebar-left" />
     <div class="main">
@@ -40,12 +39,14 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .layout {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
   display: grid;
   gap: 0 5px;
-  grid-template-columns: 200px auto 300px;
-  grid-template-rows: var(--header-height) var(--tabs-height) auto;
+  grid-template-columns: 200px auto 350px;
+  grid-template-rows: 50px auto;
   grid-template-areas:
-    "header header header"
     "sidebarLeft tab-section sidebarRight"
     "sidebarLeft main sidebarRight";
 }
