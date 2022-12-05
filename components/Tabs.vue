@@ -48,6 +48,7 @@ const tabStore = useTabsStore();
   background: pink;
   display: flex;
   list-style: none;
+  overflow-x: auto;
 
   &__tab {
     margin-right: 5px;

@@ -63,7 +63,6 @@ watch(
     if (newTabs.length > oldTabs.length) {
       isEpicsOpen.value = true;
       isProjectsOpen.value = false;
-      console.log("opening epics");
     }
   }
 );

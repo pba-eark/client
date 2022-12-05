@@ -1,15 +1,20 @@
 import { defineStore } from "pinia";
+import { useGlobalStore } from "./index";
 
 export const useAuthStore = defineStore("auth-store", () => {
+  const globalStore = useGlobalStore();
+
   /* State */
   const jwt = ref("");
   const isAuthorized = ref(false);
   const runtimeConfig = useRuntimeConfig();
 
   /* Actions */
-  const setJwt = (token) => {
+  const setJwt = async (token) => {
     localStorage.setItem("jwt", token);
     jwt.value = token;
+    /* Fetch data */
+    await globalStore.fetchData();
     isAuthorized.value = true;
   };
 
@@ -33,7 +38,7 @@ export const useAuthStore = defineStore("auth-store", () => {
   };
 
   const handleSignUp = async (firstName, lastName, email, password) => {
-    const response = await $fetch(`${runtimeConfig.API_URL}/users`, {
+    const user = await $fetch(`${runtimeConfig.API_URL}/users`, {
       method: "POST",
       body: {
         firstName,
@@ -43,8 +48,7 @@ export const useAuthStore = defineStore("auth-store", () => {
       },
     });
 
-    /* FIXME: Log user in, after signing up */
-    console.log("sign up res:", response);
+    await handleLogin(user.email, user.password);
   };
 
   /* Getters */

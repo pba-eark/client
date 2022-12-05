@@ -1,24 +1,17 @@
 <script setup>
-// import { useAuthStore } from "~/store/auth";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
 import { useEpicStore } from "~/store/epics";
-// import { useEpicStatusStore } from "~/store/epicstatus";
-// import { useTaskStore } from "~/store/tasks";
-
-// import { useSaveStore } from "~/store/save";
-
 import { useTabsStore } from "~/store/tabs";
 
-// const authStore = useAuthStore();
 const sheetStore = useEstimateSheetStore();
 const epicStore = useEpicStore();
-// const epicStatusStore = useEpicStatusStore();
-// const taskStore = useTaskStore();
 const tabStore = useTabsStore();
-
 const route = useRoute();
-
 const sheetElement = ref(null);
+
+definePageMeta({
+  middleware: ["auth"],
+});
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);
