@@ -67,7 +67,7 @@ const sheetEpics = computed(() => {
 
 <style lang="scss" scoped>
 .sheet {
-  height: calc(100vh - var(--header-height) - var(--tabs-height));
+  height: 100vh;
   overflow-y: scroll;
 
   &::-webkit-scrollbar-track {

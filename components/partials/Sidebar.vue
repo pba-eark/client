@@ -84,6 +84,7 @@ const sheetEpics = computed(() => {
 
 <template>
   <div class="block">
+    <Logo />
     <div class="block__header">
       <Button text="Globale indstillinger" icon="icon-cog" />
 
@@ -185,7 +186,7 @@ const sheetEpics = computed(() => {
 
 <style lang="scss" scoped>
 .block {
-  height: calc(100vh - var(--header-height));
+  height: 100vh;
   // overflow-y: scroll;
   background: #2e3032;
   padding: 15px;
