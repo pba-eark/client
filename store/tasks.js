@@ -134,7 +134,7 @@ export const useTaskStore = defineStore("task-store", () => {
     });
 
   };
-
+  
   /* Getters */
   const TASKS = computed(() => tasks.value);
 
