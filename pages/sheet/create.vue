@@ -1,9 +1,11 @@
 <script setup>
 import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
+import { useTabsStore } from "~/store/tabs";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
+const tabStore = useTabsStore();
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);
@@ -43,7 +45,11 @@ const handleSubmit = async () => {
     }
   }
 
-  sheetStore.createEstimateSheet(postData.sheet);
+  const res = await sheetStore.createEstimateSheet(postData.sheet);
+
+  tabStore.openTab(res);
+
+  navigateTo(`/sheet/${res.id}`);
 };
 
 const handleCreateCustomer = (customer) => {

@@ -24,13 +24,13 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
-      });
+      }
+    );
 
     setEstimateSheets(estimateSheets);
   };
 
   const createEstimateSheet = async (obj) => {
-    
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/estimatesheets`,
       {
@@ -41,9 +41,12 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
-      });
+      }
+    );
 
     setEstimateSheets([...estimateSheets.value, response]);
+
+    return response;
   };
 
   const updateEstimateSheet = async (obj) => {
@@ -59,23 +62,21 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
-      });
+      }
+    );
 
     helper.update(id, response);
-
   };
 
   const deleteEstimateSheet = async (id) => {
-    await $fetch(
-      `${runtimeConfig.public.API_URL}/estimatesheets/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authStore.API_TOKEN}`,
-        },
-      });
+    await $fetch(`${runtimeConfig.public.API_URL}/estimatesheets/${id}`, {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authStore.API_TOKEN}`,
+      },
+    });
 
     remove(id);
   };
@@ -94,6 +95,6 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
     updateEstimateSheet,
     deleteEstimateSheet,
     ESTIMATE_SHEETS,
-    CURRENT_ESTIMATE_SHEET
+    CURRENT_ESTIMATE_SHEET,
   };
 });
