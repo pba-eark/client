@@ -30,7 +30,7 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
     setRiskProfiles(riskProfiles);
   };
 
-  const createRiskProfiles = async (obj) => {
+  const createRiskProfile = async (obj) => {
 
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/riskprofiles`,
@@ -47,7 +47,7 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
       riskProfiles.value = [...riskProfiles.value, response];
   };
 
-  const updateRiskProfiles = async (obj) => {
+  const updateRiskProfile = async (obj) => {
     const { id } = obj;
 
     const response = await $fetch(
@@ -65,7 +65,7 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
     update(id, response);
   };
 
-  const deleteRiskProfiles = async (id) => {
+  const deleteRiskProfile = async (id) => {
     await $fetch(
       `${runtimeConfig.public.API_URL}/sheetstatus/${id}`,
       {
@@ -113,9 +113,9 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
 
   return {
     getRiskProfiles,
-    createRiskProfiles,
-    updateRiskProfiles,
-    deleteRiskProfiles,
+    createRiskProfile,
+    updateRiskProfile,
+    deleteRiskProfile,
     RISK_PROFILES
   };
 });
