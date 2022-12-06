@@ -137,6 +137,18 @@ const currentEpic = computed(() => {
           emit="updateTaskEpicId"
           @updateTaskEpicId="handleUpdateTaskEpicId"
         />
+
+        <Button
+          v-if="item.type === 'task'"
+          text="Slet task"
+          @click="taskStore.deleteTask(detailsStore.DETAILS)"
+        />
+
+        <Button
+          v-if="item.type === 'epic'"
+          text="Slet epic"
+          @click="epicStore.deleteEpic(detailsStore.DETAILS)"
+        />
       </div>
     </div>
   </div>

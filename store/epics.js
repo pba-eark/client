@@ -3,7 +3,6 @@ import { useAuthStore } from "./auth";
 import { typeCheck } from "../helpers/functions";
 
 export const useEpicStore = defineStore("epic-store", () => {
-
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
 
@@ -16,21 +15,23 @@ export const useEpicStore = defineStore("epic-store", () => {
   };
 
   const getEpics = async () => {
-    
-    const epics = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authStore.API_TOKEN}`,
-      },
-    });
+    try {
+      const epics = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+      });
 
-    setEpics(epics);
+      setEpics(epics);
+    } catch (e) {
+      return console.log("Error", e);
+    }
   };
 
   const createEpic = async (sheetId) => {
-
     sheetId = parseInt(sheetId);
 
     const newEpic = {
@@ -39,41 +40,51 @@ export const useEpicStore = defineStore("epic-store", () => {
       epicStatusId: 1,
     };
 
-    const response = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authStore.API_TOKEN}`,
-      },
-      body: newEpic,
-    });
-
-    epics.value = [...epics.value, response];
-  };
-
-  const updateEpic = async (obj) => {
-    const { id } = obj;
-
-    const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/epics/${id}`,
-      {
-        method: "PUT",
+    try {
+      const response = await $fetch(`${runtimeConfig.public.API_URL}/epics`, {
+        method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
-        body: obj,
+        body: newEpic,
       });
 
-    update(id, response);
+      epics.value = [...epics.value, response];
+    } catch (e) {
+      return console.log("Error", e);
+    }
   };
 
-  const deleteEpic = async (id) => {
-    await $fetch(
-      `${runtimeConfig.public.API_URL}/epics/${id}`,
-      {
+  const updateEpic = async (obj) => {
+    const { id } = obj;
+
+    try {
+      const response = await $fetch(
+        `${runtimeConfig.public.API_URL}/epics/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authStore.API_TOKEN}`,
+          },
+          body: obj,
+        }
+      );
+
+      epics.value.map((epic) => {
+        if (epic.id === typeCheck(id)) Object.assign(epic, response);
+      });
+    } catch (e) {
+      console.log("Error", e);
+    }
+  };
+
+  const deleteEpic = async ({ id }) => {
+    try {
+      await $fetch(`${runtimeConfig.public.API_URL}/epics/${id}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -81,36 +92,15 @@ export const useEpicStore = defineStore("epic-store", () => {
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
       });
+    } catch (e) {
+      return console.log("Error", e);
+    }
 
-    remove(id);
-  };
-
-  /* Helper functions */
-  const update = (id, obj) => {
-
-    epics.value.map((epic) => {
-
-      if (epic.id === typeCheck(id)) Object.assign(epic, obj);
-
-    });
-
-  };
-
-  const remove = (id) => {
-
-    epics.value.forEach((element) => {
-
-      element.id;
-
-      if (element.id === typeCheck(id)) {
-
-        let index = epics.value.findIndex(element);
-        epics.value.splice(index, 1);
-
-      }
-
-    });
-
+    setEpics(
+      epics.value.filter((epic) => {
+        return epic.id !== id;
+      })
+    );
   };
 
   /* Getters */
@@ -121,6 +111,6 @@ export const useEpicStore = defineStore("epic-store", () => {
     createEpic,
     updateEpic,
     deleteEpic,
-    EPICS
+    EPICS,
   };
 });
