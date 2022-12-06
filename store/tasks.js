@@ -78,9 +78,8 @@ export const useTaskStore = defineStore("task-store", () => {
   const updateTask = async (obj) => {
     const { id } = obj;
 
-    const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/tasks/${id}`,
-      {
+    try {
+      await $fetch(`${runtimeConfig.public.API_URL}/tasks/${id}`, {
         method: "PUT",
         headers: {
           Accept: "application/json",
@@ -89,14 +88,18 @@ export const useTaskStore = defineStore("task-store", () => {
         },
         body: obj,
       });
+    } catch (e) {
+      return console.log("Error", e);
+    }
 
-    update(id, response);
+    tasks.value.map((task) => {
+      if (task.id === typeCheck(id)) Object.assign(task, obj);
+    });
   };
 
-  const deleteTask = async (id) => {
-    await $fetch(
-      `${runtimeConfig.public.API_URL}/tasks/${id}`,
-      {
+  const deleteTask = async ({ id }) => {
+    try {
+      await $fetch(`${runtimeConfig.public.API_URL}/tasks/${id}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -104,38 +107,17 @@ export const useTaskStore = defineStore("task-store", () => {
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
       });
+    } catch (e) {
+      return console.log("Error", e);
+    }
 
-    remove(id);
+    setTasks(
+      tasks.value.filter((task) => {
+        return task.id !== id;
+      })
+    );
   };
 
-  /* Helper functions */
-  const update = (id, obj) => {
-
-    tasks.value.map((task) => {
-
-      if (task.id === typeCheck(id)) Object.assign(task, obj);
-
-    });
-
-  };
-
-  const remove = (id) => {
-
-    tasks.value.forEach((element) => {
-
-      element.id;
-
-      if (element.id === typeCheck(id)) {
-
-        let index = tasks.value.findIndex(element);
-        tasks.value.splice(index, 1);
-
-      }
-
-    });
-
-  };
-  
   /* Getters */
   const TASKS = computed(() => tasks.value);
 
@@ -144,6 +126,6 @@ export const useTaskStore = defineStore("task-store", () => {
     createTask,
     updateTask,
     deleteTask,
-    TASKS
+    TASKS,
   };
 });

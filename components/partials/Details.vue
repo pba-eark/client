@@ -137,6 +137,11 @@ const currentEpic = computed(() => {
           emit="updateTaskEpicId"
           @updateTaskEpicId="handleUpdateTaskEpicId"
         />
+
+        <Button
+          text="Slet task"
+          @click="taskStore.deleteTask(detailsStore.DETAILS)"
+        />
       </div>
     </div>
   </div>
