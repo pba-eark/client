@@ -2,10 +2,12 @@
 import { useDetailsStore } from "~/store/details";
 import { useEpicStore } from "~/store/epics";
 import { useTaskStore } from "~/store/tasks";
+import { useRiskProfileStore } from "~~/store/riskProfiles";
 
 const detailsStore = useDetailsStore();
 const epicStore = useEpicStore();
 const taskStore = useTaskStore();
+const riskProfileStore = useRiskProfileStore();
 
 const route = useRoute();
 const epicOptions = reactive({
@@ -69,10 +71,25 @@ const currentEpic = computed(() => {
     return epic.id == detailsStore.DETAILS.epicId;
   });
 });
+
+let showSettings = ref(false);
+
+const show = () => {
+  showSettings.value = !showSettings.value;
+  console.log(showSettings.value)
+};
+
 </script>
 
 <template>
   <div class="meta">
+
+
+    <Button text="Indstillinger" @click="show" />
+    <Settings v-if="showSettings" />
+
+
+
     <div v-if="item.isToggled">
       <div class="meta__header">
         <div class="flex">
@@ -85,58 +102,33 @@ const currentEpic = computed(() => {
         </h2>
         <h2 v-else>
           {{ detailsStore.DETAILS.taskName }} - Task ({{
-            detailsStore.DETAILS.id
+              detailsStore.DETAILS.id
           }})
         </h2>
       </div>
 
       <div class="meta__body">
         <div v-if="item.type === 'epic'">
-          <Input
-            label="Epic titel"
-            :default="detailsStore.DETAILS.epicName"
-            emit="updateEpicName"
-            @updateEpicName="handleUpdateEpicName"
-          />
+          <Input label="Epic titel" :default="detailsStore.DETAILS.epicName" emit="updateEpicName"
+            @updateEpicName="handleUpdateEpicName" />
 
-          <Input
-            type="textarea"
-            label="episk beskrivelse"
-            :default="detailsStore.DETAILS.comment"
-            emit="updateEpicComment"
-            @updateEpicComment="handleUpdateEpicComment"
-          />
+          <Input type="textarea" label="episk beskrivelse" :default="detailsStore.DETAILS.comment"
+            emit="updateEpicComment" @updateEpicComment="handleUpdateEpicComment" />
         </div>
 
         <div v-if="item.type === 'task'">
-          <Input
-            label="Beskrivelse"
-            type="textarea"
-            :default="detailsStore.DETAILS.taskDescription"
-            emit="updateTaskDescription"
-            @updateTaskDescription="handleUpdateTaskDescription"
-          />
+          <Input label="Beskrivelse" type="textarea" :default="detailsStore.DETAILS.taskDescription"
+            emit="updateTaskDescription" @updateTaskDescription="handleUpdateTaskDescription" />
         </div>
 
         <div v-if="item.type === 'task'">
-          <Input
-            label="Begrundelse for estimat"
-            type="textarea"
-            :default="detailsStore.DETAILS.estimateReasoning"
-            emit="updateEstimateReasoning"
-            @updateEstimateReasoning="handleUpdateEstimateReasoning"
-          />
+          <Input label="Begrundelse for estimat" type="textarea" :default="detailsStore.DETAILS.estimateReasoning"
+            emit="updateEstimateReasoning" @updateEstimateReasoning="handleUpdateEstimateReasoning" />
         </div>
 
-        <Input
-          label="Flyt til anden epic"
-          v-if="item.type === 'task'"
-          :placeholder="currentEpic[0].epicName"
-          type="select"
-          :options="epicOptions.value"
-          emit="updateTaskEpicId"
-          @updateTaskEpicId="handleUpdateTaskEpicId"
-        />
+        <Input label="Flyt til anden epic" v-if="item.type === 'task'" :placeholder="currentEpic[0].epicName"
+          type="select" :options="epicOptions.value" emit="updateTaskEpicId"
+          @updateTaskEpicId="handleUpdateTaskEpicId" />
       </div>
     </div>
   </div>
