@@ -38,13 +38,9 @@ export const useGlobalStore = defineStore("global-store", () => {
   };
 
   const scrollToEpic = ({ id }) => {
-    const element = document.querySelectorAll(`[data-epic-id="${id}"]`);
-
-    console.log("scroll to", element);
-    element[0].scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    const element = document.querySelector(`[data-epic-id="${id}"]`);
+    const topPos = element.offsetTop;
+    document.querySelector(".sheet").scrollTop = topPos - 50;
   };
 
   /* Getters */
