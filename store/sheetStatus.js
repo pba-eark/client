@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
 import { typeCheck } from "../helpers/functions";
 
-export const useSheetStatus = defineStore("sheet-status-store", () => {
+export const useSheetStatusStore = defineStore("sheet-status-store", () => {
 
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
@@ -107,7 +107,7 @@ export const useSheetStatus = defineStore("sheet-status-store", () => {
   };
 
   /* Getters */
-  const SHEET_STATUS = computed(() => additionalExpenses.value);
+  const SHEET_STATUS = computed(() => sheetStatus.value);
 
   return {
     getSheetStatus,
