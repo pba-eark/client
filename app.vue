@@ -55,16 +55,20 @@ onMounted(async () => {
 .tab-section {
   grid-area: tab-section;
 }
+
 .header {
   grid-area: header;
 }
+
 .sidebar-left {
   grid-area: sidebarLeft;
 }
+
 main {
   grid-area: main;
   overflow-y: auto;
 }
+
 .sidebar-right {
   grid-area: sidebarRight;
 }
