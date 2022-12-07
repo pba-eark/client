@@ -80,7 +80,6 @@ const sheetEpics = computed(() => {
 <style lang="scss" scoped>
 .sheet {
   height: calc(100vh - 50px);
-  overflow-y: scroll;
 
   &::-webkit-scrollbar-track {
     background-color: black;

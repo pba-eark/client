@@ -29,9 +29,9 @@ onMounted(async () => {
   >
     <Tabs v-if="authStore.IS_AUTHORIZED" class="tab-section" />
     <Sidebar v-if="authStore.IS_AUTHORIZED" class="sidebar-left" />
-    <div class="main">
+    <main>
       <LazyNuxtPage />
-    </div>
+    </main>
 
     <Details class="sidebar-right" v-if="authStore.IS_AUTHORIZED" />
   </div>
@@ -61,7 +61,7 @@ onMounted(async () => {
 .sidebar-left {
   grid-area: sidebarLeft;
 }
-.main {
+main {
   grid-area: main;
   overflow-y: auto;
 }
