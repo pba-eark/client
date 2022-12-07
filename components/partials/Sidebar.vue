@@ -109,11 +109,9 @@ const sheetEpics = computed(() => {
                   :class="{ rotate: !customer.visible }"
                 />
               </span>
-              <span
-                >{{ customer.customerName }} ({{
-                  customer.sheets.length
-                }})</span
-              >
+              <span>
+                {{ customer.customerName }} ({{ customer.sheets.length }})
+              </span>
             </p>
 
             <!-- Projects for customer -->
@@ -137,7 +135,7 @@ const sheetEpics = computed(() => {
                   :class="{ rotate: !showMissingCustomerSheets }"
                 />
               </span>
-              <span>Mangler kunde</span>
+              <span>Mangler kunde ({{ sheetsWithoutCustomers.length }})</span>
             </p>
 
             <ul v-show="showMissingCustomerSheets">
