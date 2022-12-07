@@ -2,21 +2,20 @@
 import { useCustomerStore } from "~/store/customers";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
 import { useTabsStore } from "~/store/tabs";
+import { useEpicStore } from "~/store/epics";
+import { useTaskStore } from "~/store/tasks";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
 const tabStore = useTabsStore();
+const epicStore = useEpicStore();
+const taskStore = useTaskStore();
 
-onBeforeMount(() => {
-  window.addEventListener("click", handleClick);
-});
+const customers = ref([]);
+const copyFromCustomer = ref(null);
 
-onBeforeUnmount(() => {
-  window.removeEventListener("click", handleClick);
-});
-
-definePageMeta({
-  middleware: ["auth"],
+const selectType = reactive({
+  selected: "empty",
 });
 
 let searchTerm = ref("");
@@ -28,6 +27,30 @@ const customerSelection = reactive({
 });
 const postData = reactive({
   sheet: {},
+});
+
+onBeforeMount(() => {
+  window.addEventListener("click", handleClick);
+});
+
+onMounted(() => {
+  customers.value = [];
+  customerStore.CUSTOMERS.map((c) => {
+    c.visible = false;
+    const userSheets = sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
+      if (sheet.customerId === c.id) return sheet;
+    });
+
+    customers.value.push({ ...c, sheets: userSheets });
+  });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("click", handleClick);
+});
+
+definePageMeta({
+  middleware: ["auth"],
 });
 
 const handleSubmit = async () => {
@@ -45,11 +68,33 @@ const handleSubmit = async () => {
     }
   }
 
-  const res = await sheetStore.createEstimateSheet(postData.sheet);
+  const newSheet = await sheetStore.createEstimateSheet(postData.sheet);
 
-  tabStore.openTab(res);
+  /* Copy from sheet, if selected */
+  if (selectType.selected === "copy" && copyFromCustomer.value !== null) {
+    const epicsToCreate = [];
+    epicStore.EPICS.map(async (epic) => {
+      if (epic.estimateSheetId == copyFromCustomer.value) {
+        const newEpic = { ...epic, estimateSheetId: newSheet.id };
+        epicsToCreate.push(newEpic);
+      }
+    });
 
-  navigateTo(`/sheet/${res.id}`);
+    epicsToCreate.map(async (epic) => {
+      const epicCopy = { ...epic };
+      delete epic.id;
+      const newEpic = await epicStore.createEpic(epic);
+
+      taskStore.TASKS.map((task) => {
+        if (epicCopy.id === task.epicId)
+          taskStore.createTask({ ...task, epicId: newEpic.id });
+      });
+    });
+  }
+
+  tabStore.openTab(newSheet);
+
+  navigateTo(`/sheet/${newSheet.id}`);
 };
 
 const handleCreateCustomer = (customer) => {
@@ -102,6 +147,32 @@ const handleSetJira = (val) => {
 
 const handleSetWireframe = (val) => {
   postData.sheet.wireframeLink = val;
+};
+
+/* Select new sheet type */
+const handleSelectEmptySheet = () => {
+  selectType.selected = "empty";
+  handleClearCopyCustomer();
+  handleClearTemplate();
+};
+
+const handleSelectTemplateSheet = () => {
+  selectType.selected = "template";
+  handleClearCopyCustomer();
+};
+
+const handleSelectCopySheet = () => {
+  selectType.selected = "copy";
+  handleClearTemplate();
+};
+
+/* Clear template copy / template */
+const handleClearCopyCustomer = () => {
+  copyFromCustomer.value = null;
+};
+
+const handleClearTemplate = () => {
+  console.log("clear template");
 };
 
 const searchCustomers = computed(() => {
@@ -230,15 +301,84 @@ const validateNewCustomer = computed(() => {
       <br />
       <Button text="Opret estimatark" type="submit" />
     </form>
+
+    <div>
+      <div class="block__select">
+        <div
+          :class="{ active: selectType.selected === 'empty' }"
+          @click="handleSelectEmptySheet"
+        >
+          Tom
+        </div>
+        <div
+          :class="{ active: selectType.selected === 'template' }"
+          @click="handleSelectTemplateSheet"
+        >
+          Template
+        </div>
+        <div
+          :class="{ active: selectType.selected === 'copy' }"
+          @click="handleSelectCopySheet"
+        >
+          Kopiér
+        </div>
+      </div>
+
+      <div v-show="selectType.selected === 'copy'">
+        <ul>
+          <li v-for="customer in customers">
+            <b>{{ customer.customerName }}</b>
+
+            <ul v-if="customer.sheets && customer.sheets.length">
+              <li v-for="sheet in customer.sheets">
+                <label>
+                  {{ sheet.sheetName }}
+                  <input
+                    type="radio"
+                    name="copy"
+                    :value="sheet.id"
+                    v-model="copyFromCustomer"
+                  />
+                </label>
+              </li>
+            </ul>
+          </li>
+          <Button text="Clear" @click="handleClearCopyCustomer" />
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .block {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  &__select {
+    display: flex;
+    width: 100%;
+
+    > div {
+      padding: 8px 15px;
+      border: 1px solid #eee;
+      margin-right: 8px;
+      cursor: pointer;
+
+      &.active {
+        background: peru;
+        color: #fff;
+      }
+    }
+  }
+
   &__customer {
     display: flex;
     flex-wrap: wrap;
     position: relative;
+
     .label {
       width: 100%;
     }

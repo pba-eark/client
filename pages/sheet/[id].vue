@@ -32,6 +32,18 @@ const handleClick = (e) => {
   return;
 };
 
+const handleCreateEpic = () => {
+  const route = useRoute();
+
+  const newEpic = {
+    epicName: "Ny Epic",
+    estimateSheetId: parseInt(route.params.id),
+    epicStatusId: 1,
+  };
+
+  epicStore.createEpic(newEpic);
+};
+
 const getParents = (node) => {
   let current = node,
     list = [];
@@ -57,10 +69,7 @@ const sheetEpics = computed(() => {
     <div>
       <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
 
-      <Button
-        text="Ny epic"
-        @click="epicStore.createEpic($route.params.id)"
-      ></Button>
+      <Button text="Ny epic" @click="handleCreateEpic"></Button>
     </div>
   </div>
 </template>
