@@ -10,13 +10,12 @@ export default defineComponent({
 
 <template>
   <div class="block">
-    <h1>home</h1>
+    <h1>Dashboard</h1>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .block {
-  width: 100%;
-  background: yellow;
+  margin: 20px 0 0 15px;
 }
 </style>

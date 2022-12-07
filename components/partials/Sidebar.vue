@@ -95,66 +95,56 @@ const sheetEpics = computed(() => {
           @click="isProjectsOpen = !isProjectsOpen"
           class="projects"
         />
-        <transition name="fade">
-          <ul v-show="isProjectsOpen">
-            <!-- Customer list -->
-            <li v-for="customer in customers">
-              <p @click="customer.visible = !customer.visible">
-                <span>
-                  <Icon
-                    icon="icon-chevron"
-                    :class="{ rotate: !customer.visible }"
-                  />
-                </span>
-                <span>{{ customer.customerName }} ({{ customer.id }})</span>
-              </p>
+        <ul v-show="isProjectsOpen">
+          <!-- Customer list -->
+          <li v-for="customer in customers">
+            <p @click="customer.visible = !customer.visible">
+              <span>
+                <Icon
+                  icon="icon-chevron"
+                  :class="{ rotate: !customer.visible }"
+                />
+              </span>
+              <span>{{ customer.customerName }} ({{ customer.id }})</span>
+            </p>
 
-              <!-- Projects for customer -->
-              <ul v-show="customer.visible">
-                <li v-for="sheet in customer.sheets">
-                  <NuxtLink
-                    :to="`/sheet/${sheet.id}`"
-                    @click="tabStore.handleOpenTab(sheet)"
-                  >
-                    {{ sheet.sheetName }}
-                  </NuxtLink>
-                </li>
-              </ul>
-            </li>
+            <!-- Projects for customer -->
+            <ul v-show="customer.visible">
+              <li v-for="sheet in customer.sheets">
+                <NuxtLink
+                  :to="`/sheet/${sheet.id}`"
+                  @click="tabStore.handleOpenTab(sheet)"
+                >
+                  {{ sheet.sheetName }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </li>
 
-            <li v-if="sheetsWithoutCustomers && sheetsWithoutCustomers.length">
-              <p
-                @click="showMissingCustomerSheets = !showMissingCustomerSheets"
-              >
-                <span>
-                  <Icon
-                    icon="icon-chevron"
-                    :class="{ rotate: !showMissingCustomerSheets }"
-                  />
-                </span>
-                <span>Mangler kunde</span>
-              </p>
+          <li v-if="sheetsWithoutCustomers && sheetsWithoutCustomers.length">
+            <p @click="showMissingCustomerSheets = !showMissingCustomerSheets">
+              <span>
+                <Icon
+                  icon="icon-chevron"
+                  :class="{ rotate: !showMissingCustomerSheets }"
+                />
+              </span>
+              <span>Mangler kunde</span>
+            </p>
 
-              <ul v-show="showMissingCustomerSheets">
-                <li v-for="sheet in sheetsWithoutCustomers">
-                  <NuxtLink
-                    :to="`/sheet/${sheet.id}`"
-                    @click="tabStore.handleOpenTab(sheet)"
-                  >
-                    {{ sheet.sheetName }}
-                  </NuxtLink>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </transition>
+            <ul v-show="showMissingCustomerSheets">
+              <li v-for="sheet in sheetsWithoutCustomers">
+                <NuxtLink
+                  :to="`/sheet/${sheet.id}`"
+                  @click="tabStore.handleOpenTab(sheet)"
+                >
+                  {{ sheet.sheetName }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
-
-      <Button
-        icon="icon-plus"
-        text="Nyt estimatark"
-        @click="$router.push('/sheet/create')"
-      />
     </div>
 
     <div class="block__epics"></div>

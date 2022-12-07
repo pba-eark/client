@@ -28,8 +28,20 @@ const handleClick = (e) => {
     getParents(e.target).includes(sheetElement.value) ||
     Array.from(e.target.children).includes(sheetElement.value)
   )
-    return tabStore.handleOpenTab(sheetStore.CURRENT_ESTIMATE_SHEET[0]);
+    return tabStore.openTab(sheetStore.CURRENT_ESTIMATE_SHEET[0]);
   return;
+};
+
+const handleCreateEpic = () => {
+  const route = useRoute();
+
+  const newEpic = {
+    epicName: "Ny Epic",
+    estimateSheetId: parseInt(route.params.id),
+    epicStatusId: 1,
+  };
+
+  epicStore.createEpic(newEpic);
 };
 
 const getParents = (node) => {
@@ -57,10 +69,7 @@ const sheetEpics = computed(() => {
     <div>
       <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
 
-      <Button
-        text="Ny epic"
-        @click="epicStore.createEpic($route.params.id)"
-      ></Button>
+      <Button text="Ny epic" @click="handleCreateEpic"></Button>
     </div>
   </div>
 </template>

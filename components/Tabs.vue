@@ -46,9 +46,15 @@ const getCustomerName = ({ customerId }) => {
 
 <template>
   <ul class="tabs">
-    <li class="tabs__tab tab home">
+    <li class="tabs__tab tab static">
       <NuxtLink :to="`/`">
         <Icon icon="icon-home" />
+      </NuxtLink>
+    </li>
+
+    <li class="tabs__tab tab static">
+      <NuxtLink :to="`/sheet/create`">
+        <Icon icon="icon-plus" />
       </NuxtLink>
     </li>
 
@@ -76,7 +82,9 @@ const getCustomerName = ({ customerId }) => {
         <NuxtLink :to="`/sheet/${tab.id}`">
           <div>
             <span class="name">{{ tab.sheetName }}</span>
-            <br /><small class="small">{{ getCustomerName(tab) || "Mangler kunde" }}</small>
+            <br /><small class="small">{{
+              getCustomerName(tab) || "Mangler kunde"
+            }}</small>
           </div>
           <Icon
             icon="icon-cross"
@@ -149,7 +157,7 @@ const getCustomerName = ({ customerId }) => {
       font-weight: 600;
 
       .small {
-        opacity: .75;
+        opacity: 0.75;
         font-weight: 400;
       }
       .close {
@@ -179,10 +187,7 @@ const getCustomerName = ({ customerId }) => {
       }
     }
 
-    &.home {
-      // height: auto;
-      // width: auto;
-      // min-width: auto;
+    &.static {
       svg {
         height: 30px;
         width: 30px;
