@@ -153,8 +153,6 @@ const sheetEpics = computed(() => {
       </div>
     </div>
 
-    <div class="block__epics"></div>
-
     <div
       v-show="
         sheetStore.CURRENT_ESTIMATE_SHEET &&
@@ -162,7 +160,6 @@ const sheetEpics = computed(() => {
       "
       class="block__epics"
     >
-      isEpicsOpen: {{ isEpicsOpen }}
       <!-- Sheet epic nav -->
       <Button
         :text="sheetStore.CURRENT_ESTIMATE_SHEET[0]?.sheetName"
@@ -170,6 +167,9 @@ const sheetEpics = computed(() => {
         @click="isEpicsOpen = !isEpicsOpen"
       />
       <ul v-show="isEpicsOpen">
+        <li>
+          <button @click="sheetStore.toggleSheetOverview()">Overblik</button>
+        </li>
         <li v-for="epic in sheetEpics">
           <button @click="globalStore.scrollToEpic(epic)">
             {{ epic.epicName }}
@@ -249,8 +249,6 @@ const sheetEpics = computed(() => {
   }
 
   &__epics {
-    color: #fff;
-
     button {
       width: 100%;
     }

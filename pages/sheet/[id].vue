@@ -66,9 +66,12 @@ const sheetEpics = computed(() => {
 
 <template>
   <div ref="sheetElement" class="sheet">
-    <div>
-      <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
+    <div v-show="sheetStore.IS_OVERVIEW_TOGGLED">
+      <h1>overview</h1>
+    </div>
 
+    <div v-show="!sheetStore.IS_OVERVIEW_TOGGLED">
+      <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
       <Button text="Ny epic" @click="handleCreateEpic"></Button>
     </div>
   </div>

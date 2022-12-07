@@ -38,9 +38,18 @@ export const useGlobalStore = defineStore("global-store", () => {
   };
 
   const scrollToEpic = ({ id }) => {
-    const element = document.querySelector(`[data-epic-id="${id}"]`);
-    const topPos = element.offsetTop;
-    document.querySelector(".sheet").scrollTop = topPos - 50;
+    if (sheetStore.IS_OVERVIEW_TOGGLED) {
+      sheetStore.toggleSheetOverview();
+      setTimeout(() => {
+        const element = document.querySelector(`[data-epic-id="${id}"]`);
+        const topPos = element.offsetTop;
+        document.querySelector(".sheet").scrollTop = topPos - 50;
+      }, 250);
+    } else {
+      const element = document.querySelector(`[data-epic-id="${id}"]`);
+      const topPos = element.offsetTop;
+      document.querySelector(".sheet").scrollTop = topPos - 50;
+    }
   };
 
   /* Getters */

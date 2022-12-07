@@ -8,6 +8,7 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
 
   /* State */
   const estimateSheets = ref([]);
+  const isOverviewToggled = ref(false);
 
   /* Actions */
   const setEstimateSheets = (payload) => {
@@ -49,37 +50,41 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
     return response;
   };
 
-  const updateEstimateSheet = async (obj) => {
-    const { id } = obj;
-
-    const response = await $fetch(
-      `${runtimeConfig.public.API_URL}/estimatesheets/${id}`,
-      {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authStore.API_TOKEN}`,
-        },
-        body: obj,
-      }
-    );
-
-    helper.update(id, response);
+  const toggleSheetOverview = () => {
+    isOverviewToggled.value = !isOverviewToggled.value;
   };
 
-  const deleteEstimateSheet = async (id) => {
-    await $fetch(`${runtimeConfig.public.API_URL}/estimatesheets/${id}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authStore.API_TOKEN}`,
-      },
-    });
+  // const updateEstimateSheet = async (obj) => {
+  //   const { id } = obj;
 
-    remove(id);
-  };
+  //   const response = await $fetch(
+  //     `${runtimeConfig.public.API_URL}/estimatesheets/${id}`,
+  //     {
+  //       method: "PUT",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${authStore.API_TOKEN}`,
+  //       },
+  //       body: obj,
+  //     }
+  //   );
+
+  //   helper.update(id, response);
+  // };
+
+  // const deleteEstimateSheet = async (id) => {
+  //   await $fetch(`${runtimeConfig.public.API_URL}/estimatesheets/${id}`, {
+  //     method: "DELETE",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${authStore.API_TOKEN}`,
+  //     },
+  //   });
+
+  //   remove(id);
+  // };
 
   /* Getters */
   const ESTIMATE_SHEETS = computed(() => estimateSheets.value);
@@ -88,13 +93,16 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
       if (s.id == route.params.id) return s;
     })
   );
+  const IS_OVERVIEW_TOGGLED = computed(() => isOverviewToggled.value);
 
   return {
     getEstimateSheets,
     createEstimateSheet,
-    updateEstimateSheet,
-    deleteEstimateSheet,
+    // updateEstimateSheet,
+    // deleteEstimateSheet,
     ESTIMATE_SHEETS,
     CURRENT_ESTIMATE_SHEET,
+    IS_OVERVIEW_TOGGLED,
+    toggleSheetOverview,
   };
 });
