@@ -142,7 +142,6 @@ const handleSelect = () => {
   &__field {
     font-size: 1rem;
     width: 100%;
-    height: 100%;
     padding: 4px;
     border: 1px solid gray;
     background-color: none;

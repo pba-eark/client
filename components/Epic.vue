@@ -15,19 +15,19 @@ const props = defineProps({
 });
 
 const handleCreateTask = async () => {
-  const obj = {
+  const newTask = {
     parentId: 0,
     taskName: "Ny task",
-    hourEstimate: 2,
+    hourEstimate: 0,
     estimateReasoning: "Begrundelse for estimat...",
     optOut: false,
     taskDescription: "Beskrivelse...",
-    epicId: props.data.id,
-    roleId: null,
+    epicId: parseInt(props.data.id),
+    roleId: 0,
     riskProfileId: 1,
   };
 
-  await taskStore.createTask(obj);
+  await taskStore.createTask(newTask);
 };
 
 const tasksForEpic = computed(() => {
@@ -71,11 +71,7 @@ const tasksForEpic = computed(() => {
     </div>
 
     <div class="epic__footer">
-      <!-- <Button text="Ny task" @click="handleCreateTask" /> -->
-      <Button
-        text="Ny task"
-        @click="taskStore.createTask(parseInt(props.data.id))"
-      />
+      <Button text="Ny task" @click="handleCreateTask" />
     </div>
   </div>
 </template>

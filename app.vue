@@ -63,6 +63,7 @@ onMounted(async () => {
 }
 .main {
   grid-area: main;
+  overflow-y: auto;
 }
 .sidebar-right {
   grid-area: sidebarRight;
