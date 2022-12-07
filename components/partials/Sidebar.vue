@@ -80,16 +80,6 @@ const sheetEpics = computed(() => {
     return epic.estimateSheetId == sheetStore.CURRENT_ESTIMATE_SHEET[0]?.id;
   });
 });
-
-const handleOpenProjects = () => {
-  isProjectsOpen.value = true;
-  isEpicsOpen.value = false;
-};
-
-const handleOpenEpics = () => {
-  isProjectsOpen.value = false;
-  isEpicsOpen.value = true;
-};
 </script>
 
 <template>
@@ -100,7 +90,7 @@ const handleOpenEpics = () => {
         <Button
           text="Projekter"
           icon="icon-folder"
-          @click="handleOpenProjects"
+          @click="isProjectsOpen = !isProjectsOpen"
           class="projects"
         />
         <ul v-show="isProjectsOpen" class="customers">
@@ -174,7 +164,7 @@ const handleOpenEpics = () => {
       <Button
         :text="sheetStore.CURRENT_ESTIMATE_SHEET[0]?.sheetName"
         icon="icon-chevron"
-        @click="handleOpenEpics"
+        @click="isEpicsOpen = !isEpicsOpen"
       />
       <ul v-show="isEpicsOpen">
         <li>
@@ -193,22 +183,15 @@ const handleOpenEpics = () => {
 <style lang="scss" scoped>
 .block {
   display: grid;
-  grid-template-rows: 60px auto 50px;
+  grid-template-rows: 60px auto 1fr;
   height: 100vh;
   overflow-y: auto;
   background-color: var(--color-sidebar);
   padding: 0 10px;
 
-  &--epics-open {
-    grid-template-rows: 60px 50px auto;
-  }
-
   &__header {
-    border-bottom: 2px solid #242424;
-
     button {
       width: 100%;
-      margin-bottom: 15px;
       height: 36px;
       padding: 0 5px;
       border: none;

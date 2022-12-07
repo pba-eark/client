@@ -17,6 +17,20 @@ onBeforeMount(() => {
   window.addEventListener("click", handleClick);
 });
 
+onMounted(() => {
+  /* If page is reloaded while being on a temporary tab, remake the temporary tab */
+  if (
+    tabStore.TABS.filter((tab) => tab.id == route.params.id).length < 1 &&
+    tabStore.TEMP_TAB === null
+  ) {
+    tabStore.handleOpenTab(
+      sheetStore.ESTIMATE_SHEETS.filter(
+        (sheet) => sheet.id == route.params.id
+      )[0]
+    );
+  }
+});
+
 onBeforeUnmount(() => {
   window.removeEventListener("click", handleClick);
 });
