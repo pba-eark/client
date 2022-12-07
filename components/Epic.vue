@@ -99,20 +99,20 @@ const tasksForEpic = computed(() => {
 
     &-col {
       background-color: black;
-      color: white;
+      color: var(--font-color-secondary);
       padding: 10px;
     }
 
     &--realistic {
       grid-column: span 2;
-      background-color: green;
+      background-color: var(--color-realistic);
       display: grid;
       grid-template-columns: 70px 100px;
     }
 
     &--pessimistic {
       grid-column: span 2;
-      background-color: blue;
+      background-color: var(--color-pessimistic);
       display: grid;
       grid-template-columns: 70px 100px;
     }

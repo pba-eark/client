@@ -181,14 +181,14 @@ const currentEstimate = computed(() => {
   }
 
   &--realistic {
-    background-color: green;
-    color: white;
+    background-color: var(--color-realistic);
+    color: var(--font-color-secondary);
     padding: 10px;
   }
 
   &--pessimistic {
-    background-color: blue;
-    color: white;
+    background-color: var(--color-pessimistic);
+    color: var(--font-color-secondary);
     padding: 10px;
   }
 }

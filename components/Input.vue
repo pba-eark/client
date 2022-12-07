@@ -147,9 +147,6 @@ const handleSelect = () => {
     border: 1px solid gray;
     background-color: none;
     border-radius: 0;
-    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5) inset;
-    -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5) inset;
-    -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5) inset;
 
     &:focus-visible {
       outline: 1px solid black;
@@ -173,9 +170,6 @@ const handleSelect = () => {
 }
 
 .select {
-  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
-  -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
-  -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
   background-color: none;
 }
 
