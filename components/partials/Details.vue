@@ -156,9 +156,9 @@ const currentEpic = computed(() => {
 
 <style lang="scss" scoped>
 .meta {
-  background: #2e3032;
+  background-color: var(--color-sidebar);
   padding: 15px;
-  color: white;
+  color: var(--font-color-primary);
 
   textarea {
     width: 100%;

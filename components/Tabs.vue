@@ -154,13 +154,16 @@ const getCustomerName = ({ customerId }) => {
       }
       .close {
         color: var(--font-color-secondary);
+        &:hover {
+          scale: 1.2;
+        }
       }
 
       &.router-link-exact-active {
         background: var(--color-background);
-        color: var(--color-tabs);
+        color: var(--font-color-primary);
         .close {
-          color: var(--color-tabs);
+          color: var(--font-color-primary);
         }
       }
     }
@@ -169,9 +172,9 @@ const getCustomerName = ({ customerId }) => {
       font-style: italic;
       &.router-link-exact-active {
         background: var(--color-background);
-        color: var(--color-tabs);
+        color: var(--font-color-primary);
         .close {
-          color: var(--color-tabs);
+          color: var(--font-color-primary);
         }
       }
     }

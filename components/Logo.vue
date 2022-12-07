@@ -5,6 +5,6 @@
 <style lang="scss" scoped>
 h1 {
   margin: 0;
-  color: #fff;
+  color: var(--font-color-primary);
 }
 </style>

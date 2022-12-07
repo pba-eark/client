@@ -82,7 +82,6 @@ const tasksForEpic = computed(() => {
 
 <style lang="scss" scoped>
 .epic {
-  background: gray;
   margin: 5px 0;
   padding: 5px;
 

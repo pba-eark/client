@@ -188,7 +188,7 @@ const sheetEpics = computed(() => {
 .block {
   height: 100vh;
   // overflow-y: scroll;
-  background: #2e3032;
+  background-color: var(--color-sidebar);
   padding: 15px;
 
   &__header {
