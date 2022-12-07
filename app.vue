@@ -39,13 +39,14 @@ onMounted(async () => {
 
 <style lang="scss" scoped>
 .layout {
+  background-color: var(--color-background);
   position: relative;
   height: 100vh;
   overflow: hidden;
   display: grid;
-  gap: 0 5px;
+  gap: 0 1px;
   grid-template-columns: 200px auto 350px;
-  grid-template-rows: 50px auto;
+  grid-template-rows: 60px auto;
   grid-template-areas:
     "sidebarLeft tab-section sidebarRight"
     "sidebarLeft main sidebarRight";

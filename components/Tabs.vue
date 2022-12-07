@@ -58,7 +58,7 @@ const getCustomerName = ({ customerId }) => {
         <NuxtLink :to="`/sheet/${tabStore.TEMP_TAB.id}`">
           <div>
             <span class="name">{{ tabStore.TEMP_TAB.sheetName }}</span>
-            <br /><small>
+            <br /><small class="small">
               {{ getCustomerName(tabStore.TEMP_TAB) || "Mangler kunde" }}
             </small>
           </div>
@@ -76,7 +76,7 @@ const getCustomerName = ({ customerId }) => {
         <NuxtLink :to="`/sheet/${tab.id}`">
           <div>
             <span class="name">{{ tab.sheetName }}</span>
-            <br /><small>{{ getCustomerName(tab) || "Mangler kunde" }}</small>
+            <br /><small class="small">{{ getCustomerName(tab) || "Mangler kunde" }}</small>
           </div>
           <Icon
             icon="icon-cross"
@@ -91,7 +91,6 @@ const getCustomerName = ({ customerId }) => {
 
 <style lang="scss" scoped>
 .tabs {
-  background: pink;
   display: flex;
   list-style: none;
   overflow: hidden;
@@ -109,28 +108,23 @@ const getCustomerName = ({ customerId }) => {
       overflow-x: overlay;
       overflow-y: hidden;
     }
-
     > * {
       rotate: -180deg;
     }
-
     /* width */
     &::-webkit-scrollbar {
       height: 5px;
     }
-
     /* Track */
     &::-webkit-scrollbar-track {
       // box-shadow: inset 0 0 5px grey;
       border-radius: 10px;
     }
-
     /* Handle */
     &::-webkit-scrollbar-thumb {
       background: rgb(198, 253, 0);
       border-radius: 10px;
     }
-
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
       background: #b30000;
@@ -139,47 +133,63 @@ const getCustomerName = ({ customerId }) => {
   }
 
   &__tab {
-    margin-right: 5px;
     min-width: max-content;
     direction: ltr;
     text-align: left;
 
-    &.home {
-      height: auto;
-      width: auto;
-      min-width: auto;
-      svg {
-        height: 30px;
-        width: 30px;
+    a {
+      margin-right: 1px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      background: var(--color-tabs);
+      color: var(--font-color-secondary);
+      text-decoration: none;
+      padding: 0px 15px;
+      font-weight: 600;
+
+      .small {
+        opacity: .75;
+        font-weight: 400;
+      }
+      .close {
+        color: var(--font-color-secondary);
+      }
+
+      &.router-link-exact-active {
+        background: var(--color-background);
+        color: var(--color-tabs);
+        .close {
+          color: var(--color-tabs);
+        }
       }
     }
 
     &.temp {
       font-style: italic;
       &.router-link-exact-active {
-        background: blue;
+        background: var(--color-background);
+        color: var(--color-tabs);
+        .close {
+          color: var(--color-tabs);
+        }
       }
     }
 
-    a {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      direction: ltr;
-      background: #666;
-      color: #fff;
-      text-decoration: none;
-      padding: 0 8px;
-
-      &.router-link-exact-active {
-        background: blue;
+    &.home {
+      // height: auto;
+      // width: auto;
+      // min-width: auto;
+      svg {
+        height: 30px;
+        width: 30px;
       }
     }
 
     .close {
-      height: 15px;
-      width: 15px;
-      margin-left: 8px;
+      height: 10px;
+      width: 10px;
+      margin-left: 20px;
     }
   }
 }
