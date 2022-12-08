@@ -1,11 +1,15 @@
 <script setup>
+import { useGlobalStore } from "~/store/";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
 import { useEpicStore } from "~/store/epics";
 import { useTabsStore } from "~/store/tabs";
+import { useTaskStore } from "~/store/tasks";
 
+const globalStore = useGlobalStore();
 const sheetStore = useEstimateSheetStore();
 const epicStore = useEpicStore();
 const tabStore = useTabsStore();
+const taskStore = useTaskStore();
 const route = useRoute();
 const sheetElement = ref(null);
 
@@ -15,6 +19,20 @@ definePageMeta({
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);
+});
+
+onMounted(() => {
+  /* If page is reloaded while being on a temporary tab, remake the temporary tab */
+  if (
+    tabStore.TABS.filter((tab) => tab.id == route.params.id).length < 1 &&
+    tabStore.TEMP_TAB === null
+  ) {
+    tabStore.handleOpenTab(
+      sheetStore.ESTIMATE_SHEETS.filter(
+        (sheet) => sheet.id == route.params.id
+      )[0]
+    );
+  }
 });
 
 onBeforeUnmount(() => {
@@ -33,8 +51,6 @@ const handleClick = (e) => {
 };
 
 const handleCreateEpic = () => {
-  const route = useRoute();
-
   const newEpic = {
     epicName: "Ny Epic",
     estimateSheetId: parseInt(route.params.id),
@@ -42,6 +58,30 @@ const handleCreateEpic = () => {
   };
 
   epicStore.createEpic(newEpic);
+};
+
+const handlePasteEpic = async () => {
+  console.log("Pasting epic...");
+  const epic = { ...globalStore.EPIC_CLIPBOARD };
+  const tasks = [];
+
+  for (let i = 0; taskStore.TASKS.length > i; i++) {
+    if (taskStore.TASKS[i].epicId == epic.id) {
+      tasks.push({ ...taskStore.TASKS[i] });
+    }
+  }
+
+  delete epic.id;
+  epic.estimateSheetId = parseInt(route.params.id);
+  const newEpic = await epicStore.createEpic(epic);
+  console.log("epic created!");
+
+  tasks.forEach(async (task) => {
+    delete task.id;
+    task.epicId = newEpic.id;
+    await taskStore.createTask(task);
+    console.log("task created", task);
+  });
 };
 
 const getParents = (node) => {
@@ -66,9 +106,13 @@ const sheetEpics = computed(() => {
 
 <template>
   <div ref="sheetElement" class="sheet">
-    <div>
-      <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
+    <div v-show="sheetStore.IS_OVERVIEW_TOGGLED">
+      <h1>overview</h1>
+      <Button text="Paste epic" @click="handlePasteEpic" />
+    </div>
 
+    <div v-show="!sheetStore.IS_OVERVIEW_TOGGLED">
+      <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
       <Button text="Ny epic" @click="handleCreateEpic"></Button>
     </div>
   </div>
@@ -77,7 +121,6 @@ const sheetEpics = computed(() => {
 <style lang="scss" scoped>
 .sheet {
   height: calc(100vh - 50px);
-  overflow-y: scroll;
 
   &::-webkit-scrollbar-track {
     background-color: black;

@@ -14,8 +14,4 @@ export default defineComponent({
   </div>
 </template>
 
-<style lang="scss" scoped>
-.block {
-  margin: 20px 0 0 15px;
-}
-</style>
+<style lang="scss" scoped></style>

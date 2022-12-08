@@ -83,11 +83,9 @@ const sheetEpics = computed(() => {
 </script>
 
 <template>
-  <div class="block">
+  <div class="block" :class="{ 'block--epics-open': isEpicsOpen }">
     <Logo />
     <div class="block__header">
-      <Button text="Globale indstillinger" icon="icon-cog" />
-
       <div class="block__projects">
         <Button
           text="Projekter"
@@ -95,7 +93,7 @@ const sheetEpics = computed(() => {
           @click="isProjectsOpen = !isProjectsOpen"
           class="projects"
         />
-        <ul v-show="isProjectsOpen">
+        <ul v-show="isProjectsOpen" class="customers">
           <!-- Customer list -->
           <li
             v-for="customer in customers"
@@ -110,13 +108,14 @@ const sheetEpics = computed(() => {
                 />
               </span>
               <span>
-                {{ customer.customerName }} ({{ customer.sheets.length }})
+                {{ customer.customerName }}
               </span>
             </p>
 
             <!-- Projects for customer -->
-            <ul v-show="customer.visible">
+            <ul v-show="customer.visible" class="sheets">
               <li v-for="sheet in customer.sheets">
+                <div class="sheet-status"></div>
                 <NuxtLink
                   :to="`/sheet/${sheet.id}`"
                   @click="tabStore.handleOpenTab(sheet)"
@@ -135,11 +134,12 @@ const sheetEpics = computed(() => {
                   :class="{ rotate: !showMissingCustomerSheets }"
                 />
               </span>
-              <span>Mangler kunde ({{ sheetsWithoutCustomers.length }})</span>
+              <span>Mangler kunde</span>
             </p>
 
-            <ul v-show="showMissingCustomerSheets">
+            <ul v-show="showMissingCustomerSheets" class="sheets">
               <li v-for="sheet in sheetsWithoutCustomers">
+                <div class="sheet-status"></div>
                 <NuxtLink
                   :to="`/sheet/${sheet.id}`"
                   @click="tabStore.handleOpenTab(sheet)"
@@ -153,8 +153,6 @@ const sheetEpics = computed(() => {
       </div>
     </div>
 
-    <div class="block__epics"></div>
-
     <div
       v-show="
         sheetStore.CURRENT_ESTIMATE_SHEET &&
@@ -162,7 +160,6 @@ const sheetEpics = computed(() => {
       "
       class="block__epics"
     >
-      isEpicsOpen: {{ isEpicsOpen }}
       <!-- Sheet epic nav -->
       <Button
         :text="sheetStore.CURRENT_ESTIMATE_SHEET[0]?.sheetName"
@@ -170,6 +167,9 @@ const sheetEpics = computed(() => {
         @click="isEpicsOpen = !isEpicsOpen"
       />
       <ul v-show="isEpicsOpen">
+        <li>
+          <button @click="sheetStore.toggleSheetOverview()">Overblik</button>
+        </li>
         <li v-for="epic in sheetEpics">
           <button @click="globalStore.scrollToEpic(epic)">
             {{ epic.epicName }}
@@ -182,25 +182,21 @@ const sheetEpics = computed(() => {
 
 <style lang="scss" scoped>
 .block {
+  display: grid;
+  grid-template-rows: 60px auto 1fr;
   height: 100vh;
-  // overflow-y: scroll;
+  overflow-y: auto;
   background-color: var(--color-sidebar);
-  padding: 15px;
+  padding: 0 10px;
 
   &__header {
-    border-bottom: 2px solid #242424;
-    padding: 15px 0;
-
     button {
       width: 100%;
-      margin-bottom: 15px;
       height: 36px;
       padding: 0 5px;
       border: none;
 
       &.projects {
-        background: #606060;
-        color: #fff;
         margin: 0;
       }
 
@@ -215,18 +211,16 @@ const sheetEpics = computed(() => {
     height: 100%;
     overflow: hidden;
     margin-bottom: 15px;
-    color: #fff;
 
-    > ul {
+    > ul.customers {
       border-top: 1px solid #242424;
-      background: #606060;
       padding: 5px 8px;
 
       p {
         padding: 5px 0;
         cursor: pointer;
         user-select: none;
-        font-weight: bold;
+        font-weight: 600;
 
         svg {
           height: 10px;
@@ -235,22 +229,30 @@ const sheetEpics = computed(() => {
         }
       }
 
-      ul {
-        margin-left: 5px;
-        border-left: 1px solid #fff;
-        padding-left: 6px;
+      ul.sheets {
+        padding-left: 15px;
+        margin-left: 4px;
         margin-bottom: 5px;
+        border-left: 2px solid rgba(0, 0, 0, 0.25);
 
         li {
           padding: 3px 0;
+          display: flex;
+          gap: 5px;
+
+          .sheet-status {
+            margin-top: 0.25rem;
+            height: 10px;
+            width: 10px;
+            border-radius: 50px;
+            background: red;
+          }
         }
       }
     }
   }
 
   &__epics {
-    color: #fff;
-
     button {
       width: 100%;
     }

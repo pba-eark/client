@@ -16,8 +16,6 @@ onMounted(async () => {
   if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)
     await jiraStore.setJwt(localStorage.getItem("jira"));
 
-  // if (authStore.IS_AUTHORIZED) await globalStore.fetchData();
-
   return globalStore.setLoaded(true);
 });
 </script>
@@ -29,9 +27,9 @@ onMounted(async () => {
   >
     <Tabs v-if="authStore.IS_AUTHORIZED" class="tab-section" />
     <Sidebar v-if="authStore.IS_AUTHORIZED" class="sidebar-left" />
-    <div class="main">
+    <main>
       <LazyNuxtPage />
-    </div>
+    </main>
 
     <Details class="sidebar-right" v-if="authStore.IS_AUTHORIZED" />
   </div>
@@ -55,16 +53,20 @@ onMounted(async () => {
 .tab-section {
   grid-area: tab-section;
 }
+
 .header {
   grid-area: header;
 }
+
 .sidebar-left {
   grid-area: sidebarLeft;
 }
-.main {
+
+main {
   grid-area: main;
   overflow-y: auto;
 }
+
 .sidebar-right {
   grid-area: sidebarRight;
 }

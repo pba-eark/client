@@ -1,8 +1,10 @@
 <script setup>
+import { useGlobalStore } from "~/store/";
 import { useDetailsStore } from "~/store/details";
 import { useEpicStore } from "~/store/epics";
 import { useTaskStore } from "~/store/tasks";
 
+const globalStore = useGlobalStore();
 const detailsStore = useDetailsStore();
 const epicStore = useEpicStore();
 const taskStore = useTaskStore();
@@ -64,6 +66,26 @@ const handleUpdateEpicComment = async (val) => {
   await epicStore.updateEpic(detailsStore.DETAILS);
 };
 
+const handleCopyEpic = (obj) => {
+  const epic = { ...obj };
+  delete epic.estimateSheetId;
+  globalStore.copyEpic(epic);
+};
+
+const handleCopyTask = (obj) => {
+  const task = { ...obj };
+  delete task.id;
+  delete task.epicId;
+  globalStore.copyTask(task);
+};
+
+const handlePasteTask = () => {
+  const task = { ...globalStore.TASK_CLIPBOARD };
+  task.epicId = detailsStore.DETAILS.id;
+  taskStore.createTask(task);
+};
+
+/* Computed */
 const currentEpic = computed(() => {
   return epicStore.EPICS.filter((epic) => {
     return epic.id == detailsStore.DETAILS.epicId;
@@ -91,6 +113,22 @@ const currentEpic = computed(() => {
       </div>
 
       <div class="meta__body">
+        <Button
+          v-if="item.type === 'epic'"
+          text="Kopiér epic"
+          @click="handleCopyEpic(detailsStore.DETAILS)"
+        />
+        <Button
+          v-if="item.type === 'epic'"
+          text="Paste task"
+          @click="handlePasteTask"
+        />
+        <Button
+          v-if="item.type === 'task'"
+          text="Kopiér task"
+          @click="handleCopyTask(detailsStore.DETAILS)"
+        />
+
         <div v-if="item.type === 'epic'">
           <Input
             label="Epic titel"
