@@ -2,12 +2,16 @@
 
 import { useRiskProfileStore } from "~~/store/riskProfiles";
 import { useRoleStore } from "~~/store/roles";
+import { useTaskStore } from "~~/store/tasks";
+import { useEpicStore } from "~~/store/epics";
 import { useSheetStatusStore } from "~~/store/sheetStatus";
 import { useEpicStatusStore } from "~~/store/epicStatus";
 import { useEstimateSheetRiskProfileStore } from "~~/store/composites/estimateSheetRiskProfiles";
 
 const riskProfileStore = useRiskProfileStore();
 const roleStore = useRoleStore();
+const taskStore = useTaskStore();
+const epicStore = useEpicStore();
 const sheetStatusStore = useSheetStatusStore();
 const epicStatusStore = useEpicStatusStore();
 const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
@@ -21,114 +25,103 @@ const props = defineProps({
 
 const localSettingsTab = ref(true)
 
+/* Profile */
 const sheetProfiles = ref([]);
 const masterGlobals = ref([]);
 const globals = ref([]);
-const locals = ref([]);
 
-const pushData = ref(false);
-
-onMounted(() => {
-
-
-
-  riskProfileStore.RISK_PROFILES.forEach(element => {
-    estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(item => {
-      if (element.id == item.riskProfileId && props.sheetId == item.estimateSheetId) {
-        sheetProfiles.value.push(element);
-      }
-    });
-  });
-
-  riskProfileStore.RISK_PROFILES.forEach(element => {
-    if (element.global) {
-      masterGlobals.value.push(element);
+riskProfileStore.RISK_PROFILES.forEach(element => {
+  estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(item => {
+    if (element.id == item.riskProfileId && props.sheetId == item.estimateSheetId) {
+      sheetProfiles.value.push(element);
     }
   });
+});
 
+riskProfileStore.RISK_PROFILES.forEach(element => {
+  if (element.global) {
+    masterGlobals.value.push(element);
+  }
+});
 
-  masterGlobals.value.forEach(masterGlobal => {
+masterGlobals.value.forEach(masterGlobal => {
 
-    sheetProfiles.value.forEach(sheetProfile => {
+  let indexToSplice = 0;
 
+  sheetProfiles.value.forEach(sheetProfile => {
 
+    const index = sheetProfiles.value.findIndex(
+      (profile) => profile.profileName == masterGlobal.profileName
+    );
 
-      let test = globals.value.map((global) => { console.log("global", global), console.log("sheet", sheetProfile) });
-      console.log("test", test)
-
-      //if (element.profileName == item.profileName) {
-      if (globals.value.filter((global) => { return global.profileName == sheetProfile.profileName; }).length > 0) {
-
-        //globals.value.push(sheetProfile);
-      }
-
-
-
-
-      // sheetProfiles.value.filter((sheetProfile) => {
-      //   return sheetProfile.profileName !== masterGlobal.profileName;
-      // })
-
-      //}
-
-    });
+    if (index >= 0 && sheetProfile.profileName == masterGlobal.profileName) {
+      globals.value.push(sheetProfile);
+      indexToSplice = index;
+    }
 
   });
 
-  /*let mgRun = 0
-  let spRun = 0
+  sheetProfiles.value.splice(indexToSplice, 1);
 
-  masterGlobals.value.forEach(element => {
-
-    pushData.value = true;
-
-    mgRun ++
-    console.log("mgRun", mgRun)
-    console.log("mg push", pushData.value)
-    sheetProfiles.value.forEach(item => {
-
-      if (element.profileName == item.profileName && !globals.value.includes(item.profileName) && pushData.value == true) {
-        spRun ++
-        console.log("spRun", spRun)
-
-        // if (!globals.value.includes(item) && pushData == true) {
-
-        //   globals.value.push(item);
-        //   pushData = false;
-
-        // }
-        console.log("add to global", item)
-        globals.value.push(item);
-        pushData.value = false;
-        console.log("sp push", pushData.value)
-      }
-      else if (!locals.value.includes(item) && !globals.value.includes(element)) {
-
-        spRun ++
-        console.log("spRun", spRun)
-        // if (!globals.value.includes(element)) {
-        //   globals.value.push(element);
-        // }
-
-        // if (!locals.value.includes(item) && !globals.value.includes(item)) {
-        //   locals.value.push(item);
-        // }
-        console.log("add to local", item)
-        locals.value.push(item);
-        console.log("sp push", pushData.value)
-      }
-    });
-  });*/
-
-
-  console.log("sheetProfiles", sheetProfiles.value)
-  //console.log("masterGlobals", masterGlobals.value)
-  console.log("globals", globals.value)
-  //console.log("locals", locals.value)
 });
 
+/* Role */
+const sheetTasks = ref([]);
+const sheetEpics = ref([]);
+const sheetRoles = ref([]);
+const globalMasterRoles = ref([]);
+const globalRoles = ref([]);
 
+epicStore.EPICS.forEach(epic => {
+  if (epic.estimateSheetId == props.sheetId) {
+    sheetEpics.value.push(epic);
+  }
+});
 
+taskStore.TASKS.forEach(task => {
+  sheetEpics.value.forEach(epic => {
+    if (task.epicId == epic.id) {
+      sheetTasks.value.push(task)
+    }
+  });
+});
+
+roleStore.ROLES.forEach(role => {
+  sheetTasks.value.forEach(task => {
+    if (role.id == task.roleId && !sheetRoles.value.includes(role)) {
+      sheetRoles.value.push(role)
+    }
+  });
+});
+
+roleStore.ROLES.forEach(role => {
+  if (role.global) {
+    globalMasterRoles.value.push(role);
+  }
+});
+
+globalMasterRoles.value.forEach(masterRole => {
+
+let indexToSplice = 0;
+
+sheetRoles.value.forEach(sheetRole => {
+
+  const index = sheetRoles.value.findIndex(
+    (role) => role.roleName == masterRole.roleName
+  );
+
+  if (index >= 0 && sheetRole.roleName == masterRole.roleName) {
+    globalRoles.value.push(sheetRole);
+    indexToSplice = index;
+  }
+
+});
+
+sheetRoles.value.splice(indexToSplice, 1);
+
+});
+
+console.log(globalRoles.value)
 
 </script>
 
@@ -142,27 +135,24 @@ onMounted(() => {
       <h2>Lokal</h2>
 
       <h3>Risikoprofiler</h3>
-      <div v-for="riskProfile in globals.value" :key="riskProfile.id">
-        <LocalGlobalSettings :data="riskProfile" />
+      <div v-for="riskProfile in globals" :key="riskProfile.id">
+        <LocalGlobalSettings :data="riskProfile" :renderForm="'riskProfile'"/>
       </div>
       <p>-----------------------------</p>
-      <div v-for="riskProfile in locals.value" :key="riskProfile.id">
-        <LocalSettings :data="riskProfile" />
+      <div v-for="riskProfile in sheetProfiles" :key="riskProfile.id">
+        <LocalSettings :data="riskProfile" :renderForm="'riskProfile'"/>
       </div>
 
 
       <h3>Roller</h3>
-      <!-- <div v-for="role in roleStore.ROLES" :key="role.id">
-        <div v-if="!role.global">
-          <Input @change="handleUpdateRole(role, 'name')" v-model="input" :default="role.roleName" />
-          <Input @change="handleUpdateRole(role, 'wage')" v-model="input" :default="role.hourlyWage || '0'" />
-          <Input type="checkbox" @change="handleUpdateRole(role, 'global')" v-model="input" :default="role.global" />
-          <Input type="checkbox" @change="handleUpdateRole(role, 'default')" v-model="input" :default="role.default" />
-        </div>
+      <div v-for="role in globalRoles" :key="role.id">
+        <LocalGlobalSettings :data="role" :renderForm="'role'"/>
       </div>
-      <br>
-      <Button text="Ny Rolle" @Click="handleCreateRole(newRole, 'globalSetting')" />
-      <br>
+      <p>-----------------------------</p>
+      <div v-for="role in sheetRoles" :key="role.id">
+        <LocalSettings :data="role" :renderForm="'role'"/>
+      </div>
+      <!-- 
 
       <h3>Ark status</h3>
       <div v-for="sheetStatus in sheetStatusStore.SHEET_STATUS" :key="sheetStatus.id">

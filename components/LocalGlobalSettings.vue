@@ -11,27 +11,14 @@ const props = defineProps({
         type: Object,
         required: true
     },
+    renderForm: {
+        type: String,
+        required: true
+    }
 });
 
 /* Profile */
-const handleUpdateProfile = (obj) => {
-    if (writePercentage != null) {
-        obj.percentage = writePercentage;
-    }
-    riskProfileStore.updateRiskProfile(obj);
-};
-
-const newRiskProfile = {
-    global: false,
-    default: false,
-    profileName: "Ny profil",
-    percentage: 0
-};
-
 const handleCreateProfile = (obj) => {
-
-
-
     riskProfileStore.createRiskProfile(obj);
 };
 
@@ -153,22 +140,37 @@ const useGlobalValue = () => {
 
             <br>
 
-            <form>
+            <form v-if="props.renderForm == 'riskProfile'">
                 <p>"icon" Profil Navn</p>
                 <p>{{ props.data.profileName }}</p>
                 <p>{{ props.data.percentage }}</p>
                 <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
                 <div v-if="!disabled">
                     <p>Benyt Global Værdi</p>
-                    <p>{{ riskProfile.percentage }}%</p>
+                    <p>{{ props.data.percentage }}%</p>
                     <input type="checkbox" @change="useGlobalValue">
                     <input type="text" :disabled=writePercentageField v-model="writePercentage">
-                    <Button text="Save" @click="handleCreateProfile(riskProfile)"/>
+                    <Button text="Save" @click="handleCreateProfile(props.data)"/>
                     <Button text="Unsave" @click="(disabled = true)"/>
                 </div>
             </form>
 
             <br>
+
+            <form v-if="props.renderForm == 'role'">
+                <p>"icon" Rolle Navn</p>
+                <p>{{ props.data.roleName }}</p>
+                <p>{{ props.data.hourlyWage }}</p>
+                <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
+                <div v-if="!disabled">
+                    <p>Benyt Global Værdi</p>
+                    <p>{{ props.data.hourlyWage }}kr</p>
+                    <input type="checkbox" @change="useGlobalValue">
+                    <input type="text" :disabled=writePercentageField v-model="writePercentage">
+                    <Button text="Save" @click="handleCreateRole(props.data)"/>
+                    <Button text="Unsave" @click="(disabled = true)"/>
+                </div>
+            </form>
 
 
             <!-- <Input @change="handleUpdateProfile(props.data, 'name')" v-model="input"
