@@ -98,7 +98,6 @@ let showSettings = ref(false);
 
 const show = () => {
   showSettings.value = !showSettings.value;
-  console.log(showSettings.value)
 };
 
 </script>
@@ -108,7 +107,7 @@ const show = () => {
 
 
     <Button text="Indstillinger" @click="show" />
-    <Settings v-if="showSettings" />
+    <Settings v-if="showSettings" :sheetId=route.params.id />
 
 
 
