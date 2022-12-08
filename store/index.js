@@ -9,9 +9,13 @@ import { useTaskStore } from "./tasks";
 import { useUserStore } from "./users";
 import { useSheetStatusStore } from "./sheetStatus"
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useEstimateSheetRiskProfileStore } from "./composites/estimateSheetRiskProfiles";
 =======
 >>>>>>> 29b341a (Settings)
+=======
+import { useEstimateSheetRiskProfileStore } from "./composites/estimateSheetRiskProfiles";
+>>>>>>> 5eb0cdb (lort)
 
 export const useGlobalStore = defineStore("global-store", () => {
   const customerStore = useCustomerStore();
@@ -24,9 +28,13 @@ export const useGlobalStore = defineStore("global-store", () => {
   const userStore = useUserStore();
   const sheetStatusStore = useSheetStatusStore();
 <<<<<<< HEAD
+<<<<<<< HEAD
   const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 =======
 >>>>>>> 29b341a (Settings)
+=======
+  const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
+>>>>>>> 5eb0cdb (lort)
 
   /* State */
   const isLoaded = ref(false);
@@ -49,9 +57,13 @@ export const useGlobalStore = defineStore("global-store", () => {
     await taskStore.getTasks();
     await sheetStatusStore.getSheetStatus();
 <<<<<<< HEAD
+<<<<<<< HEAD
     await estimateSheetRiskProfileStore.getEstimateSheetRiskProfiles();
 =======
 >>>>>>> 29b341a (Settings)
+=======
+    await estimateSheetRiskProfileStore.getEstimateSheetRiskProfiles();
+>>>>>>> 5eb0cdb (lort)
   };
 
   const scrollToEpic = ({ id }) => {
