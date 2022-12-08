@@ -107,7 +107,7 @@ const show = () => {
 
 
     <Button text="Indstillinger" @click="show" />
-    <Settings v-if="showSettings" :sheetId=route.params.id />
+    <Settings v-if="showSettings" :sheetId="parseInt(route.params.id)" />
 
 
 
