@@ -50,14 +50,28 @@ const handleClick = (e) => {
   return;
 };
 
-const handleCreateEpic = () => {
-  const newEpic = {
+const handleCreateEpic = async () => {
+  const obj = {
     epicName: "Ny Epic",
     estimateSheetId: parseInt(route.params.id),
     epicStatusId: 1,
   };
 
-  epicStore.createEpic(newEpic);
+  const newEpic = await epicStore.createEpic(obj);
+
+  const newTask = {
+    parentId: 0,
+    taskName: "Ny task",
+    hourEstimate: 0,
+    estimateReasoning: "Begrundelse for estimat...",
+    optOut: false,
+    taskDescription: "Beskrivelse...",
+    epicId: newEpic.id,
+    roleId: 0,
+    riskProfileId: 1,
+  };
+
+  await taskStore.createTask(newTask);
 };
 
 const handlePasteEpic = async () => {
