@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { useAuthStore } from "./auth";
-import { typeCheck } from "../helpers/functions";
+import { useAuthStore } from "~~/store/auth";
+import { typeCheck } from "~~/helpers/functions";
 
 export const useEstimateSheetRiskProfileStore = defineStore("estimate-sheet-risk-profile-store", () => {
 
@@ -24,7 +24,7 @@ export const useEstimateSheetRiskProfileStore = defineStore("estimate-sheet-risk
         Authorization: `Bearer ${authStore.API_TOKEN}`,
       },
     });
-
+    
     setEstimateSheetRiskProfiles(response);
   };
 
@@ -79,7 +79,7 @@ export const useEstimateSheetRiskProfileStore = defineStore("estimate-sheet-risk
   };
 
   /* Getters */
-  const ESTIMATE_SHEET_RISK_PROFILES = computed(() => additionalExpenses.value);
+  const ESTIMATE_SHEET_RISK_PROFILES = computed(() => estimateSheetRiskProfiles.value);
 
   return {
     getEstimateSheetRiskProfiles,
