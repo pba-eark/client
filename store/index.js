@@ -20,6 +20,13 @@ export const useGlobalStore = defineStore("global-store", () => {
 
   /* State */
   const isLoaded = ref(false);
+  const epicClipboard = ref(null);
+  const taskClipboard = ref(null);
+
+  /* Actions */
+  const setLoaded = (payload) => {
+    isLoaded.value = payload;
+  };
 
   const fetchData = async () => {
     await userStore.getUsers();
@@ -30,11 +37,6 @@ export const useGlobalStore = defineStore("global-store", () => {
     await riskProfileStore.getRiskProfiles();
     await roleStore.getRoles();
     await taskStore.getTasks();
-  };
-
-  /* Actions */
-  const setLoaded = (payload) => {
-    isLoaded.value = payload;
   };
 
   const scrollToEpic = ({ id }) => {
@@ -52,13 +54,27 @@ export const useGlobalStore = defineStore("global-store", () => {
     }
   };
 
+  const copyEpic = (payload) => {
+    epicClipboard.value = payload;
+  };
+
+  const copyTask = (payload) => {
+    taskClipboard.value = payload;
+  };
+
   /* Getters */
   const IS_LOADED = computed(() => isLoaded.value);
+  const EPIC_CLIPBOARD = computed(() => epicClipboard.value);
+  const TASK_CLIPBOARD = computed(() => taskClipboard.value);
 
   return {
     fetchData,
     setLoaded,
     scrollToEpic,
+    copyEpic,
+    copyTask,
     IS_LOADED,
+    EPIC_CLIPBOARD,
+    TASK_CLIPBOARD,
   };
 });
