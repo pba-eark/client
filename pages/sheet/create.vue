@@ -87,7 +87,6 @@ const handleSubmit = async () => {
       riskProfileId: globalProfile.id,
     };
     sheetRiskProfileStore.createEstimateSheetRiskProfile(obj);
-    console.log("added connection", obj);
   });
 
   /* Copy from sheet, if selected */
