@@ -61,7 +61,6 @@ const handleCreateEpic = () => {
 };
 
 const handlePasteEpic = async () => {
-  console.log("Pasting epic...");
   const epic = { ...globalStore.EPIC_CLIPBOARD };
   const tasks = [];
 
@@ -74,13 +73,11 @@ const handlePasteEpic = async () => {
   delete epic.id;
   epic.estimateSheetId = parseInt(route.params.id);
   const newEpic = await epicStore.createEpic(epic);
-  console.log("epic created!");
 
   tasks.forEach(async (task) => {
     delete task.id;
     task.epicId = newEpic.id;
     await taskStore.createTask(task);
-    console.log("task created", task);
   });
 };
 

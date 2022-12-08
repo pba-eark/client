@@ -11,7 +11,6 @@ export const useTaskStore = defineStore("task-store", () => {
 
   /* Actions */
   const setTasks = (payload) => {
-    console.log("SETTING TASKS");
     tasks.value = payload;
   };
 
@@ -44,7 +43,6 @@ export const useTaskStore = defineStore("task-store", () => {
         body: task,
       });
 
-      console.log("new task", res);
       tasks.value = [...tasks.value, res];
     } catch (e) {
       console.log("ERROR", e);
