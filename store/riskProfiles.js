@@ -44,7 +44,8 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
         body: obj,
       });
 
-      riskProfiles.value = [...riskProfiles.value, response];
+    riskProfiles.value = [...riskProfiles.value, response];
+    return response;
   };
 
   const updateRiskProfile = async (obj) => {
@@ -66,18 +67,26 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
   };
 
   const deleteRiskProfile = async (id) => {
-    await $fetch(
-      `${runtimeConfig.public.API_URL}/sheetstatus/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authStore.API_TOKEN}`,
-        },
-      });
+    try {
+      await $fetch(
+        `${runtimeConfig.public.API_URL}/riskprofiles/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authStore.API_TOKEN}`,
+          },
+        });
+    } catch (e) {
+      return console.log("Error", e);
+    }
 
-    remove(id);
+    setRiskProfiles(
+      riskProfiles.value.filter((profile) => {
+        return profile.id !== id;
+      })
+    );
   };
 
   /* Helper functions */
@@ -86,23 +95,6 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
     riskProfiles.value.map((riskProfile) => {
 
       if (riskProfile.id === typeCheck(id)) Object.assign(riskProfile, obj);
-
-    });
-
-  };
-
-  const remove = (id) => {
-
-    riskProfiles.value.forEach((element) => {
-
-      element.id;
-
-      if (element.id === typeCheck(id)) {
-
-        let index = riskProfiles.value.findIndex(element);
-        riskProfiles.value.splice(index, 1);
-
-      }
 
     });
 
