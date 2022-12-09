@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useCustomerStore } from "./customers";
 import { useEpicStore } from "./epics";
-import { useEpicStatusStore } from "./epicstatus";
+import { useEpicStatusStore } from "./epicStatus";
 import { useEstimateSheetStore } from "./estimateSheets";
 import { useRiskProfileStore } from "./riskProfiles";
 import { useRoleStore } from "./roles";
