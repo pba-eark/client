@@ -130,8 +130,6 @@ const useGlobalValue = () => {
     writePercentage = null;
 };
 
-
-
 </script>
 
 <template>
@@ -170,6 +168,13 @@ const useGlobalValue = () => {
                     <Button text="Save" @click="handleCreateRole(props.data)"/>
                     <Button text="Unsave" @click="(disabled = true)"/>
                 </div>
+            </form>
+
+            <br>
+
+            <form v-if="props.renderForm == 'sheetStatus'">
+                <p>Status Navn</p>
+                <p>{{ props.data.sheetStatusName }}</p>
             </form>
 
 
