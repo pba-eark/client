@@ -17,11 +17,6 @@ const props = defineProps({
     type: String,
     default: "text",
   },
-  classes: {
-    type: String,
-    required: false,
-    default: "",
-  },
   options: {
     type: Array,
     required: false,
@@ -65,11 +60,12 @@ const handleSelect = () => {
 </script>
 
 <template>
-  <label class="input">
+  <label class="input" :class="classes">
+    
     <!-- Label -->
     <span class="input__label">
       {{ props.label && props.label.length ? props.label : "" }}
-      <span v-if="required" class="required" :class="classes">*</span>
+      <span v-if="required" class="required">*</span>
     </span>
 
     <!-- Textarea -->
@@ -81,7 +77,6 @@ const handleSelect = () => {
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
       :placeholder="props.placeholder"
-      :class="classes"
       >{{ data.value }}</textarea
     >
 
@@ -91,8 +86,6 @@ const handleSelect = () => {
       v-model="data.value"
       v-bind="$attrs"
       @change="handleSelect"
-      :class="props.type"
-      class="input__field"
     >
       <option value="" selected disabled>{{ props.placeholder }}</option>
       <option v-for="option in props.options" :key="option.id" :value="option">
@@ -114,7 +107,6 @@ const handleSelect = () => {
       "
       :type="props.type"
       :placeholder="props.placeholder"
-      :class="classes"
     />
 
     <!-- Default Input -->
@@ -127,49 +119,76 @@ const handleSelect = () => {
       "
       :type="props.type"
       :placeholder="props.placeholder"
-      class="input__field"
     />
   </label>
 </template>
 
 <style lang="scss" scoped>
+
 .input {
+  width: 100%;
+  height: 100%;
+  font-size: 1rem;
+  line-height: 1;
+  
   &__label {
     display: block;
     user-select: none;
   }
-
-  &__field {
-    font-size: 1rem;
-    width: 100%;
-    padding: 4px;
-    border: 1px solid gray;
-    background-color: none;
-    border-radius: 0;
-
-    &:focus-visible {
-      outline: 1px solid black;
-    }
-
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+  
+  &__text {
+    
+    &--task {
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      border: none;
+      border-radius: 0;
+      font-size: inherit;
+      line-height: inherit;
     }
   }
-}
+  
+  &__number {
+    
+    &--task {
+      width: 100%;
+      height: 100%;
+      text-align: right;
+      background-color: transparent;
+      border: none;
+      border-radius: 0;
+      font-size: inherit;
+      line-height: inherit;
+      
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+  }
+  
+  &__select {
+    
+    &--task {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: transparent;
+      border-radius: 0;
+      font-size: inherit;
+      line-height: inherit;
+    }
+  }
 
-.number {
-  text-align: right;
-}
+  &__checkbox {
 
-.checkbox {
-  height: 25px;
-  width: 25px;
-}
-
-.select {
-  background-color: none;
+    &--task {
+      height: 25px;
+      width: 25px;
+    }
+  }
 }
 
 .required {

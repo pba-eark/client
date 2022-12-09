@@ -45,18 +45,14 @@ const tasksForEpic = computed(() => {
         <Button text="Edit" @click="detailsStore.setDetails(props.data)" />
       </div>
       <div class="epic__table-header">
-        <div class="epic__table-col">Navn</div>
+        <div class="epic__table-col">Task navn</div>
         <div class="epic__table-col">Risikoprofil</div>
         <div class="epic__table-col">Rolle</div>
-        <div class="epic__table-col">Estimat</div>
-        <div class="epic__table-col epic__table--realistic">
-          <div class="">Timer</div>
-          <div class="">Pris DKK</div>
-        </div>
-        <div class="epic__table-col epic__table--pessimistic">
-          <div class="">Timer</div>
-          <div class="">Pris DKK</div>
-        </div>
+        <div class="epic__table-col epic__table--right">Estimat</div>
+        <div class="epic__table-col epic__table--right">Timer</div>
+        <div class="epic__table-col epic__table--right">Pris DKK</div>
+        <div class="epic__table-col epic__table--right">Timer</div>
+        <div class="epic__table-col epic__table--right">Pris DKK</div>
         <div class="epic__table-col">Fravalgt</div>
       </div>
     </div>
@@ -79,36 +75,36 @@ const tasksForEpic = computed(() => {
 <style lang="scss" scoped>
 .epic {
   margin: 5px 0;
-  padding: 5px;
 
   &__table {
     display: grid;
-    gap: 3px;
+    gap: var(--table-gap);
 
     &-header {
       width: 100%;
       display: grid;
-      grid-template-columns: auto 100px 200px 70px 70px 100px 70px 100px 75px;
-      gap: 3px;
-      margin-bottom: 3px;
+      gap: var(--table-gap);
+      grid-template-columns: var(--table-columns);
+      font-weight: 600;
     }
 
     &-col {
-      background-color: black;
-      color: var(--font-color-secondary);
-      padding: 10px;
+      color: var(--font-color-primary);
+      padding: 7px;
+    }
+
+    &--right {
+      text-align: right;
     }
 
     &--realistic {
       grid-column: span 2;
-      background-color: var(--color-realistic);
       display: grid;
       grid-template-columns: 70px 100px;
     }
 
     &--pessimistic {
       grid-column: span 2;
-      background-color: var(--color-pessimistic);
       display: grid;
       grid-template-columns: 70px 100px;
     }

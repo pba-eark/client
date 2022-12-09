@@ -81,6 +81,7 @@ const currentEstimate = computed(() => {
   <div class="task__row" :class="{ 'task--disabled': props.data.optOut }">
     <div class="task__col">
       <Input
+        class="input__text--task"
         :default="props.data.taskName"
         emit="updateTaskName"
         @updateTaskName="handleUpdateTaskName"
@@ -89,6 +90,7 @@ const currentEstimate = computed(() => {
 
     <div class="task__col">
       <Input
+        class="input__select--task"
         type="select"
         :options="riskProfileOptions"
         emit="updateRiskProfile"
@@ -99,6 +101,7 @@ const currentEstimate = computed(() => {
 
     <div class="task__col">
       <Input
+        class="input__select--task"
         type="select"
         :placeholder="
           currentRole[0]?.roleName ? currentRole[0].roleName : 'Vælg rolle'
@@ -109,9 +112,9 @@ const currentEstimate = computed(() => {
       />
     </div>
 
-    <div class="task__col task--number">
+    <div class="task__col">
       <Input
-        class="number"
+        class="input__number--task"
         :default="currentEstimate"
         emit="updateEstimate"
         @updateEstimate="handleUpdateEstimate"
@@ -134,13 +137,18 @@ const currentEstimate = computed(() => {
       {{ pricePessimistic }}
     </div>
 
-    <div class="task__col task--checkbox">
+    <div class="task__col task--center">
       <Input
         type="checkbox"
+        class="input__checkbox--task"
         v-model="props.data.optOut"
         @change="taskStore.updateTask(props.data)"
         :default="props.data.optOut"
       />
+    </div>
+
+    <div class="task__col task--center">
+      <Icon icon="icon-dots" class="task__details-icon" />
     </div>
   </div>
 </template>
@@ -149,22 +157,22 @@ const currentEstimate = computed(() => {
 .task {
   &__row {
     width: 100%;
+    background-color: var(--color-task);
     display: grid;
-    grid-template-columns: auto 100px 200px 70px 70px 100px 70px 100px 75px;
-    gap: 3px;
+    gap: var(--table-gap);
+    grid-template-columns: var(--table-columns);
   }
 
   &--disabled {
-    background: red;
+    background: var(--color-disabled);
     .task__col {
-      background: red;
+      background: var(--color-disabled);
     }
   }
 
   &__col {
-    background-color: white;
-    color: black;
-    padding: 5px;
+    color: var(--font-color-primary);
+    padding: 2px;
   }
 
   &--number {
@@ -173,23 +181,29 @@ const currentEstimate = computed(() => {
     flex-direction: row-reverse;
   }
 
-  &--checkbox {
+  &--realistic {
+    background-color: var(--color-realistic);
+    color: var(--font-color-secondary);
+    padding: 8px;
+  }
+
+  &--pessimistic {
+    background-color: var(--color-pessimistic);
+    color: var(--font-color-secondary);
+    padding: 8px;
+  }
+
+  &--center {
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  &--realistic {
-    background-color: var(--color-realistic);
-    color: var(--font-color-secondary);
-    padding: 10px;
-  }
-
-  &--pessimistic {
-    background-color: var(--color-pessimistic);
-    color: var(--font-color-secondary);
-    padding: 10px;
+  &__details-icon {
+    max-height: 20px;
+    max-width: 20px;
+    cursor: pointer;
   }
 }
 </style>
