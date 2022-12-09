@@ -26,6 +26,10 @@ const handleUpdateProfile = (obj) => {
     riskProfileStore.updateRiskProfile(obj);
 };
 
+const handleDeleteProfile = (id) => {
+    riskProfileStore.deleteRiskProfile(id);
+};
+
 /* Role */
 const handleUpdateRole = (obj) => {
     roleStore.updateRole(obj);
@@ -43,6 +47,7 @@ const handleUpdateRole = (obj) => {
                 <p for="name">"icon" Profil Navn</p>
                 <input type="text" :disabled=disabled v-model="data.profileName">
                 <input type="text" :disabled=disabled v-model="data.percentage">
+                <Button text="Delete" @click="handleDeleteProfile(data.id)" />
                 <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
                 <div v-if="!disabled">
                     <Button text="Save" @click="handleUpdateProfile(data)"/>

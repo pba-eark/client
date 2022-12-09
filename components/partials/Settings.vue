@@ -26,6 +26,7 @@ const props = defineProps({
 
 const localSettingsTab = ref(true)
 
+// #region Profile
 /* Profile */
 const sheetProfiles = ref([]);
 const masterGlobals = ref([]);
@@ -66,6 +67,27 @@ masterGlobals.value.forEach(masterGlobal => {
 
 });
 
+const newLokalProfile = {
+  global: false,
+  default: false,
+  profileName: "Ny Profil",
+  percentage: 0
+};
+
+const newSheetLink = ref({
+  estimateSheetId: props.sheetId,
+  riskProfileId: 0
+});
+
+const handleCreateProfile = async () => {
+  let newProfile = await riskProfileStore.createRiskProfile(newLokalProfile);
+  newSheetLink.value.riskProfileId = newProfile.id;
+  await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
+  sheetProfiles.value.push(newProfile)
+};
+// #endregion
+
+// #region Role
 /* Role */
 const sheetTasks = ref([]);
 const sheetEpics = ref([]);
@@ -121,13 +143,16 @@ globalMasterRoles.value.forEach(masterRole => {
   sheetRoles.value.splice(indexToSplice, 1);
 
 });
+// #endregion
 
+// #region SheetStatus
 /* SheetStatus */
 const globalMasterSheetStatus = ref([]);
 
 sheetStatusStore.SHEET_STATUS.forEach(status => {
   globalMasterSheetStatus.value.push(status);
 });
+// #endregion
 
 </script>
 
@@ -148,6 +173,7 @@ sheetStatusStore.SHEET_STATUS.forEach(status => {
       <div v-for="riskProfile in sheetProfiles" :key="riskProfile.id">
         <LocalSettings :data="riskProfile" :renderForm="'riskProfile'" />
       </div>
+      <Button text="New Profile" @Click="handleCreateProfile" />
 
 
       <h3>Roller</h3>
@@ -160,11 +186,6 @@ sheetStatusStore.SHEET_STATUS.forEach(status => {
       </div>
 
     </div>
-
-
-
-
-
 
     <div v-if="!localSettingsTab">
       <h2>Global</h2>
@@ -184,7 +205,7 @@ sheetStatusStore.SHEET_STATUS.forEach(status => {
         <GlobalSettings :data="status" :renderForm="'sheetStatus'" />
       </div>
 
-      
+
 
 
       <!-- <h2>Global</h2>
