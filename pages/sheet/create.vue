@@ -4,12 +4,16 @@ import { useEstimateSheetStore } from "~/store/estimateSheets";
 import { useTabsStore } from "~/store/tabs";
 import { useEpicStore } from "~/store/epics";
 import { useTaskStore } from "~/store/tasks";
+import { useRiskProfileStore } from "~/store/riskProfiles";
+import { useEstimateSheetRiskProfileStore } from "~/store/composites/estimateSheetRiskProfiles";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
 const tabStore = useTabsStore();
 const epicStore = useEpicStore();
 const taskStore = useTaskStore();
+const riskProfileStore = useRiskProfileStore();
+const sheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 
 const customers = ref([]);
 const copyFromCustomer = ref(null);
@@ -69,6 +73,21 @@ const handleSubmit = async () => {
   }
 
   const newSheet = await sheetStore.createEstimateSheet(postData.sheet);
+
+  /* Create connection between global risk profiles and new sheet */
+  const riskProfiles = [...riskProfileStore.RISK_PROFILES];
+
+  const globalRiskProfiles = riskProfiles.filter((profile) => {
+    return profile.global;
+  });
+
+  globalRiskProfiles.forEach((globalProfile) => {
+    const obj = {
+      estimateSheetId: newSheet.id,
+      riskProfileId: globalProfile.id,
+    };
+    sheetRiskProfileStore.createEstimateSheetRiskProfile(obj);
+  });
 
   /* Copy from sheet, if selected */
   if (selectType.selected === "copy" && copyFromCustomer.value !== null) {

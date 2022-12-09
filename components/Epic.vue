@@ -1,9 +1,7 @@
 <script setup>
-import { useAuthStore } from "~/store/auth";
 import { useTaskStore } from "~/store/tasks";
 import { useDetailsStore } from "~/store/details";
 
-const authStore = useAuthStore();
 const taskStore = useTaskStore();
 const detailsStore = useDetailsStore();
 
@@ -67,7 +65,10 @@ const tasksForEpic = computed(() => {
     </div>
 
     <div class="epic__footer">
-      <Button text="Ny task" @click="handleCreateTask" />
+      <Button
+        :text="`Ny task (${props.data.epicName})`"
+        @click="handleCreateTask"
+      />
     </div>
   </div>
 </template>
@@ -111,9 +112,19 @@ const tasksForEpic = computed(() => {
   }
 
   &__header {
+    position: sticky;
+    top: -20px;
+    background: var(--color-background);
+    z-index: 1;
     .flex {
       display: flex;
     }
+  }
+
+  &__footer {
+    position: sticky;
+    bottom: -20px;
+    background: var(--color-background);
   }
 }
 </style>
