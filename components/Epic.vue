@@ -119,6 +119,7 @@ const tasksForEpic = computed(() => {
     position: sticky;
     top: -20px;
     background: var(--color-background);
+    z-index: 1;
     .flex {
       display: flex;
     }
