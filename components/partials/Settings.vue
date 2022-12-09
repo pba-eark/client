@@ -121,7 +121,11 @@ sheetRoles.value.splice(indexToSplice, 1);
 
 });
 
-console.log(globalRoles.value)
+/* SheetStatus */
+const sheetStatus = ref([]);
+const globalMasterSheetStatus = ref([]);
+const globalSheetStatus = ref([]);
+
 
 </script>
 
@@ -152,37 +156,7 @@ console.log(globalRoles.value)
       <div v-for="role in sheetRoles" :key="role.id">
         <LocalSettings :data="role" :renderForm="'role'"/>
       </div>
-      <!-- 
 
-      <h3>Ark status</h3>
-      <div v-for="sheetStatus in sheetStatusStore.SHEET_STATUS" :key="sheetStatus.id">
-        <div v-if="!sheetStatus.global">
-          <Input @change="handleUpdateSheetStatus(sheetStatus, 'name')" v-model="input"
-            :default="sheetStatus.sheetStatusName" />
-          <Input type="checkbox" @change="handleUpdateSheetStatus(sheetStatus, 'global')" v-model="input"
-            :default="sheetStatus.global" />
-          <Input type="checkbox" @change="handleUpdateSheetStatus(sheetStatus, 'default')" v-model="input"
-            :default="sheetStatus.default" />
-        </div>
-      </div>
-      <br>
-      <Button text="Ny Status" @Click="handleCreateSheetStatus(newSheetStatus, 'globalSetting')" />
-      <br>
-
-      <h3>Epic status</h3>
-      <div v-for="epicStatus in epicStatusStore.EPIC_STATUS" :key="epicStatus.id">
-        <div v-if="!epicStatus.global">
-          <Input @change="handleUpdateEpicStatus(epicStatus, 'name')" v-model="input"
-            :default="epicStatus.epicStatusName" />
-          <Input type="checkbox" @change="handleUpdateEpicStatus(epicStatus, 'global')" v-model="input"
-            :default="epicStatus.global" />
-          <Input type="checkbox" @change="handleUpdateEpicStatus(epicStatus, 'default')" v-model="input"
-            :default="epicStatus.default" />
-        </div>
-      </div>
-      <br>
-      <Button text="Ny Status" @Click="handleCreateEpicStatus(newEpicStatus, 'globalSetting')" />
-      <br> -->
     </div>
 
 
@@ -191,6 +165,12 @@ console.log(globalRoles.value)
 
 
     <div v-if="!localSettingsTab">
+      <h2>Global</h2>
+
+      <h3>Risikoprofiler</h3>
+      <div v-for="profile in masterGlobals" :key="profile.id">
+        <GlobalSettings :data="profile" :renderForm="'role'"/>
+      </div>
       <!-- <h2>Global</h2>
 
       <h3>Risikoprofiler</h3>
