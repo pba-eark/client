@@ -1,20 +1,21 @@
 <script setup>
 
 import { useRiskProfileStore } from "~~/store/riskProfiles";
+import { useEstimateSheetRiskProfileStore } from "~~/store/composites/estimateSheetRiskProfiles";
 import { useRoleStore } from "~~/store/roles";
 import { useTaskStore } from "~~/store/tasks";
 import { useEpicStore } from "~~/store/epics";
 import { useSheetStatusStore } from "~~/store/sheetStatus";
 import { useEpicStatusStore } from "~~/store/epicStatus";
-import { useEstimateSheetRiskProfileStore } from "~~/store/composites/estimateSheetRiskProfiles";
+
 
 const riskProfileStore = useRiskProfileStore();
+const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 const roleStore = useRoleStore();
 const taskStore = useTaskStore();
 const epicStore = useEpicStore();
 const sheetStatusStore = useSheetStatusStore();
 const epicStatusStore = useEpicStatusStore();
-const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 
 const props = defineProps({
   sheetId: {
@@ -102,30 +103,31 @@ roleStore.ROLES.forEach(role => {
 
 globalMasterRoles.value.forEach(masterRole => {
 
-let indexToSplice = 0;
+  let indexToSplice = 0;
 
-sheetRoles.value.forEach(sheetRole => {
+  sheetRoles.value.forEach(sheetRole => {
 
-  const index = sheetRoles.value.findIndex(
-    (role) => role.roleName == masterRole.roleName
-  );
+    const index = sheetRoles.value.findIndex(
+      (role) => role.roleName == masterRole.roleName
+    );
 
-  if (index >= 0 && sheetRole.roleName == masterRole.roleName) {
-    globalRoles.value.push(sheetRole);
-    indexToSplice = index;
-  }
+    if (index >= 0 && sheetRole.roleName == masterRole.roleName) {
+      globalRoles.value.push(sheetRole);
+      indexToSplice = index;
+    }
 
-});
+  });
 
-sheetRoles.value.splice(indexToSplice, 1);
+  sheetRoles.value.splice(indexToSplice, 1);
 
 });
 
 /* SheetStatus */
-const sheetStatus = ref([]);
 const globalMasterSheetStatus = ref([]);
-const globalSheetStatus = ref([]);
 
+sheetStatusStore.SHEET_STATUS.forEach(status => {
+  globalMasterSheetStatus.value.push(status);
+});
 
 </script>
 
@@ -140,21 +142,21 @@ const globalSheetStatus = ref([]);
 
       <h3>Risikoprofiler</h3>
       <div v-for="riskProfile in globals" :key="riskProfile.id">
-        <LocalGlobalSettings :data="riskProfile" :renderForm="'riskProfile'"/>
+        <LocalGlobalSettings :data="riskProfile" :renderForm="'riskProfile'" />
       </div>
       <p>-----------------------------</p>
       <div v-for="riskProfile in sheetProfiles" :key="riskProfile.id">
-        <LocalSettings :data="riskProfile" :renderForm="'riskProfile'"/>
+        <LocalSettings :data="riskProfile" :renderForm="'riskProfile'" />
       </div>
 
 
       <h3>Roller</h3>
       <div v-for="role in globalRoles" :key="role.id">
-        <LocalGlobalSettings :data="role" :renderForm="'role'"/>
+        <LocalGlobalSettings :data="role" :renderForm="'role'" />
       </div>
       <p>-----------------------------</p>
       <div v-for="role in sheetRoles" :key="role.id">
-        <LocalSettings :data="role" :renderForm="'role'"/>
+        <LocalSettings :data="role" :renderForm="'role'" />
       </div>
 
     </div>
@@ -169,8 +171,22 @@ const globalSheetStatus = ref([]);
 
       <h3>Risikoprofiler</h3>
       <div v-for="profile in masterGlobals" :key="profile.id">
-        <GlobalSettings :data="profile" :renderForm="'role'"/>
+        <GlobalSettings :data="profile" :renderForm="'riskProfile'" />
       </div>
+
+      <h3>Roller</h3>
+      <div v-for="role in globalMasterRoles" :key="role.id">
+        <GlobalSettings :data="role" :renderForm="'role'" />
+      </div>
+
+      <h3>Sheet Status</h3>
+      <div v-for="status in globalMasterSheetStatus" :key="status.id">
+        <GlobalSettings :data="status" :renderForm="'sheetStatus'" />
+      </div>
+
+      
+
+
       <!-- <h2>Global</h2>
 
       <h3>Risikoprofiler</h3>

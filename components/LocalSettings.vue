@@ -62,6 +62,11 @@ const handleUpdateRole = (obj) => {
                 </div>
             </form>
 
+            <br>
+            <form v-if="props.renderForm == 'sheetStatus'">
+                <p>Status Navn</p>
+                <p>{{ props.data.sheetStatusName }}</p>
+            </form>
 
             <!-- <Input @change="handleUpdateProfile(props.data, 'name')" v-model="input"
                 :default="props.data.profileName" />
