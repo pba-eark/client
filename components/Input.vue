@@ -60,8 +60,7 @@ const handleSelect = () => {
 </script>
 
 <template>
-  <label class="input" :class="classes">
-    
+  <label class="input">
     <!-- Label -->
     <span class="input__label">
       {{ props.label && props.label.length ? props.label : "" }}
@@ -124,20 +123,18 @@ const handleSelect = () => {
 </template>
 
 <style lang="scss" scoped>
-
 .input {
   width: 100%;
   height: 100%;
   font-size: 1rem;
   line-height: 1;
-  
+
   &__label {
     display: block;
     user-select: none;
   }
-  
+
   &__text {
-    
     &--task {
       width: 100%;
       height: 100%;
@@ -148,9 +145,8 @@ const handleSelect = () => {
       line-height: inherit;
     }
   }
-  
+
   &__number {
-    
     &--task {
       width: 100%;
       height: 100%;
@@ -160,7 +156,7 @@ const handleSelect = () => {
       border-radius: 0;
       font-size: inherit;
       line-height: inherit;
-      
+
       &::-webkit-outer-spin-button,
       &::-webkit-inner-spin-button {
         -webkit-appearance: none;
@@ -168,9 +164,8 @@ const handleSelect = () => {
       }
     }
   }
-  
+
   &__select {
-    
     &--task {
       width: 100%;
       height: 100%;
@@ -183,7 +178,6 @@ const handleSelect = () => {
   }
 
   &__checkbox {
-
     &--task {
       height: 25px;
       width: 25px;
