@@ -154,7 +154,7 @@ export const useEstimateSheetRiskProfileStore = defineStore(
 
     /* Getters */
     const ESTIMATE_SHEET_RISK_PROFILES = computed(
-      () => additionalExpenses.value
+      () => estimateSheetRiskProfiles.value
     );
 
     return {
