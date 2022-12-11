@@ -7,6 +7,7 @@ import { useRiskProfileStore } from "./riskProfiles";
 import { useRoleStore } from "./roles";
 import { useTaskStore } from "./tasks";
 import { useUserStore } from "./users";
+import { useEstimateSheetRiskProfileStore } from "./composites/estimateSheetRiskProfiles";
 
 export const useGlobalStore = defineStore("global-store", () => {
   const customerStore = useCustomerStore();
@@ -17,6 +18,7 @@ export const useGlobalStore = defineStore("global-store", () => {
   const roleStore = useRoleStore();
   const taskStore = useTaskStore();
   const userStore = useUserStore();
+  const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 
   /* State */
   const isLoaded = ref(false);
@@ -37,6 +39,7 @@ export const useGlobalStore = defineStore("global-store", () => {
     await riskProfileStore.getRiskProfiles();
     await roleStore.getRoles();
     await taskStore.getTasks();
+    await estimateSheetRiskProfileStore.getEstimateSheetRiskProfiles();
   };
 
   const scrollToEpic = ({ id }) => {
