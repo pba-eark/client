@@ -1,8 +1,10 @@
 import { defineStore } from "pinia";
 import { useGlobalStore } from "./index";
+import { useUserStore } from "./users";
 
 export const useAuthStore = defineStore("auth-store", () => {
   const globalStore = useGlobalStore();
+  const userStore = useUserStore();
 
   /* State */
   const jwt = ref("");
@@ -19,12 +21,13 @@ export const useAuthStore = defineStore("auth-store", () => {
   };
 
   const handleLogin = async (email, password) => {
-    const JWT = await $fetch(`${runtimeConfig.public.API_URL}/auth/login`, {
+    const res = await $fetch(`${runtimeConfig.public.API_URL}/auth/login`, {
       method: "POST",
       body: { email, password },
     });
 
-    setJwt(JWT);
+    userStore.setCurrentUser(res.user);
+    setJwt(res.token);
     navigateTo("/");
   };
 
