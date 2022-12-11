@@ -59,6 +59,8 @@ const handleCreateEpic = async () => {
 
   const newEpic = await epicStore.createEpic(obj);
 
+  if (!newEpic) return alert("An error occured while creating the epic!");
+
   const newTask = {
     parentId: 0,
     taskName: "Ny task",

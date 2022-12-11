@@ -13,11 +13,11 @@ export const useRoleStore = defineStore("role-store", () => {
   /* Actions */
   const setRoles = (payload) => {
     /* Find longest role name */
-    const longest = payload.sort(function (a, b) {
-      return b.roleName.length - a.roleName.length;
-    })[0];
+    // const longest = payload.sort(function (a, b) {
+    //   return b.roleName.length - a.roleName.length;
+    // })[0];
 
-    longestRoleName.value = longest.roleName.length;
+    // longestRoleName.value = longest.roleName?.length;
 
     roles.value = payload;
   };
