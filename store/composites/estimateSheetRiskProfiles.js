@@ -46,52 +46,23 @@ export const useEstimateSheetRiskProfileStore = defineStore(
           }
         );
 
-        estimateSheetRiskProfiles.value = [
+        setEstimateSheetRiskProfiles([
           ...estimateSheetRiskProfiles.value,
           response,
-        ];
+        ]);
       } catch (e) {
         console.log("ERROR", e);
       }
     };
 
-    // const deleteEstimateSheetRiskProfile = async (id) => {
-    //   await $fetch(
-    //     `${runtimeConfig.public.API_URL}/estimatesheetriskprofiles/${id}`,
-    //     {
-    //       method: "DELETE",
-    //       headers: {
-    //         Accept: "application/json",
-    //         "Content-Type": "application/json",
-    //         Authorization: `Bearer ${authStore.API_TOKEN}`,
-    //       },
-    //     }
-    //   );
-
-    //   remove(id);
-    // };
-
-    // /* Helper functions */
-    // const remove = (id) => {
-    //   estimateSheetRiskProfiles.value.forEach((element) => {
-    //     element.id;
-
-    //     if (element.id === typeCheck(id)) {
-    //       let index = estimateSheetRiskProfiles.value.findIndex(element);
-    //       estimateSheetRiskProfiles.value.splice(index, 1);
-    //     }
-    //   });
-    // };
-
     /* Getters */
     const ESTIMATE_SHEET_RISK_PROFILES = computed(
-      () => additionalExpenses.value
+      () => estimateSheetRiskProfiles.value
     );
 
     return {
       getEstimateSheetRiskProfiles,
       createEstimateSheetRiskProfile,
-      // deleteEstimateSheetRiskProfile,
       ESTIMATE_SHEET_RISK_PROFILES,
     };
   }

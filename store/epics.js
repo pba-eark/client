@@ -43,7 +43,7 @@ export const useEpicStore = defineStore("epic-store", () => {
         body: epic,
       });
 
-      epics.value = [...epics.value, response];
+      setEpics([...epics.value, response]);
       return response;
     } catch (e) {
       return console.log("Error", e);

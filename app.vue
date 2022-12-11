@@ -1,9 +1,11 @@
 <script setup>
 import { useGlobalStore } from "~/store/index";
+import { useUserStore } from "~/store/users";
 import { useAuthStore } from "~/store/auth";
 import { useJiraStore } from "~/store/jira";
 
 const authStore = useAuthStore();
+const userStore = useUserStore();
 const jiraStore = useJiraStore();
 const globalStore = useGlobalStore();
 
@@ -11,6 +13,10 @@ onMounted(async () => {
   /* Check if user is logged in */
   if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt"))
     authStore.setJwt(localStorage.getItem("jwt"));
+
+  /* Check if user is logged in */
+  if (!authStore.IS_AUTHORIZED && localStorage.getItem("user"))
+    userStore.setCurrentUser(JSON.parse(localStorage.getItem("user")));
 
   /* Check for jira jwt in localstorage */
   if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)

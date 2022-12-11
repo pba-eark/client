@@ -6,6 +6,7 @@ import { useEpicStore } from "~/store/epics";
 import { useTaskStore } from "~/store/tasks";
 import { useRiskProfileStore } from "~/store/riskProfiles";
 import { useEstimateSheetRiskProfileStore } from "~/store/composites/estimateSheetRiskProfiles";
+import { useEstimateSheetUserStore } from "~/store/composites/estimateSheetUsers";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
@@ -14,6 +15,7 @@ const epicStore = useEpicStore();
 const taskStore = useTaskStore();
 const riskProfileStore = useRiskProfileStore();
 const sheetRiskProfileStore = useEstimateSheetRiskProfileStore();
+const sheetUserStore = useEstimateSheetUserStore();
 
 const customers = ref([]);
 const copyFromCustomer = ref(null);
@@ -31,6 +33,8 @@ const customerSelection = reactive({
 });
 const postData = reactive({
   sheet: {},
+  estimatedBy: [],
+  doneBy: [],
 });
 
 onBeforeMount(() => {
@@ -88,6 +92,29 @@ const handleSubmit = async () => {
     };
     sheetRiskProfileStore.createEstimateSheetRiskProfile(obj);
   });
+
+  /* Create connection between users and new sheet */
+  /* Estimated by  */
+  if (postData.estimatedBy.length)
+    postData.estimatedBy.forEach((user) => {
+      const obj = {
+        estimateSheetId: newSheet.id,
+        userId: user.id,
+        type: "estimate",
+      };
+      sheetUserStore.createEstimateSheetUser(obj);
+    });
+
+  /* Done by  */
+  if (postData.doneBy.length)
+    postData.doneBy.forEach((user) => {
+      const obj = {
+        estimateSheetId: newSheet.id,
+        userId: user.id,
+        type: "done",
+      };
+      sheetUserStore.createEstimateSheetUser(obj);
+    });
 
   /* Copy from sheet, if selected */
   if (selectType.selected === "copy" && copyFromCustomer.value !== null) {

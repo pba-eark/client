@@ -6,10 +6,16 @@ export const useUserStore = defineStore("user-store", () => {
 
   /* State */
   const users = ref([]);
+  const currentUser = ref({});
 
   /* Actions */
   const setUsers = (payload) => {
     users.value = payload;
+  };
+
+  const setCurrentUser = (payload) => {
+    currentUser.value = payload;
+    localStorage.setItem("user", JSON.stringify(payload));
   };
 
   const getUsers = async () => {
@@ -27,9 +33,12 @@ export const useUserStore = defineStore("user-store", () => {
 
   /* Getters */
   const USERS = computed(() => users.value);
+  const CURRENT_USER = computed(() => currentUser.value);
 
   return {
+    setCurrentUser,
     getUsers,
     USERS,
+    CURRENT_USER,
   };
 });
