@@ -33,6 +33,7 @@ const masterGlobals = ref([]);
 const globals = ref([]);
 
 riskProfileStore.RISK_PROFILES.forEach(element => {
+
   estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(item => {
     if (element.id == item.riskProfileId && props.sheetId == item.estimateSheetId) {
       sheetProfiles.value.push(element);
@@ -83,8 +84,20 @@ const handleCreateProfile = async () => {
   let newProfile = await riskProfileStore.createRiskProfile(newLokalProfile);
   newSheetLink.value.riskProfileId = newProfile.id;
   await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
-  sheetProfiles.value.push(newProfile)
+  sheetProfiles.value.push(newProfile);
 };
+
+const handleDeleteProfile = (id) => {
+  
+    riskProfileStore.deleteRiskProfile(id);
+
+    const profileIndex = sheetProfiles.value.findIndex(
+    (obj) => obj.id === id
+  );
+
+  sheetProfiles.value.splice(profileIndex, 1);
+};
+
 // #endregion
 
 // #region Role
@@ -171,10 +184,9 @@ sheetStatusStore.SHEET_STATUS.forEach(status => {
       </div>
       <p>-----------------------------</p>
       <div v-for="riskProfile in sheetProfiles" :key="riskProfile.id">
-        <LocalSettings :data="riskProfile" :renderForm="'riskProfile'" />
+        <LocalSettings :data="riskProfile" :renderForm="'riskProfile'" @delete="handleDeleteProfile" />
       </div>
       <Button text="New Profile" @Click="handleCreateProfile" />
-
 
       <h3>Roller</h3>
       <div v-for="role in globalRoles" :key="role.id">
@@ -204,71 +216,6 @@ sheetStatusStore.SHEET_STATUS.forEach(status => {
       <div v-for="status in globalMasterSheetStatus" :key="status.id">
         <GlobalSettings :data="status" :renderForm="'sheetStatus'" />
       </div>
-
-
-
-
-      <!-- <h2>Global</h2>
-
-      <h3>Risikoprofiler</h3>
-      <div v-for="riskProfile in riskProfileStore.RISK_PROFILES" :key="riskProfile.id">
-        <div v-if="riskProfile.global">
-          <Input @change="handleUpdateProfile(riskProfile, 'name')" v-model="input"
-            :default="riskProfile.profileName" />
-          <Input @change="handleUpdateProfile(riskProfile, 'percentage')" v-model="input"
-            :default="riskProfile.percentage || '0'" />
-          <Input type="checkbox" @change="handleUpdateProfile(riskProfile, 'global')" v-model="input"
-            :default="riskProfile.global" />
-          <Input type="checkbox" @change="handleUpdateProfile(riskProfile, 'default')" v-model="input"
-            :default="riskProfile.default" />
-        </div>
-      </div>
-      <br>
-      <Button text="Ny Profil" @Click="handleCreateProfile(newRiskProfile, 'globalSetting')" />
-      <br>
-
-      <h3>Roller</h3>
-      <div v-for="role in roleStore.ROLES" :key="role.id">
-        <div v-if="role.global">
-          <Input @change="handleUpdateRole(role, 'name')" v-model="input" :default="role.roleName" />
-          <Input @change="handleUpdateRole(role, 'wage')" v-model="input" :default="role.hourlyWage || '0'" />
-          <Input type="checkbox" @change="handleUpdateRole(role, 'global')" v-model="input" :default="role.global" />
-          <Input type="checkbox" @change="handleUpdateRole(role, 'default')" v-model="input" :default="role.default" />
-        </div>
-      </div>
-      <br>
-      <Button text="Ny Rolle" @Click="handleCreateRole(newRole, 'globalSetting')" />
-      <br>
-
-      <h3>Ark status</h3>
-      <div v-for="sheetStatus in sheetStatusStore.SHEET_STATUS" :key="sheetStatus.id">
-        <div v-if="sheetStatus.global">
-          <Input @change="handleUpdateSheetStatus(sheetStatus, 'name')" v-model="input"
-            :default="sheetStatus.sheetStatusName" />
-          <Input type="checkbox" @change="handleUpdateSheetStatus(sheetStatus, 'global')" v-model="input"
-            :default="sheetStatus.global" />
-          <Input type="checkbox" @change="handleUpdateSheetStatus(sheetStatus, 'default')" v-model="input"
-            :default="sheetStatus.default" />
-        </div>
-      </div>
-      <br>
-      <Button text="Ny Status" @Click="handleCreateSheetStatus(newSheetStatus, 'globalSetting')" />
-      <br>
-
-      <h3>Epic status</h3>
-      <div v-for="epicStatus in epicStatusStore.EPIC_STATUS" :key="epicStatus.id">
-        <div v-if="epicStatus.global">
-          <Input @change="handleUpdateEpicStatus(epicStatus, 'name')" v-model="input"
-            :default="epicStatus.epicStatusName" />
-          <Input type="checkbox" @change="handleUpdateEpicStatus(epicStatus, 'global')" v-model="input"
-            :default="epicStatus.global" />
-          <Input type="checkbox" @change="handleUpdateEpicStatus(epicStatus, 'default')" v-model="input"
-            :default="epicStatus.default" />
-        </div>
-      </div>
-      <br>
-      <Button text="Ny Status" @Click="handleCreateEpicStatus(newEpicStatus, 'globalSetting')" />
-      <br> -->
     </div>
 
 
