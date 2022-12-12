@@ -1,8 +1,11 @@
 <script setup>
 import { useTabsStore } from "~/store/tabs";
 import { useCustomerStore } from "~/store/customers";
+import { useEstimateSheetStore } from "~/store/estimateSheets";
+
 const tabStore = useTabsStore();
 const customerStore = useCustomerStore();
+const sheetStore = useEstimateSheetStore();
 
 const tabsElement = ref(null);
 const horizontalScroll = ref(true);
@@ -61,7 +64,13 @@ const getCustomerName = ({ customerId }) => {
     <div class="tabs__scroll" ref="tabsElement">
       <!-- Temporary tab -->
       <li v-if="tabStore.TEMP_TAB !== null" class="tabs__tab tab temp">
-        <NuxtLink :to="`/sheet/${tabStore.TEMP_TAB.id}`">
+        <NuxtLink
+          :to="
+            sheetStore.IS_OVERVIEW_TOGGLED
+              ? `/sheet/overview/${tabStore.TEMP_TAB.id}`
+              : `/sheet/${tabStore.TEMP_TAB.id}`
+          "
+        >
           <div>
             <span class="name">{{ tabStore.TEMP_TAB.sheetName }}</span>
             <br /><small class="small">
@@ -79,7 +88,13 @@ const getCustomerName = ({ customerId }) => {
 
       <!-- Tabs -->
       <li v-for="tab in reverseTabs" class="tabs__tab tab">
-        <NuxtLink :to="`/sheet/${tab.id}`">
+        <NuxtLink
+          :to="
+            sheetStore.IS_OVERVIEW_TOGGLED
+              ? `/sheet/overview/${tab.id}`
+              : `/sheet/${tab.id}`
+          "
+        >
           <div>
             <span class="name">{{ tab.sheetName }}</span>
             <br /><small class="small">{{

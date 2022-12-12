@@ -50,8 +50,15 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
     return response;
   };
 
-  const toggleSheetOverview = () => {
+  const toggleSheetOverview = async (id) => {
     isOverviewToggled.value = !isOverviewToggled.value;
+    return isOverviewToggled.value
+      ? await navigateTo(`/sheet/overview/${id}`)
+      : await navigateTo(`/sheet/${id}`);
+  };
+
+  const setToggleSheetOverview = (payload) => {
+    isOverviewToggled.value = payload;
   };
 
   // const updateEstimateSheet = async (obj) => {
@@ -104,5 +111,6 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
     CURRENT_ESTIMATE_SHEET,
     IS_OVERVIEW_TOGGLED,
     toggleSheetOverview,
+    setToggleSheetOverview,
   };
 });

@@ -1,9 +1,13 @@
 <script setup>
 import { useTaskStore } from "~/store/tasks";
 import { useDetailsStore } from "~/store/details";
+import { useRiskProfileStore } from "~/store/riskProfiles";
+import { useRoleStore } from "~/store/roles";
 
 const taskStore = useTaskStore();
 const detailsStore = useDetailsStore();
+const riskProfileStore = useRiskProfileStore();
+const roleStore = useRoleStore();
 
 const props = defineProps({
   data: {
@@ -28,10 +32,67 @@ const handleCreateTask = async () => {
   await taskStore.createTask(newTask);
 };
 
+const roundNearQtr = (number) => {
+  return (Math.round(number * 4) / 4).toFixed(2);
+};
+
+const numberDotSeperator = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
 const tasksForEpic = computed(() => {
   return taskStore.TASKS.filter((task) => {
     return task.epicId === props.data.id;
   });
+});
+
+const totalEstimatedHours = ref(0);
+const totalRealisticHours = ref(0);
+const totalPessimisticHours = ref(0);
+const totalRealisticPrice = ref(0);
+const totalPessimisticPrice = ref(0);
+
+tasksForEpic.value.forEach((task) => {
+  const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
+    return p.id === task.riskProfileId;
+  })[0];
+
+  const currentRole = roleStore.ROLES.filter((r) => {
+    return r.id === task.roleId;
+  })[0];
+
+  /* Total estimated hours */
+  totalEstimatedHours.value += task.hourEstimate;
+
+  /* Total realistic hours */
+  totalRealisticHours.value += parseFloat(
+    roundNearQtr(
+      task.hourEstimate * (1 + currentRiskProfile.percentage / 2 / 100)
+    )
+  );
+
+  /* Total realistic price */
+  if (currentRole) {
+    totalRealisticPrice.value += parseFloat(
+      currentRole.hourlyWage *
+        task.hourEstimate *
+        (1 + currentRiskProfile.percentage / 2 / 100)
+    );
+  }
+
+  /* Total pessimistic price */
+  totalPessimisticHours.value += parseFloat(
+    roundNearQtr(task.hourEstimate * (1 + currentRiskProfile.percentage / 100))
+  );
+
+  /* Total pessimistic price */
+  if (currentRole) {
+    totalPessimisticPrice.value += parseFloat(
+      currentRole.hourlyWage *
+        task.hourEstimate *
+        (1 + currentRiskProfile.percentage / 100)
+    );
+  }
 });
 </script>
 
@@ -69,6 +130,34 @@ const tasksForEpic = computed(() => {
         :text="`Ny task (${props.data.epicName})`"
         @click="handleCreateTask"
       />
+
+      <div>
+        Estimat i alt {{ totalEstimatedHours.toFixed(2).replace(".", ",") }}
+      </div>
+
+      <div>
+        Realistisk timer i alt
+        {{ totalRealisticHours.toFixed(2).replace(".", ",") }}
+      </div>
+
+      <div>
+        Realistisk pris i alt
+        {{
+          numberDotSeperator(totalRealisticPrice.toFixed(2).replace(".", ","))
+        }}
+      </div>
+
+      <div>
+        Pessimistic timer i alt
+        {{ totalPessimisticHours.toFixed(2).replace(".", ",") }}
+      </div>
+
+      <div>
+        Pessimistic pris i alt
+        {{
+          numberDotSeperator(totalPessimisticPrice.toFixed(2).replace(".", ","))
+        }}
+      </div>
     </div>
   </div>
 </template>
