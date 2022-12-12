@@ -22,11 +22,25 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  /* If page is reloaded while being on a temporary tab, remake the temporary tab */
+  /* Save 5 most recently open sheets */
+  let recentSheets =
+    JSON.parse(window.localStorage.getItem("recentSheets")) ?? [];
+  const currentSheet = sheetStore.ESTIMATE_SHEETS.filter((s) => {
+    if (s.id == route.params.id) return s;
+  })[0];
+
+  if (!recentSheets.some((s) => s.id === currentSheet.id)) {
+    console.log("Adding recent sheet", currentSheet);
+    recentSheets = [currentSheet, ...recentSheets];
+    if (recentSheets.length > 5) recentSheets.pop();
+    window.localStorage.setItem("recentSheets", JSON.stringify(recentSheets));
+  }
+
   if (
     tabStore.TABS.filter((tab) => tab.id == route.params.id).length < 1 &&
     tabStore.TEMP_TAB === null
   ) {
+    /* If page is reloaded while being on a temporary tab, remake the temporary tab */
     tabStore.handleOpenTab(
       sheetStore.ESTIMATE_SHEETS.filter(
         (sheet) => sheet.id == route.params.id
@@ -36,6 +50,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  /* Clean up eventlistener */
   window.removeEventListener("click", handleClick);
 });
 

@@ -9,13 +9,14 @@ const sheetUserStore = useEstimateSheetUserStore();
 
 const estimations = ref([]);
 const responsibilities = ref([]);
+const recentlyOpen = ref([]);
 
 definePageMeta({
   middleware: ["auth"],
 });
 
 onMounted(() => {
-  /* TODO: Handle if user has BOTH estimated and done */
+  /* Get sheets estimated & done by current user */
   sheetUserStore.ESTIMATE_SHEET_USERS.forEach((connection) => {
     if (connection.userId == userStore.CURRENT_USER.id) {
       if (connection.type === "estimate")
@@ -24,6 +25,10 @@ onMounted(() => {
         responsibilities.value = [...responsibilities.value, connection];
     }
   });
+
+  if (process.client && localStorage.getItem("recentSheets")) {
+    recentlyOpen.value = JSON.parse(localStorage.getItem("recentSheets"));
+  }
 });
 
 const estimatedSheets = computed(() => {
@@ -69,6 +74,13 @@ const doneSheets = computed(() => {
       </div>
       <div>
         <h2>Sidste åbne ark</h2>
+        <ul>
+          <li v-for="sheet in recentlyOpen">
+            <NuxtLink :to="`/sheet/${sheet.id}`">
+              {{ sheet.sheetName }}
+            </NuxtLink>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
