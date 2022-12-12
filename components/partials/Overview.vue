@@ -11,6 +11,7 @@ const roleStore = useRoleStore();
 const epicStore = useEpicStore();
 const epicStatusStore = useEpicStatusStore();
 const route = useRoute();
+const epics = ref([]);
 
 const roundNearQtr = (number) => {
   return (Math.round(number * 4) / 4).toFixed(2);
@@ -25,8 +26,6 @@ const epicsForSheet = computed(() => {
     return epic.estimateSheetId == route.params.id;
   });
 });
-
-const epics = ref([]);
 
 epicsForSheet.value.forEach((e) => {
   let totalRealisticHours = 0;
@@ -95,8 +94,6 @@ epicsForSheet.value.forEach((e) => {
   obj.totalPessimisticHours = totalPessimisticHours;
   obj.totalRealisticPrice = totalRealisticPrice;
   obj.totalPessimisticPrice = totalPessimisticPrice;
-
-  console.log(obj);
   epics.value.push(obj);
 });
 </script>

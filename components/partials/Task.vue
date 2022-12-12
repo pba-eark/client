@@ -25,10 +25,8 @@ const handleUpdateTaskName = (val) => {
 };
 
 const handleUpdateEstimate = (val) => {
-  val = roundNearQtr(val);
   if (val.includes(",")) val = val.replace(",", ".");
-  val = parseFloat(val).toFixed(2);
-
+  val = roundNearQtr(parseFloat(val));
   props.data.hourEstimate = val;
   taskStore.updateTask(props.data);
   detailsStore.setDetails(props.data);
