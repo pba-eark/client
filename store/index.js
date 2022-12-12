@@ -44,6 +44,7 @@ export const useGlobalStore = defineStore("global-store", () => {
     await taskStore.getTasks();
     await sheetRiskProfileStore.getEstimateSheetRiskProfiles();
     await sheetUserStore.getEstimateSheetUsers();
+    return setLoaded(true);
   };
 
   const scrollToEpic = async (sheetId, epicId) => {
