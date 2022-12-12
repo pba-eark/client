@@ -16,6 +16,8 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["update"]);
+
 const handleUpdateTaskName = (val) => {
   props.data.taskName = val;
   taskStore.updateTask(props.data);
@@ -30,6 +32,7 @@ const handleUpdateEstimate = (val) => {
   props.data.hourEstimate = val;
   taskStore.updateTask(props.data);
   detailsStore.setDetails(props.data);
+  emit("update");
 };
 
 const handleUpdateRiskProfile = (val) => {
@@ -37,6 +40,7 @@ const handleUpdateRiskProfile = (val) => {
   props.data.riskProfileId = id;
   taskStore.updateTask(props.data);
   detailsStore.setDetails(props.data);
+  emit("update");
 };
 
 const handleUpdateRole = (val) => {
@@ -44,6 +48,7 @@ const handleUpdateRole = (val) => {
   props.data.roleId = id;
   taskStore.updateTask(props.data);
   detailsStore.setDetails(props.data);
+  emit("update");
 };
 
 const roundNearQtr = (number) => {

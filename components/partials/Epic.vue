@@ -9,11 +9,21 @@ const detailsStore = useDetailsStore();
 const riskProfileStore = useRiskProfileStore();
 const roleStore = useRoleStore();
 
+const totalEstimatedHours = ref(0);
+const totalRealisticHours = ref(0);
+const totalPessimisticHours = ref(0);
+const totalRealisticPrice = ref(0);
+const totalPessimisticPrice = ref(0);
+
 const props = defineProps({
   data: {
     type: Object,
     required: true,
   },
+});
+
+onMounted(() => {
+  calculateTotals();
 });
 
 const handleCreateTask = async () => {
@@ -32,6 +42,10 @@ const handleCreateTask = async () => {
   await taskStore.createTask(newTask);
 };
 
+const handleTaskUpdate = () => {
+  calculateTotals();
+};
+
 const roundNearQtr = (number) => {
   return (Math.round(number * 4) / 4).toFixed(2);
 };
@@ -46,54 +60,58 @@ const tasksForEpic = computed(() => {
   });
 });
 
-const totalEstimatedHours = ref(0);
-const totalRealisticHours = ref(0);
-const totalPessimisticHours = ref(0);
-const totalRealisticPrice = ref(0);
-const totalPessimisticPrice = ref(0);
+const calculateTotals = () => {
+  totalEstimatedHours.value = 0;
+  totalRealisticHours.value = 0;
+  totalPessimisticHours.value = 0;
+  totalRealisticPrice.value = 0;
+  totalPessimisticPrice.value = 0;
 
-tasksForEpic.value.forEach((task) => {
-  const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
-    return p.id === task.riskProfileId;
-  })[0];
+  tasksForEpic.value.forEach((task) => {
+    const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
+      return p.id === task.riskProfileId;
+    })[0];
 
-  const currentRole = roleStore.ROLES.filter((r) => {
-    return r.id === task.roleId;
-  })[0];
+    const currentRole = roleStore.ROLES.filter((r) => {
+      return r.id === task.roleId;
+    })[0];
 
-  /* Total estimated hours */
-  totalEstimatedHours.value += task.hourEstimate;
+    /* Total estimated hours */
+    totalEstimatedHours.value += task.hourEstimate;
 
-  /* Total realistic hours */
-  totalRealisticHours.value += parseFloat(
-    roundNearQtr(
-      task.hourEstimate * (1 + currentRiskProfile.percentage / 2 / 100)
-    )
-  );
-
-  /* Total realistic price */
-  if (currentRole) {
-    totalRealisticPrice.value += parseFloat(
-      currentRole.hourlyWage *
-        task.hourEstimate *
-        (1 + currentRiskProfile.percentage / 2 / 100)
+    /* Total realistic hours */
+    totalRealisticHours.value += parseFloat(
+      roundNearQtr(
+        task.hourEstimate * (1 + currentRiskProfile.percentage / 2 / 100)
+      )
     );
-  }
 
-  /* Total pessimistic price */
-  totalPessimisticHours.value += parseFloat(
-    roundNearQtr(task.hourEstimate * (1 + currentRiskProfile.percentage / 100))
-  );
+    /* Total realistic price */
+    if (currentRole) {
+      totalRealisticPrice.value += parseFloat(
+        currentRole.hourlyWage *
+          task.hourEstimate *
+          (1 + currentRiskProfile.percentage / 2 / 100)
+      );
+    }
 
-  /* Total pessimistic price */
-  if (currentRole) {
-    totalPessimisticPrice.value += parseFloat(
-      currentRole.hourlyWage *
-        task.hourEstimate *
-        (1 + currentRiskProfile.percentage / 100)
+    /* Total pessimistic price */
+    totalPessimisticHours.value += parseFloat(
+      roundNearQtr(
+        task.hourEstimate * (1 + currentRiskProfile.percentage / 100)
+      )
     );
-  }
-});
+
+    /* Total pessimistic price */
+    if (currentRole) {
+      totalPessimisticPrice.value += parseFloat(
+        currentRole.hourlyWage *
+          task.hourEstimate *
+          (1 + currentRiskProfile.percentage / 100)
+      );
+    }
+  });
+};
 </script>
 
 <template>
@@ -122,6 +140,7 @@ tasksForEpic.value.forEach((task) => {
         :key="task.id"
         :data="task"
         @click="detailsStore.setDetails(task)"
+        @update="handleTaskUpdate"
       />
     </div>
 
