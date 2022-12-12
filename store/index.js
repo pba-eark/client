@@ -52,7 +52,7 @@ export const useGlobalStore = defineStore("global-store", () => {
       await sheetStore.toggleSheetOverview(sheetId);
     const element = document.querySelector(`[data-epic-id="${epicId}"]`);
     const topPos = element.offsetTop;
-    document.querySelector("main").scrollTop = topPos - 50;
+    document.querySelector("main").scrollTop = topPos - 60;
   };
 
   const copyEpic = (payload) => {
