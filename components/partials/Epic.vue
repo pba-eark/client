@@ -110,8 +110,6 @@ const calculateTotals = () => {
           (1 + currentRiskProfile.percentage / 100)
       );
     }
-    /* FIXME: totalEstimatedHours.toFixed(2).replace(".", ",") FIXME: ERROR */
-    // console.log(totalEstimatedHours.value);
   });
 };
 </script>

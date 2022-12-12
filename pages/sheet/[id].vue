@@ -32,7 +32,6 @@ onMounted(() => {
   })[0];
 
   if (!recentSheets.some((s) => s.id === currentSheet.id)) {
-    console.log("Adding recent sheet", currentSheet);
     recentSheets = [currentSheet, ...recentSheets];
     if (recentSheets.length > 5) recentSheets.pop();
     window.localStorage.setItem("recentSheets", JSON.stringify(recentSheets));
