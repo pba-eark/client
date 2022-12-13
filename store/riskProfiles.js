@@ -3,7 +3,6 @@ import { useAuthStore } from "./auth";
 import { typeCheck } from "../helpers/functions";
 
 export const useRiskProfileStore = defineStore("risk-profile-store", () => {
-
   const runtimeConfig = useRuntimeConfig();
   const authStore = useAuthStore();
 
@@ -25,13 +24,13 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
-      });
+      }
+    );
 
     setRiskProfiles(riskProfiles);
   };
 
   const createRiskProfile = async (obj) => {
-
     const response = await $fetch(
       `${runtimeConfig.public.API_URL}/riskprofiles`,
       {
@@ -42,7 +41,8 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
-      });
+      }
+    );
 
     riskProfiles.value = [...riskProfiles.value, response];
     return response;
@@ -61,23 +61,22 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
           Authorization: `Bearer ${authStore.API_TOKEN}`,
         },
         body: obj,
-      });
+      }
+    );
 
     update(id, response);
   };
 
   const deleteRiskProfile = async (id) => {
     try {
-      await $fetch(
-        `${runtimeConfig.public.API_URL}/riskprofiles/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authStore.API_TOKEN}`,
-          },
-        });
+      await $fetch(`${runtimeConfig.public.API_URL}/riskprofiles/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+      });
     } catch (e) {
       return console.log("Error", e);
     }
@@ -91,13 +90,9 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
 
   /* Helper functions */
   const update = (id, obj) => {
-
     riskProfiles.value.map((riskProfile) => {
-
       if (riskProfile.id === typeCheck(id)) Object.assign(riskProfile, obj);
-
     });
-
   };
 
   /* Getters */
@@ -108,6 +103,6 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
     createRiskProfile,
     updateRiskProfile,
     deleteRiskProfile,
-    RISK_PROFILES
+    RISK_PROFILES,
   };
 });

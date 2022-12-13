@@ -22,6 +22,8 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
+  if (sheetStore.IS_OVERVIEW_TOGGLED) sheetStore.setToggleSheetOverview(false);
+
   /* Save 5 most recently open sheets */
   let recentSheets =
     JSON.parse(window.localStorage.getItem("recentSheets")) ?? [];
@@ -30,7 +32,6 @@ onMounted(() => {
   })[0];
 
   if (!recentSheets.some((s) => s.id === currentSheet.id)) {
-    console.log("Adding recent sheet", currentSheet);
     recentSheets = [currentSheet, ...recentSheets];
     if (recentSheets.length > 5) recentSheets.pop();
     window.localStorage.setItem("recentSheets", JSON.stringify(recentSheets));
@@ -91,27 +92,6 @@ const handleCreateEpic = async () => {
   await taskStore.createTask(newTask);
 };
 
-const handlePasteEpic = async () => {
-  const epic = { ...globalStore.EPIC_CLIPBOARD };
-  const tasks = [];
-
-  for (let i = 0; taskStore.TASKS.length > i; i++) {
-    if (taskStore.TASKS[i].epicId == epic.id) {
-      tasks.push({ ...taskStore.TASKS[i] });
-    }
-  }
-
-  delete epic.id;
-  epic.estimateSheetId = parseInt(route.params.id);
-  const newEpic = await epicStore.createEpic(epic);
-
-  tasks.forEach(async (task) => {
-    delete task.id;
-    task.epicId = newEpic.id;
-    await taskStore.createTask(task);
-  });
-};
-
 const getParents = (node) => {
   let current = node,
     list = [];
@@ -134,15 +114,8 @@ const sheetEpics = computed(() => {
 
 <template>
   <div ref="sheetElement" class="sheet">
-    <div v-show="sheetStore.IS_OVERVIEW_TOGGLED">
-      <h1>overview</h1>
-      <Button text="Paste epic" @click="handlePasteEpic" />
-    </div>
-
-    <div v-show="!sheetStore.IS_OVERVIEW_TOGGLED">
-      <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
-      <Button text="Ny epic" @click="handleCreateEpic"></Button>
-    </div>
+    <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
+    <Button text="Ny epic" @click="handleCreateEpic"></Button>
   </div>
 </template>
 

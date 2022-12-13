@@ -16,10 +16,9 @@ const props = defineProps({
   },
 });
 
-let hoursRealistic = 2.25;
-let priceRealistic = 1125.0;
-let hoursPessimistic = 2.5;
-let pricePessimistic = 1250.0;
+const estimateInput = ref(null);
+
+const emit = defineEmits(["update"]);
 
 const handleUpdateTaskName = (val) => {
   props.data.taskName = val;
@@ -28,52 +27,131 @@ const handleUpdateTaskName = (val) => {
 };
 
 const handleUpdateEstimate = (val) => {
-  if (val.includes(",")) val = val.replace(",", ".");
-  val = parseFloat(val).toFixed(2);
+  if (val.includes(",")) val = val.toString().replace(",", ".");
+  val = roundNearQtr(parseFloat(val));
+
+  if (props.data.hourEstimate == val) {
+    /* If new value evaluates to same as old value, reset input to default value. */
+    return estimateInput.value.handleReset();
+  }
 
   props.data.hourEstimate = val;
   taskStore.updateTask(props.data);
   detailsStore.setDetails(props.data);
+  emit("update");
 };
 
-const handleUpdateRiskProfile = ({ id }) => {
+const handleUpdateRiskProfile = (val) => {
+  const { id } = val;
   props.data.riskProfileId = id;
   taskStore.updateTask(props.data);
   detailsStore.setDetails(props.data);
+  emit("update");
 };
 
-const handleUpdateRole = ({ id }) => {
+const handleUpdateRole = (val) => {
+  const { id } = val;
   props.data.roleId = id;
   taskStore.updateTask(props.data);
   detailsStore.setDetails(props.data);
+  emit("update");
+};
+
+const handleUpdateOptOut = (val) => {
+  props.data.optOut = val;
+  taskStore.updateTask(props.data);
+  detailsStore.setDetails(props.data);
+  emit("update");
+};
+
+const roundNearQtr = (number) => {
+  return (Math.round(number * 4) / 4).toFixed(2);
+};
+
+const numberDotSeperator = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
 const roleOptions = computed(() => {
   return roleStore.ROLES.map((role) => {
-    return { id: role.id, name: role.roleName };
+    return { id: role.id, name: role.roleName, hourlyWage: role.hourlyWage };
   });
 });
 
 const riskProfileOptions = computed(() => {
   return riskProfileStore.RISK_PROFILES.map((riskProfile) => {
-    return { id: riskProfile.id, name: riskProfile.profileName };
+    return {
+      id: riskProfile.id,
+      name: riskProfile.profileName,
+      percentage: riskProfile.percentage,
+      global: riskProfile.global,
+      default: riskProfile.default,
+    };
   });
 });
 
 const currentRiskProfile = computed(() => {
   return riskProfileStore.RISK_PROFILES.filter((riskProfile) => {
     return riskProfile.id == props.data.riskProfileId;
-  });
+  })[0];
 });
 
 const currentRole = computed(() => {
   return roleStore.ROLES.filter((role) => {
     return role.id == props.data.roleId;
-  });
+  })[0];
 });
 
 const currentEstimate = computed(() => {
   return parseFloat(props.data.hourEstimate).toFixed(2).replace(".", ",");
+});
+
+const hoursRealistic = computed(() => {
+  return parseFloat(
+    roundNearQtr(
+      props.data.hourEstimate *
+        (1 + currentRiskProfile.value.percentage / 2 / 100)
+    )
+  )
+    .toFixed(2)
+    .replace(".", ",");
+});
+
+const priceRealistic = computed(() => {
+  if (!currentRole.value?.hourlyWage) return "0,00";
+  return numberDotSeperator(
+    parseFloat(
+      currentRole.value?.hourlyWage *
+        props.data.hourEstimate *
+        (1 + currentRiskProfile.value.percentage / 2 / 100)
+    )
+      .toFixed(2)
+      .replace(".", ",")
+  );
+});
+
+const hoursPessimistic = computed(() => {
+  return parseFloat(
+    roundNearQtr(
+      props.data.hourEstimate * (1 + currentRiskProfile.value.percentage / 100)
+    )
+  )
+    .toFixed(2)
+    .replace(".", ",");
+});
+
+const pricePessimistic = computed(() => {
+  if (!currentRole.value?.hourlyWage) return "0,00";
+
+  return numberDotSeperator(
+    parseFloat(
+      currentRole.value?.hourlyWage *
+        props.data.hourEstimate *
+        (1 + currentRiskProfile.value.percentage / 100)
+    )
+      .toFixed(2)
+      .replace(".", ",")
+  );
 });
 </script>
 
@@ -94,7 +172,7 @@ const currentEstimate = computed(() => {
         type="select"
         :options="riskProfileOptions"
         emit="updateRiskProfile"
-        :placeholder="currentRiskProfile[0].profileName"
+        :placeholder="currentRiskProfile.profileName"
         @updateRiskProfile="handleUpdateRiskProfile"
       />
     </div>
@@ -104,7 +182,7 @@ const currentEstimate = computed(() => {
         class="input__select--task"
         type="select"
         :placeholder="
-          currentRole[0]?.roleName ? currentRole[0].roleName : 'Vælg rolle'
+          currentRole?.roleName ? currentRole.roleName : 'Vælg rolle'
         "
         :options="roleOptions"
         emit="updateRole"
@@ -118,6 +196,7 @@ const currentEstimate = computed(() => {
         :default="currentEstimate"
         emit="updateEstimate"
         @updateEstimate="handleUpdateEstimate"
+        ref="estimateInput"
       />
     </div>
 
@@ -141,8 +220,8 @@ const currentEstimate = computed(() => {
       <Input
         type="checkbox"
         class="input__checkbox--task"
-        v-model="props.data.optOut"
-        @change="taskStore.updateTask(props.data)"
+        emit="updateOptOut"
+        @updateOptOut="handleUpdateOptOut"
         :default="props.data.optOut"
       />
     </div>

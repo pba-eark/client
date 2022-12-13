@@ -168,10 +168,12 @@ const sheetEpics = computed(() => {
       />
       <ul v-show="isEpicsOpen">
         <li>
-          <button @click="sheetStore.toggleSheetOverview()">Overblik</button>
+          <button @click="sheetStore.toggleSheetOverview($route.params.id)">
+            {{ sheetStore.IS_OVERVIEW_TOGGLED ? "Epics" : "Overblik" }}
+          </button>
         </li>
         <li v-for="epic in sheetEpics">
-          <button @click="globalStore.scrollToEpic(epic)">
+          <button @click="globalStore.scrollToEpic($route.params.id, epic.id)">
             {{ epic.epicName }}
           </button>
         </li>

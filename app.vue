@@ -21,8 +21,6 @@ onMounted(async () => {
   /* Check for jira jwt in localstorage */
   if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)
     await jiraStore.setJwt(localStorage.getItem("jira"));
-
-  return globalStore.setLoaded(true);
 });
 </script>
 

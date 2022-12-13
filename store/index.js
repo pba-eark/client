@@ -21,6 +21,7 @@ export const useGlobalStore = defineStore("global-store", () => {
   const userStore = useUserStore();
   const sheetRiskProfileStore = useEstimateSheetRiskProfileStore();
   const sheetUserStore = useEstimateSheetUserStore();
+  const route = useRoute();
 
   /* State */
   const isLoaded = ref(false);
@@ -43,21 +44,15 @@ export const useGlobalStore = defineStore("global-store", () => {
     await taskStore.getTasks();
     await sheetRiskProfileStore.getEstimateSheetRiskProfiles();
     await sheetUserStore.getEstimateSheetUsers();
+    return setLoaded(true);
   };
 
-  const scrollToEpic = ({ id }) => {
-    if (sheetStore.IS_OVERVIEW_TOGGLED) {
-      sheetStore.toggleSheetOverview();
-      setTimeout(() => {
-        const element = document.querySelector(`[data-epic-id="${id}"]`);
-        const topPos = element.offsetTop;
-        document.querySelector("main").scrollTop = topPos - 50;
-      }, 100);
-    } else {
-      const element = document.querySelector(`[data-epic-id="${id}"]`);
-      const topPos = element.offsetTop;
-      document.querySelector("main").scrollTop = topPos - 50;
-    }
+  const scrollToEpic = async (sheetId, epicId) => {
+    if (sheetStore.IS_OVERVIEW_TOGGLED)
+      await sheetStore.toggleSheetOverview(sheetId);
+    const element = document.querySelector(`[data-epic-id="${epicId}"]`);
+    const topPos = element.offsetTop;
+    document.querySelector("main").scrollTop = topPos - 60;
   };
 
   const copyEpic = (payload) => {
