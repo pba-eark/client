@@ -59,7 +59,6 @@ const handleSelect = () => {
 };
 
 const handleReset = () => {
-  console.log("input reset triggered");
   data.value = props.default;
 };
 
