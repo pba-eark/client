@@ -20,21 +20,22 @@ const props = defineProps({
 const numberDotSeperator = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
-/* TODO: Læg alle de enkelte rollers tasks sammen (med præberegnede værdier) */
-
-// const totalRealisticHrsForRole = (role) => {
-//   const { tasks } = role;
-//   let total = 0;
-//   tasks.forEach(({ realisticHours }) => (total += realisticHours));
-//   return total;
-// };
 
 props.roles.forEach((role) => {
-  let total = 0;
+  let totalRealisticHours = 0;
+  let totalRealisticPrice = 0;
+  let totalPessimisticHours = 0;
+  let totalPessimisticPrice = 0;
   role.tasks.forEach((task) => {
-    total += task.realisticHours;
+    totalRealisticHours += task.realisticHours;
+    totalRealisticPrice += task.realisticPrice;
+    totalPessimisticHours += task.pessimisticHours;
+    totalPessimisticPrice += task.pessimisticPrice;
   });
-  role.total = total;
+  role.totalRealisticHours = totalRealisticHours;
+  role.totalRealisticPrice = totalRealisticPrice;
+  role.totalPessimisticHours = totalPessimisticHours;
+  role.totalPessimisticPrice = totalPessimisticPrice;
 });
 </script>
 
@@ -69,8 +70,35 @@ props.roles.forEach((role) => {
 
     <div v-for="role in roles" class="row__details" v-show="isOpen">
       <div>{{ role.roleName }}</div>
-      <div>{{ `${role.hourlyWage} kr/t` }}</div>
-      <div>{{ role.total }}</div>
+      <div>{{ role.hourlyWage }} kr./t</div>
+      <div>
+        {{
+          numberDotSeperator(
+            role.totalRealisticHours.toFixed(2).replace(".", ",")
+          )
+        }}
+      </div>
+      <div>
+        {{
+          numberDotSeperator(
+            role.totalRealisticPrice.toFixed(2).replace(".", ",")
+          )
+        }}
+      </div>
+      <div>
+        {{
+          numberDotSeperator(
+            role.totalPessimisticHours.toFixed(2).replace(".", ",")
+          )
+        }}
+      </div>
+      <div>
+        {{
+          numberDotSeperator(
+            role.totalPessimisticPrice.toFixed(2).replace(".", ",")
+          )
+        }}
+      </div>
     </div>
   </div>
 </template>
@@ -101,7 +129,11 @@ props.roles.forEach((role) => {
     color: #fff;
     width: 100%;
     display: grid;
-    grid-template-columns: 100px 100px 100px;
+    grid-template-columns: 60px 100px 108px 150px 150px 150px 125px 150px auto auto;
+
+    > div:first-child {
+      grid-column-start: 2;
+    }
   }
 }
 </style>
