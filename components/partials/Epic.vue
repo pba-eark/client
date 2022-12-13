@@ -69,6 +69,7 @@ const calculateTotals = () => {
   totalPessimisticPrice.value = 0;
 
   tasksForEpic.value.forEach((task) => {
+    if (task.optOut) return null;
     const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
       return p.id === task.riskProfileId;
     })[0];

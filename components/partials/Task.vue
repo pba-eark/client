@@ -57,6 +57,13 @@ const handleUpdateRole = (val) => {
   emit("update");
 };
 
+const handleUpdateOptOut = (val) => {
+  props.data.optOut = val;
+  taskStore.updateTask(props.data);
+  detailsStore.setDetails(props.data);
+  emit("update");
+};
+
 const roundNearQtr = (number) => {
   return (Math.round(number * 4) / 4).toFixed(2);
 };
@@ -213,8 +220,8 @@ const pricePessimistic = computed(() => {
       <Input
         type="checkbox"
         class="input__checkbox--task"
-        v-model="props.data.optOut"
-        @change="taskStore.updateTask(props.data)"
+        emit="updateOptOut"
+        @updateOptOut="handleUpdateOptOut"
         :default="props.data.optOut"
       />
     </div>

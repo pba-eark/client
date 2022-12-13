@@ -31,7 +31,7 @@ const roundNearQtr = (number) => {
 const calculateOverview = () => {
   epics.value = [];
   const epicsForSheet = epicStore.EPICS.filter((epic) => {
-    return epic.estimateSheetId == route.params.id;
+    return epic.estimateSheetId == route.params.id && !epic.optOut;
   });
 
   epicsForSheet.forEach((e) => {
@@ -39,8 +39,6 @@ const calculateOverview = () => {
     let totalPessimisticHours = 0;
     let totalRealisticPrice = 0;
     let totalPessimisticPrice = 0;
-
-    let epicTasks = [];
 
     const epic = {
       ...e,
@@ -50,7 +48,9 @@ const calculateOverview = () => {
       status: "",
     };
 
-    /* Get & set epic status */
+    let epicTasks = [];
+
+    /* Get then set epic status */
     const epicStatus = epicStatusStore.EPIC_STATUS.filter((s) => {
       return s.id === e.epicStatusId;
     })[0];
@@ -63,7 +63,10 @@ const calculateOverview = () => {
     });
 
     tasksForEpic.forEach((task) => {
-      if (task.optOut) epic.optOuts++;
+      if (task.optOut) {
+        epic.optOuts++;
+        return;
+      }
       const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
         return p.id === task.riskProfileId;
       })[0];
