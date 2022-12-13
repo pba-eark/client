@@ -16,6 +16,8 @@ const props = defineProps({
   },
 });
 
+const estimateInput = ref(null);
+
 const emit = defineEmits(["update"]);
 
 const handleUpdateTaskName = (val) => {
@@ -25,8 +27,14 @@ const handleUpdateTaskName = (val) => {
 };
 
 const handleUpdateEstimate = (val) => {
-  if (val.includes(",")) val = val.replace(",", ".");
+  if (val.includes(",")) val = val.toString().replace(",", ".");
   val = roundNearQtr(parseFloat(val));
+
+  if (props.data.hourEstimate == val) {
+    /* If new value evaluates to same as old value, reset input to default value. */
+    return estimateInput.value.handleReset();
+  }
+
   props.data.hourEstimate = val;
   taskStore.updateTask(props.data);
   detailsStore.setDetails(props.data);
@@ -181,6 +189,7 @@ const pricePessimistic = computed(() => {
         :default="currentEstimate"
         emit="updateEstimate"
         @updateEstimate="handleUpdateEstimate"
+        ref="estimateInput"
       />
     </div>
 

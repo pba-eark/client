@@ -156,7 +156,6 @@ const tasksForEpic = computed(() => {
         @click="handleCreateTask"
       />
 
-      <h2>OPDATERES IKKE PÅ PASTE TASK</h2>
       <div>
         Estimat i alt {{ totalEstimatedHours.toFixed(2).replace(".", ",") }}
       </div>

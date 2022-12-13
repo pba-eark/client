@@ -14,7 +14,7 @@ const props = defineProps({
   optOuts: Number,
   status: Object,
   riskProfile: Object,
-  taskRoles: Array,
+  roles: Array,
 });
 
 const numberDotSeperator = (x) => {
@@ -28,12 +28,26 @@ const numberDotSeperator = (x) => {
 //   tasks.forEach(({ realisticHours }) => (total += realisticHours));
 //   return total;
 // };
+
+props.roles.forEach((role) => {
+  let total = 0;
+  role.tasks.forEach((task) => {
+    total += task.realisticHours;
+  });
+  role.total = total;
+});
 </script>
 
 <template>
   <div v-bind="$attrs">
     <div class="row" :class="{ row__open: isOpen }" @click="isOpen = !isOpen">
-      <div><Icon icon="icon-chevron" class="row__icon" /> {{ isOpen }}</div>
+      <div>
+        <Icon
+          icon="icon-chevron"
+          class="row__icon"
+          :class="{ row__icon__open: isOpen }"
+        />
+      </div>
       <div>{{ name }}</div>
       <div>{{ totalRealisticHours.toFixed(2).replace(".", ",") }}</div>
       <div>
@@ -53,11 +67,10 @@ const numberDotSeperator = (x) => {
       <div></div>
     </div>
 
-    <div v-for="role in taskRoles" class="row__details" v-show="isOpen">
+    <div v-for="role in roles" class="row__details" v-show="isOpen">
       <div>{{ role.roleName }}</div>
       <div>{{ `${role.hourlyWage} kr/t` }}</div>
-      <!-- <div>{{ totalRealisticHrsForRole(role) }}</div> -->
-      <!-- <div>total realstisk: {{ totalRealisticHrsForRole }}</div> -->
+      <div>{{ role.total }}</div>
     </div>
   </div>
 </template>
@@ -77,6 +90,10 @@ const numberDotSeperator = (x) => {
     width: 15px;
     margin: 0 auto;
     display: block;
+
+    &__open {
+      rotate: 180deg;
+    }
   }
 
   &__details {

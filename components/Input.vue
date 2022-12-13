@@ -57,6 +57,15 @@ const handleSelect = () => {
   /* Reset select when updating task epicId */
   if (props.emit == "updateTaskEpicId") data.value = "";
 };
+
+const handleReset = () => {
+  console.log("input reset triggered");
+  data.value = props.default;
+};
+
+defineExpose({
+  handleReset,
+});
 </script>
 
 <template>

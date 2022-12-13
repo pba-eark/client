@@ -116,7 +116,7 @@ const calculateOverview = () => {
 
       if (currentRole) {
         if (!epic.roles.some((role) => role.id === currentRole.id)) {
-          epic.roles.push(currentRole);
+          epic.roles.push({ ...currentRole, tasks: [] });
         }
       }
 
@@ -125,15 +125,11 @@ const calculateOverview = () => {
 
     /* Set tasks for epic roles */
     epic.roles.forEach((role) => {
-      const tasks = [];
-
       for (let i = 0; i < epicTasks.length; i++) {
         if (role.id == epicTasks[i].roleId) {
-          tasks.push(epicTasks[i]);
+          role.tasks.push(epicTasks[i]);
         }
       }
-
-      role.tasks = tasks;
     });
 
     epic.totalRealisticHours = totalRealisticHours;
@@ -178,7 +174,7 @@ const calculateOverview = () => {
         :riskProfile="epic.riskProfile"
         :tasks="epic.tasks"
         :role="epic.role"
-        :taskRoles="epic.roles"
+        :roles="epic.roles"
       />
     </div>
   </div>
