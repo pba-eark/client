@@ -26,6 +26,13 @@ onMounted(() => {
   calculateTotals();
 });
 
+watch(
+  () => taskStore.TASKS.length,
+  () => {
+    calculateTotals();
+  }
+);
+
 const handleCreateTask = async () => {
   const newTask = {
     parentId: 0,
@@ -53,12 +60,6 @@ const roundNearQtr = (number) => {
 const numberDotSeperator = (x) => {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
-
-const tasksForEpic = computed(() => {
-  return taskStore.TASKS.filter((task) => {
-    return task.epicId === props.data.id;
-  });
-});
 
 const calculateTotals = () => {
   totalEstimatedHours.value = 0;
@@ -112,6 +113,11 @@ const calculateTotals = () => {
     }
   });
 };
+const tasksForEpic = computed(() => {
+  return taskStore.TASKS.filter((task) => {
+    return task.epicId === props.data.id;
+  });
+});
 </script>
 
 <template>
@@ -150,6 +156,7 @@ const calculateTotals = () => {
         @click="handleCreateTask"
       />
 
+      <h2>OPDATERES IKKE PÅ PASTE TASK</h2>
       <div>
         Estimat i alt {{ totalEstimatedHours.toFixed(2).replace(".", ",") }}
       </div>

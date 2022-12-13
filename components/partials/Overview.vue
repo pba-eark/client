@@ -13,89 +13,137 @@ const epicStatusStore = useEpicStatusStore();
 const route = useRoute();
 const epics = ref([]);
 
+onMounted(() => {
+  calculateOverview();
+});
+
+watch(
+  () => taskStore.TASKS.length,
+  () => {
+    calculateOverview();
+  }
+);
+
 const roundNearQtr = (number) => {
   return (Math.round(number * 4) / 4).toFixed(2);
 };
 
-const numberDotSeperator = (x) => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-
-const epicsForSheet = computed(() => {
-  return epicStore.EPICS.filter((epic) => {
+const calculateOverview = () => {
+  epics.value = [];
+  const epicsForSheet = epicStore.EPICS.filter((epic) => {
     return epic.estimateSheetId == route.params.id;
   });
-});
 
-epicsForSheet.value.forEach((e) => {
-  let totalRealisticHours = 0;
-  let totalPessimisticHours = 0;
-  let totalRealisticPrice = 0;
-  let totalPessimisticPrice = 0;
-  const obj = { ...e, tasks: [], optOuts: 0, uncertainty: 0, status: "" };
+  epicsForSheet.forEach((e) => {
+    let totalRealisticHours = 0;
+    let totalPessimisticHours = 0;
+    let totalRealisticPrice = 0;
+    let totalPessimisticPrice = 0;
 
-  /* Get & set epic status */
-  const epicStatus = epicStatusStore.EPIC_STATUS.filter((s) => {
-    return s.id === e.epicStatusId;
-  })[0];
+    let epicTasks = [];
 
-  obj.status = epicStatus;
+    const epic = {
+      ...e,
+      roles: [],
+      optOuts: 0,
+      uncertainty: 0,
+      status: "",
+    };
 
-  /* Get tasks for epic */
-  const tasksForEpic = taskStore.TASKS.filter((t) => {
-    return t.epicId === e.id;
-  });
-
-  tasksForEpic.forEach((task) => {
-    if (task.optOut) obj.optOuts++;
-    obj.tasks.push(task);
-    const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
-      return p.id === task.riskProfileId;
+    /* Get & set epic status */
+    const epicStatus = epicStatusStore.EPIC_STATUS.filter((s) => {
+      return s.id === e.epicStatusId;
     })[0];
 
-    const currentRole = roleStore.ROLES.filter((r) => {
-      return r.id === task.roleId;
-    })[0];
+    epic.status = epicStatus;
 
-    /* Total realistic hours */
-    totalRealisticHours += parseFloat(
-      roundNearQtr(
-        task.hourEstimate * (1 + currentRiskProfile.percentage / 2 / 100)
-      )
-    );
+    /* Get tasks for epic */
+    const tasksForEpic = taskStore.TASKS.filter((t) => {
+      return t.epicId === e.id;
+    });
 
-    /* Total realistic price */
-    if (currentRole) {
-      totalRealisticPrice += parseFloat(
-        currentRole.hourlyWage *
-          task.hourEstimate *
-          (1 + currentRiskProfile.percentage / 2 / 100)
+    tasksForEpic.forEach((task) => {
+      if (task.optOut) epic.optOuts++;
+      const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
+        return p.id === task.riskProfileId;
+      })[0];
+
+      epic.riskProfile = currentRiskProfile;
+
+      const currentRole = roleStore.ROLES.filter((r) => {
+        return r.id === task.roleId;
+      })[0];
+
+      /* Realistic hours */
+      task.realisticHours = parseFloat(
+        roundNearQtr(
+          task.hourEstimate * (1 + currentRiskProfile.percentage / 2 / 100)
+        )
       );
-    }
 
-    /* Total pessimistic price */
-    totalPessimisticHours += parseFloat(
-      roundNearQtr(
-        task.hourEstimate * (1 + currentRiskProfile.percentage / 100)
-      )
-    );
+      totalRealisticHours += task.realisticHours;
 
-    /* Total pessimistic price */
-    if (currentRole) {
-      totalPessimisticPrice += parseFloat(
-        currentRole.hourlyWage *
-          task.hourEstimate *
-          (1 + currentRiskProfile.percentage / 100)
+      /* Realistic price */
+      if (currentRole) {
+        task.realisticPrice = parseFloat(
+          currentRole.hourlyWage *
+            task.hourEstimate *
+            (1 + currentRiskProfile.percentage / 2 / 100)
+        );
+
+        totalRealisticPrice += task.realisticPrice;
+      }
+
+      /* Pessimistic hours */
+      task.pessimisticHours = parseFloat(
+        roundNearQtr(
+          task.hourEstimate * (1 + currentRiskProfile.percentage / 100)
+        )
       );
-    }
+
+      totalPessimisticHours += task.pessimisticHours;
+
+      /* Pessimistic price */
+      if (currentRole) {
+        task.pessimisticPrice = parseFloat(
+          currentRole.hourlyWage *
+            task.hourEstimate *
+            (1 + currentRiskProfile.percentage / 100)
+        );
+
+        totalPessimisticPrice += task.pessimisticPrice;
+      }
+
+      if (currentRole) {
+        if (!epic.roles.some((role) => role.id === currentRole.id)) {
+          epic.roles.push(currentRole);
+        }
+      }
+
+      epicTasks.push(task);
+    });
+
+    /* Set tasks for epic roles */
+    epic.roles.forEach((role) => {
+      const tasks = [];
+
+      for (let i = 0; i < epicTasks.length; i++) {
+        if (role.id == epicTasks[i].roleId) {
+          tasks.push(epicTasks[i]);
+        }
+      }
+
+      role.tasks = tasks;
+    });
+
+    epic.totalRealisticHours = totalRealisticHours;
+    epic.totalPessimisticHours = totalPessimisticHours;
+    epic.totalRealisticPrice = totalRealisticPrice;
+    epic.totalPessimisticPrice = totalPessimisticPrice;
+    epics.value.push(epic);
+    console.log(epic);
   });
-
-  obj.totalRealisticHours = totalRealisticHours;
-  obj.totalPessimisticHours = totalPessimisticHours;
-  obj.totalRealisticPrice = totalRealisticPrice;
-  obj.totalPessimisticPrice = totalPessimisticPrice;
-  epics.value.push(obj);
-});
+};
 </script>
 
 <template>
@@ -104,6 +152,7 @@ epicsForSheet.value.forEach((e) => {
 
     <div class="table">
       <div class="table__header">
+        <div></div>
         <div>Epic</div>
         <div>Timer</div>
         <div>Pris DKK</div>
@@ -115,40 +164,32 @@ epicsForSheet.value.forEach((e) => {
         <div>Usikkerhed</div>
       </div>
 
-      <div class="table__row" v-for="epic in epics">
-        <div>{{ epic.epicName }}</div>
-        <div>{{ epic.totalRealisticHours.toFixed(2).replace(".", ",") }}</div>
-        <div>
-          {{
-            numberDotSeperator(
-              epic.totalRealisticPrice.toFixed(2).replace(".", ",")
-            )
-          }}
-        </div>
-        <div>{{ epic.totalPessimisticHours.toFixed(2).replace(".", ",") }}</div>
-        <div>
-          {{
-            numberDotSeperator(
-              epic.totalPessimisticPrice.toFixed(2).replace(".", ",")
-            )
-          }}
-        </div>
-        <div>{{ epic.optOuts }}</div>
-        <div>{{ epic.status.epicStatusName }}</div>
-        <div></div>
-        <div></div>
-      </div>
+      <EpicOverview
+        v-for="epic in epics"
+        :key="epic.id"
+        :id="epic.id"
+        :name="epic.epicName"
+        :totalRealisticHours="epic.totalRealisticHours"
+        :totalRealisticPrice="epic.totalRealisticPrice"
+        :totalPessimisticHours="epic.totalPessimisticHours"
+        :totalPessimisticPrice="epic.totalPessimisticPrice"
+        :optOuts="epic.optOuts"
+        :status="epic.status"
+        :riskProfile="epic.riskProfile"
+        :tasks="epic.tasks"
+        :role="epic.role"
+        :taskRoles="epic.roles"
+      />
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .table {
-  &__header,
-  &__row {
+  &__header {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
+    grid-template-columns: 50px 200px 150px 150px 150px 150px 125px 150px auto auto;
   }
 }
 </style>
