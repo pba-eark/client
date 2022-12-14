@@ -11,16 +11,18 @@ const globalStore = useGlobalStore();
 
 onMounted(async () => {
   /* Check if user is logged in */
-  if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt"))
-    authStore.setJwt(localStorage.getItem("jwt"));
+  if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt")) {
+    await authStore.setJwt(localStorage.getItem("jwt"));
+    userStore.setCurrentUser(JSON.parse(localStorage.getItem("user")));
+  } else {
+    globalStore.setLoaded(true);
+  }
 
   /* Check if user is logged in */
   if (!authStore.IS_AUTHORIZED && localStorage.getItem("user"))
-    userStore.setCurrentUser(JSON.parse(localStorage.getItem("user")));
-
-  /* Check for jira jwt in localstorage */
-  if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)
-    await jiraStore.setJwt(localStorage.getItem("jira"));
+    if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)
+      /* Check for jira jwt in localstorage */
+      await jiraStore.setJwt(localStorage.getItem("jira"));
 });
 </script>
 

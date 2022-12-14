@@ -1,16 +1,16 @@
 <script>
 import { useAuthStore } from "~/store/auth";
-import { useGlobalStore } from "~/store";
+// import { useGlobalStore } from "~/store";
 
 export default defineComponent({
   async setup() {
-    const globalStore = useGlobalStore();
+    // const globalStore = useGlobalStore();
     const authStore = useAuthStore();
 
     /* Make sure user can't access this page, if logged in */
     watchEffect(async () => {
       if (authStore.IS_AUTHORIZED) {
-        await globalStore.fetchData(authStore.API_TOKEN);
+        // await globalStore.fetchData();
         return navigateTo(localStorage.getItem("lastPath") ?? "/");
       }
     });
