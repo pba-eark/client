@@ -7,12 +7,18 @@ import { useRiskProfileStore } from "./riskProfiles";
 import { useRoleStore } from "./roles";
 import { useTaskStore } from "./tasks";
 import { useUserStore } from "./users";
+<<<<<<< HEAD
 import { useEstimateSheetRiskProfileStore } from "./composites/estimateSheetRiskProfiles";
 <<<<<<< HEAD
 import { useEstimateSheetUserStore } from "./composites/estimateSheetUsers";
 import { useSheetStatusStore } from "./sheetStatus";
 =======
 >>>>>>> abf643b (Delete and Create functions for)
+=======
+import { useEstimateSheetRiskProfileStore } from "~/store/composites/estimateSheetRiskProfiles";
+import { useEstimateSheetUserStore } from "~/store/composites/estimateSheetUsers";
+import { useEstimateSheetRoleStore } from "./composites/estimateSheetRoles";
+>>>>>>> ddeb690 (DELETE & UPDATE functions)
 
 export const useGlobalStore = defineStore("global-store", () => {
   const customerStore = useCustomerStore();
@@ -26,10 +32,14 @@ export const useGlobalStore = defineStore("global-store", () => {
 <<<<<<< HEAD
   const sheetRiskProfileStore = useEstimateSheetRiskProfileStore();
   const sheetUserStore = useEstimateSheetUserStore();
+<<<<<<< HEAD
   const sheetStatusStore = useSheetStatusStore();
 =======
   const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 >>>>>>> abf643b (Delete and Create functions for)
+=======
+  const sheetRoleStore = useEstimateSheetRoleStore();
+>>>>>>> ddeb690 (DELETE & UPDATE functions)
 
   /* State */
   const isLoaded = ref(false);
@@ -53,11 +63,15 @@ export const useGlobalStore = defineStore("global-store", () => {
 <<<<<<< HEAD
     await sheetRiskProfileStore.getEstimateSheetRiskProfiles();
     await sheetUserStore.getEstimateSheetUsers();
+<<<<<<< HEAD
     await sheetStatusStore.getSheetStatus();
     return setLoaded(true);
 =======
     await estimateSheetRiskProfileStore.getEstimateSheetRiskProfiles();
 >>>>>>> abf643b (Delete and Create functions for)
+=======
+    await sheetRoleStore.getEstimateSheetRoles();
+>>>>>>> ddeb690 (DELETE & UPDATE functions)
   };
 
   const scrollToEpic = async (sheetId, epicId) => {

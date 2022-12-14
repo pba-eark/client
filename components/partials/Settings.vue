@@ -63,6 +63,8 @@ masterGlobals.value.forEach(masterGlobal => {
       (profile) => profile.profileName == masterGlobal.profileName
     );
 
+    console.log(sheetProfile.profileName, masterGlobal.profileName)
+
     if (index >= 0 && sheetProfile.profileName == masterGlobal.profileName) {
       globals.value.push(sheetProfile);
       indexes.push(index);
@@ -418,7 +420,7 @@ const handleDeleteGlobalSheetStatus = async (id) => {
 
       <h3>Roller</h3>
       <div v-for="role in globalRoles" :key="role.id">
-        <LocalGlobalSettings :data="role" :renderForm="'role'" />
+        <LocalGlobalSettings :data="role" :renderForm="'role'" @delete="handleDeleteRole" />
       </div>
       <p>-----------------------------</p>
       <div v-for="role in sheetRoles" :key="role.id">
