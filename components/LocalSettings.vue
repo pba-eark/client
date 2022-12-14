@@ -43,10 +43,10 @@ const handleUpdateRole = (obj) => {
                 <p for="name">"icon" Profil Navn</p>
                 <input type="text" :disabled=disabled v-model="data.profileName">
                 <input type="text" :disabled=disabled v-model="data.percentage">
-                <Button text="Delete" @click="$emit('delete', data.id)" />
+                <Button text="Delete" @click="($emit('delete', data.id))" />
                 <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
                 <div v-if="!disabled">
-                    <Button text="Save" @click="handleUpdateProfile(data)"/>
+                    <Button text="Save" @click="handleUpdateProfile(data), (disabled = true)"/>
                     <Button text="Unsave" @click="(disabled = true)"/>
                 </div>
             </form>
@@ -56,9 +56,10 @@ const handleUpdateRole = (obj) => {
                 <p for="name">"icon" Rolle Navn</p>
                 <input type="text" :disabled=disabled v-model="data.roleName">
                 <input type="text" :disabled=disabled v-model="data.hourlyWage">
+                <Button text="Delete" @click="$emit('delete', data.id)" />
                 <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
                 <div v-if="!disabled">
-                    <Button text="Save" @click="handleUpdateRole(data)"/>
+                    <Button text="Save" @click="handleUpdateRole(data), (disabled = true)"/>
                     <Button text="Unsave" @click="(disabled = true)"/>
                 </div>
             </form>

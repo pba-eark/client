@@ -47,6 +47,7 @@ export const useRoleStore = defineStore("role-store", () => {
     });
 
     roles.value = [...roles.value, response];
+    return response;
   };
 
   const updateRole = async (obj) => {
@@ -78,25 +79,22 @@ export const useRoleStore = defineStore("role-store", () => {
       },
     });
 
-    remove(id);
+    setRoles(
+      roles.value.filter((role) => {
+        return role.id !== id;
+      })
+    );
   };
 
   /* Helper functions */
   const update = (id, obj) => {
+
     roles.value.map((role) => {
+
       if (role.id === typeCheck(id)) Object.assign(role, obj);
-    });
-  };
 
-  const remove = (id) => {
-    roles.value.forEach((element) => {
-      element.id;
-
-      if (element.id === typeCheck(id)) {
-        let index = roles.value.findIndex(element);
-        roles.value.splice(index, 1);
-      }
     });
+
   };
 
   /* Getters */

@@ -9,6 +9,7 @@ import { useTaskStore } from "./tasks";
 import { useUserStore } from "./users";
 import { useEstimateSheetRiskProfileStore } from "~/store/composites/estimateSheetRiskProfiles";
 import { useEstimateSheetUserStore } from "~/store/composites/estimateSheetUsers";
+import { useEstimateSheetRoleStore } from "./composites/estimateSheetRoles";
 
 export const useGlobalStore = defineStore("global-store", () => {
   const customerStore = useCustomerStore();
@@ -21,6 +22,7 @@ export const useGlobalStore = defineStore("global-store", () => {
   const userStore = useUserStore();
   const sheetRiskProfileStore = useEstimateSheetRiskProfileStore();
   const sheetUserStore = useEstimateSheetUserStore();
+  const sheetRoleStore = useEstimateSheetRoleStore();
 
   /* State */
   const isLoaded = ref(false);
@@ -43,6 +45,7 @@ export const useGlobalStore = defineStore("global-store", () => {
     await taskStore.getTasks();
     await sheetRiskProfileStore.getEstimateSheetRiskProfiles();
     await sheetUserStore.getEstimateSheetUsers();
+    await sheetRoleStore.getEstimateSheetRoles();
   };
 
   const scrollToEpic = ({ id }) => {

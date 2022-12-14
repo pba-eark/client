@@ -55,6 +55,23 @@ export const useEstimateSheetRiskProfileStore = defineStore(
       }
     };
 
+    const deleteEstimateSheetRiskProfile = async (sheetId, profileId) => {
+      await $fetch(`${runtimeConfig.public.API_URL}/estimatesheetriskprofiles/?sheetId=${sheetId}&profileId=${profileId}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+      });
+
+      setEstimateSheetRiskProfiles(
+        estimateSheetRiskProfiles.value.filter((sheetProfile) => {
+          return sheetProfile.id !== profileId;
+        })
+      );
+    };
+
     /* Getters */
     const ESTIMATE_SHEET_RISK_PROFILES = computed(
       () => estimateSheetRiskProfiles.value
@@ -63,6 +80,7 @@ export const useEstimateSheetRiskProfileStore = defineStore(
     return {
       getEstimateSheetRiskProfiles,
       createEstimateSheetRiskProfile,
+      deleteEstimateSheetRiskProfile,
       ESTIMATE_SHEET_RISK_PROFILES,
     };
   }
