@@ -144,9 +144,11 @@ const calculateOverview = () => {
 
       if (!task.optOut) {
         totalEpicsRealisticHours.value += task.realisticHours;
-        totalEpicsRealisticPrice.value += task.realisticPrice;
+        if (task.realisticPrice)
+          totalEpicsRealisticPrice.value += task.realisticPrice;
         totalEpicsPessimisticHours.value += task.pessimisticHours;
-        totalEpicsPessimisticPrice.value += task.pessimisticPrice;
+        if (task.pessimisticPrice)
+          totalEpicsPessimisticPrice.value += task.pessimisticPrice;
       }
 
       epicTasks.push(task);
@@ -233,7 +235,7 @@ const calculateOverview = () => {
       }}
     </p>
     <p>
-      pessimistisk timer:
+      pessimistisk pris:
       {{
         numberDotSeperator(
           totalEpicsPessimisticPrice.toFixed(2).replace(".", ",")
