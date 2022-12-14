@@ -143,12 +143,10 @@ const calculateOverview = () => {
       }
 
       if (!task.optOut) {
-        totalEpicsRealisticHours.value += task.realisticHours;
-        if (task.realisticPrice)
-          totalEpicsRealisticPrice.value += task.realisticPrice;
-        totalEpicsPessimisticHours.value += task.pessimisticHours;
-        if (task.pessimisticPrice)
-          totalEpicsPessimisticPrice.value += task.pessimisticPrice;
+        totalEpicsRealisticHours.value += task.realisticHours ?? 0;
+        totalEpicsRealisticPrice.value += task.realisticPrice ?? 0;
+        totalEpicsPessimisticHours.value += task.pessimisticHours ?? 0;
+        totalEpicsPessimisticPrice.value += task.pessimisticPrice ?? 0;
       }
 
       epicTasks.push(task);
@@ -168,7 +166,6 @@ const calculateOverview = () => {
     epic.totalRealisticPrice = totalRealisticPrice;
     epic.totalPessimisticPrice = totalPessimisticPrice;
     epics.value.push(epic);
-    console.log(epic);
   });
 };
 </script>
