@@ -62,7 +62,7 @@ const handleClick = (e) => {
     getParents(e.target).includes(sheetElement.value) ||
     Array.from(e.target.children).includes(sheetElement.value)
   )
-    return tabStore.openTab(sheetStore.CURRENT_ESTIMATE_SHEET[0]);
+    return tabStore.openTab(sheetStore.CURRENT_ESTIMATE_SHEET);
   return;
 };
 

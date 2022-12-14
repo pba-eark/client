@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useAuthStore } from "./auth";
+import { typeCheck } from "../helpers/functions";
 
 export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
   const route = useRoute();
@@ -61,24 +62,30 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
     isOverviewToggled.value = payload;
   };
 
-  // const updateEstimateSheet = async (obj) => {
-  //   const { id } = obj;
+  const updateEstimateSheet = async (obj) => {
+    const { id } = obj;
 
-  //   const response = await $fetch(
-  //     `${runtimeConfig.public.API_URL}/estimatesheets/${id}`,
-  //     {
-  //       method: "PUT",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${authStore.API_TOKEN}`,
-  //       },
-  //       body: obj,
-  //     }
-  //   );
+    try {
+      const response = await $fetch(
+        `${runtimeConfig.public.API_URL}/estimatesheets/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authStore.API_TOKEN}`,
+          },
+          body: obj,
+        }
+      );
 
-  //   helper.update(id, response);
-  // };
+      estimateSheets.value.map((sheet) => {
+        if (sheet.id === typeCheck(id)) Object.assign(sheet, response);
+      });
+    } catch (e) {
+      console.log("Error", e);
+    }
+  };
 
   // const deleteEstimateSheet = async (id) => {
   //   await $fetch(`${runtimeConfig.public.API_URL}/estimatesheets/${id}`, {
@@ -95,17 +102,18 @@ export const useEstimateSheetStore = defineStore("estimate-sheet-store", () => {
 
   /* Getters */
   const ESTIMATE_SHEETS = computed(() => estimateSheets.value);
-  const CURRENT_ESTIMATE_SHEET = computed(() =>
-    estimateSheets.value.filter((s) => {
-      if (s.id == route.params.id) return s;
-    })
+  const CURRENT_ESTIMATE_SHEET = computed(
+    () =>
+      estimateSheets.value.filter((s) => {
+        if (s.id == route.params.id) return s;
+      })[0]
   );
   const IS_OVERVIEW_TOGGLED = computed(() => isOverviewToggled.value);
 
   return {
     getEstimateSheets,
     createEstimateSheet,
-    // updateEstimateSheet,
+    updateEstimateSheet,
     // deleteEstimateSheet,
     ESTIMATE_SHEETS,
     CURRENT_ESTIMATE_SHEET,

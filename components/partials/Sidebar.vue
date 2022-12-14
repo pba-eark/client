@@ -77,7 +77,7 @@ const sheetsWithoutCustomers = computed(() => {
 
 const sheetEpics = computed(() => {
   return epicStore.EPICS.filter((epic) => {
-    return epic.estimateSheetId == sheetStore.CURRENT_ESTIMATE_SHEET[0]?.id;
+    return epic.estimateSheetId == sheetStore.CURRENT_ESTIMATE_SHEET?.id;
   });
 });
 </script>
@@ -153,16 +153,10 @@ const sheetEpics = computed(() => {
       </div>
     </div>
 
-    <div
-      v-show="
-        sheetStore.CURRENT_ESTIMATE_SHEET &&
-        sheetStore.CURRENT_ESTIMATE_SHEET.length
-      "
-      class="block__epics"
-    >
+    <div v-show="sheetStore.CURRENT_ESTIMATE_SHEET" class="block__epics">
       <!-- Sheet epic nav -->
       <Button
-        :text="sheetStore.CURRENT_ESTIMATE_SHEET[0]?.sheetName"
+        :text="sheetStore.CURRENT_ESTIMATE_SHEET?.sheetName"
         icon="icon-chevron"
         @click="isEpicsOpen = !isEpicsOpen"
       />
