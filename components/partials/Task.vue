@@ -118,7 +118,7 @@ const hoursRealistic = computed(() => {
 });
 
 const priceRealistic = computed(() => {
-  if (!currentRole.value?.hourlyWage) return "0,00";
+  if (!currentRole.value?.hourlyWage) return "Ingen rolle";
   return numberDotSeperator(
     parseFloat(
       currentRole.value?.hourlyWage *
@@ -141,7 +141,7 @@ const hoursPessimistic = computed(() => {
 });
 
 const pricePessimistic = computed(() => {
-  if (!currentRole.value?.hourlyWage) return "0,00";
+  if (!currentRole.value?.hourlyWage) return "Ingen rolle";
 
   return numberDotSeperator(
     parseFloat(
