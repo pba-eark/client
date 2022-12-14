@@ -140,7 +140,6 @@ const calculateOverview = () => {
     epic.totalRealisticPrice = totalRealisticPrice;
     epic.totalPessimisticPrice = totalPessimisticPrice;
     epics.value.push(epic);
-    console.log(epic);
   });
 };
 </script>

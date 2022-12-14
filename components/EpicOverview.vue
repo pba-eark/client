@@ -1,8 +1,4 @@
 <script setup>
-import { useRoleStore } from "~/store/roles";
-
-const roleStore = useRoleStore();
-const roleDetails = ref([]);
 const isOpen = ref(false);
 const props = defineProps({
   id: Number,
@@ -18,6 +14,7 @@ const props = defineProps({
 });
 
 const numberDotSeperator = (x) => {
+  if (!x) return "0,00";
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
@@ -74,28 +71,28 @@ props.roles.forEach((role) => {
       <div>
         {{
           numberDotSeperator(
-            role.totalRealisticHours.toFixed(2).replace(".", ",")
+            role.totalRealisticHours?.toFixed(2).replace(".", ",")
           )
         }}
       </div>
       <div>
         {{
           numberDotSeperator(
-            role.totalRealisticPrice.toFixed(2).replace(".", ",")
+            role.totalRealisticPrice?.toFixed(2).replace(".", ",")
           )
         }}
       </div>
       <div>
         {{
           numberDotSeperator(
-            role.totalPessimisticHours.toFixed(2).replace(".", ",")
+            role.totalPessimisticHours?.toFixed(2).replace(".", ",")
           )
         }}
       </div>
       <div>
         {{
           numberDotSeperator(
-            role.totalPessimisticPrice.toFixed(2).replace(".", ",")
+            role.totalPessimisticPrice?.toFixed(2).replace(".", ",")
           )
         }}
       </div>
