@@ -17,7 +17,6 @@ const props = defineProps({
   totalPessimisticPrice: Number,
   optOuts: Number,
   status: Object,
-  riskProfile: Object,
   roles: Array,
   userId: Number,
   user: Object,
@@ -29,11 +28,13 @@ const numberDotSeperator = (x) => {
 };
 
 props.roles.forEach((role) => {
+  role.optOuts = 0;
   let totalRealisticHours = 0;
   let totalRealisticPrice = 0;
   let totalPessimisticHours = 0;
   let totalPessimisticPrice = 0;
   role.tasks.forEach((task) => {
+    if (task.optOut) return role.optOuts++;
     totalRealisticHours += task.realisticHours;
     totalRealisticPrice += task.realisticPrice;
     totalPessimisticHours += task.pessimisticHours;
@@ -170,6 +171,9 @@ const userOptions = computed(() => {
             role.totalPessimisticPrice?.toFixed(2).replace(".", ",")
           )
         }}
+      </div>
+      <div>
+        {{ role.optOuts }}
       </div>
     </div>
   </div>

@@ -87,13 +87,10 @@ const calculateOverview = () => {
     tasksForEpic.forEach((task) => {
       if (task.optOut) {
         epic.optOuts++;
-        return;
       }
       const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
         return p.id === task.riskProfileId;
       })[0];
-
-      epic.riskProfile = currentRiskProfile;
 
       const currentRole = roleStore.ROLES.filter((r) => {
         return r.id === task.roleId;
@@ -106,7 +103,7 @@ const calculateOverview = () => {
         )
       );
 
-      totalRealisticHours += task.realisticHours;
+      if (!task.optOut) totalRealisticHours += task.realisticHours;
 
       /* Realistic price */
       if (currentRole) {
@@ -116,7 +113,7 @@ const calculateOverview = () => {
             (1 + currentRiskProfile.percentage / 2 / 100)
         );
 
-        totalRealisticPrice += task.realisticPrice;
+        if (!task.optOut) totalRealisticPrice += task.realisticPrice;
       }
 
       /* Pessimistic hours */
@@ -126,7 +123,7 @@ const calculateOverview = () => {
         )
       );
 
-      totalPessimisticHours += task.pessimisticHours;
+      if (!task.optOut) totalPessimisticHours += task.pessimisticHours;
 
       /* Pessimistic price */
       if (currentRole) {
@@ -136,7 +133,7 @@ const calculateOverview = () => {
             (1 + currentRiskProfile.percentage / 100)
         );
 
-        totalPessimisticPrice += task.pessimisticPrice;
+        if (!task.optOut) totalPessimisticPrice += task.pessimisticPrice;
       }
 
       if (currentRole) {
@@ -145,10 +142,12 @@ const calculateOverview = () => {
         }
       }
 
-      totalEpicsRealisticHours.value += task.realisticHours;
-      totalEpicsRealisticPrice.value += task.realisticPrice;
-      totalEpicsPessimisticHours.value += task.pessimisticHours;
-      totalEpicsPessimisticPrice.value += task.pessimisticPrice;
+      if (!task.optOut) {
+        totalEpicsRealisticHours.value += task.realisticHours;
+        totalEpicsRealisticPrice.value += task.realisticPrice;
+        totalEpicsPessimisticHours.value += task.pessimisticHours;
+        totalEpicsPessimisticPrice.value += task.pessimisticPrice;
+      }
 
       epicTasks.push(task);
     });
@@ -167,6 +166,7 @@ const calculateOverview = () => {
     epic.totalRealisticPrice = totalRealisticPrice;
     epic.totalPessimisticPrice = totalPessimisticPrice;
     epics.value.push(epic);
+    console.log(epic);
   });
 };
 </script>
@@ -200,7 +200,6 @@ const calculateOverview = () => {
         :totalPessimisticPrice="epic.totalPessimisticPrice"
         :optOuts="epic.optOuts"
         :status="epic.status"
-        :riskProfile="epic.riskProfile"
         :tasks="epic.tasks"
         :role="epic.role"
         :roles="epic.roles"
