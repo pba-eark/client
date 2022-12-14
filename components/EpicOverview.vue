@@ -1,4 +1,12 @@
 <script setup>
+import { useEpicStatusStore } from "~/store/epicStatus";
+import { useEpicStore } from "~/store/epics";
+import { useUserStore } from "~/store/users";
+
+const epicStatusStore = useEpicStatusStore();
+const epicStore = useEpicStore();
+const userStore = useUserStore();
+
 const isOpen = ref(false);
 const props = defineProps({
   id: Number,
@@ -9,8 +17,9 @@ const props = defineProps({
   totalPessimisticPrice: Number,
   optOuts: Number,
   status: Object,
-  riskProfile: Object,
   roles: Array,
+  userId: Number,
+  user: Object,
 });
 
 const numberDotSeperator = (x) => {
@@ -19,11 +28,13 @@ const numberDotSeperator = (x) => {
 };
 
 props.roles.forEach((role) => {
+  role.optOuts = 0;
   let totalRealisticHours = 0;
   let totalRealisticPrice = 0;
   let totalPessimisticHours = 0;
   let totalPessimisticPrice = 0;
   role.tasks.forEach((task) => {
+    if (task.optOut) return role.optOuts++;
     totalRealisticHours += task.realisticHours;
     totalRealisticPrice += task.realisticPrice;
     totalPessimisticHours += task.pessimisticHours;
@@ -34,34 +45,99 @@ props.roles.forEach((role) => {
   role.totalPessimisticHours = totalPessimisticHours;
   role.totalPessimisticPrice = totalPessimisticPrice;
 });
+
+const handleUpdateEpicStatus = async (val) => {
+  const { id } = val;
+  const epicToUpdate = epicStore.EPICS.filter((epic) => {
+    return epic.id === props.id;
+  })[0];
+
+  epicToUpdate.epicStatusId = id;
+  return await epicStore.updateEpic(epicToUpdate);
+};
+
+const handleUpdateEpicUserId = async (val) => {
+  const { id } = val;
+  const epicToUpdate = {
+    ...epicStore.EPICS.filter((epic) => {
+      return epic.id === props.id;
+    })[0],
+  };
+
+  epicToUpdate.userId = id;
+  return await epicStore.updateEpic(epicToUpdate);
+};
+
+const epicStatusOptions = computed(() => {
+  return epicStatusStore.EPIC_STATUS.map((status) => {
+    return { id: status.id, name: status.epicStatusName };
+  });
+});
+
+const userOptions = computed(() => {
+  return userStore.USERS.map((user) => {
+    return { id: user.id, name: `${user.firstName} ${user.lastName}` };
+  });
+});
 </script>
 
 <template>
   <div v-bind="$attrs">
-    <div class="row" :class="{ row__open: isOpen }" @click="isOpen = !isOpen">
+    <div class="row" :class="{ row__open: isOpen }">
       <div>
         <Icon
+          @click="isOpen = !isOpen"
           icon="icon-chevron"
           class="row__icon"
           :class="{ row__icon__open: isOpen }"
         />
       </div>
       <div>{{ name }}</div>
-      <div>{{ totalRealisticHours.toFixed(2).replace(".", ",") }}</div>
+      <div>
+        {{
+          numberDotSeperator(totalRealisticHours.toFixed(2).replace(".", ","))
+        }}
+      </div>
       <div>
         {{
           numberDotSeperator(totalRealisticPrice.toFixed(2).replace(".", ","))
         }}
       </div>
-      <div>{{ totalPessimisticHours.toFixed(2).replace(".", ",") }}</div>
+      <div>
+        {{
+          numberDotSeperator(totalPessimisticHours.toFixed(2).replace(".", ","))
+        }}
+      </div>
       <div>
         {{
           numberDotSeperator(totalPessimisticPrice.toFixed(2).replace(".", ","))
         }}
       </div>
       <div>{{ optOuts }}</div>
-      <div>{{ status.epicStatusName }}</div>
-      <div></div>
+      <div>
+        <Input
+          class="input__select--task"
+          type="select"
+          :placeholder="
+            status.epicStatusName ? status.epicStatusName : 'Vælg status'
+          "
+          :options="epicStatusOptions"
+          emit="updateEpicStatus"
+          @updateEpicStatus="handleUpdateEpicStatus"
+        />
+      </div>
+      <div>
+        <Input
+          class="input__select--task"
+          type="select"
+          :placeholder="
+            userId ? `${user.firstName} ${user.lastName}` : 'Vælg ansvarsperson'
+          "
+          :options="userOptions"
+          emit="updateEpicUserId"
+          @updateEpicUserId="handleUpdateEpicUserId"
+        />
+      </div>
       <div></div>
     </div>
 
@@ -96,6 +172,9 @@ props.roles.forEach((role) => {
           )
         }}
       </div>
+      <div>
+        {{ role.optOuts }}
+      </div>
     </div>
   </div>
 </template>
@@ -105,7 +184,6 @@ props.roles.forEach((role) => {
   background: #fff;
   align-items: center;
   padding: 16px 8px;
-  cursor: pointer;
   display: grid;
   grid-template-columns: 50px 200px 150px 150px 150px 150px 125px 150px auto auto;
   user-select: none;
@@ -115,6 +193,7 @@ props.roles.forEach((role) => {
     width: 15px;
     margin: 0 auto;
     display: block;
+    cursor: pointer;
 
     &__open {
       rotate: 180deg;

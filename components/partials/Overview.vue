@@ -4,14 +4,21 @@ import { useRiskProfileStore } from "~/store/riskProfiles";
 import { useRoleStore } from "~/store/roles";
 import { useEpicStore } from "~/store/epics";
 import { useEpicStatusStore } from "~/store/epicStatus";
+import { useUserStore } from "~/store/users";
 
 const taskStore = useTaskStore();
 const riskProfileStore = useRiskProfileStore();
 const roleStore = useRoleStore();
 const epicStore = useEpicStore();
 const epicStatusStore = useEpicStatusStore();
+const userStore = useUserStore();
+
 const route = useRoute();
 const epics = ref([]);
+const totalEpicsRealisticHours = ref(0);
+const totalEpicsRealisticPrice = ref(0);
+const totalEpicsPessimisticHours = ref(0);
+const totalEpicsPessimisticPrice = ref(0);
 
 onMounted(() => {
   calculateOverview();
@@ -26,6 +33,11 @@ watch(
 
 const roundNearQtr = (number) => {
   return (Math.round(number * 4) / 4).toFixed(2);
+};
+
+const numberDotSeperator = (x) => {
+  if (!x) return "0,00";
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
 const calculateOverview = () => {
@@ -45,7 +57,8 @@ const calculateOverview = () => {
       roles: [],
       optOuts: 0,
       uncertainty: 0,
-      status: "",
+      status: {},
+      user: {},
     };
 
     let epicTasks = [];
@@ -57,6 +70,15 @@ const calculateOverview = () => {
 
     epic.status = epicStatus;
 
+    /* Get then set user responsible for epic */
+    if (epic.userId !== null) {
+      const epicUser = userStore.USERS.filter((u) => {
+        return u.id === e.userId;
+      })[0];
+
+      epic.user = epicUser;
+    }
+
     /* Get tasks for epic */
     const tasksForEpic = taskStore.TASKS.filter((t) => {
       return t.epicId === e.id;
@@ -65,13 +87,10 @@ const calculateOverview = () => {
     tasksForEpic.forEach((task) => {
       if (task.optOut) {
         epic.optOuts++;
-        return;
       }
       const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
         return p.id === task.riskProfileId;
       })[0];
-
-      epic.riskProfile = currentRiskProfile;
 
       const currentRole = roleStore.ROLES.filter((r) => {
         return r.id === task.roleId;
@@ -84,7 +103,7 @@ const calculateOverview = () => {
         )
       );
 
-      totalRealisticHours += task.realisticHours;
+      if (!task.optOut) totalRealisticHours += task.realisticHours;
 
       /* Realistic price */
       if (currentRole) {
@@ -94,7 +113,7 @@ const calculateOverview = () => {
             (1 + currentRiskProfile.percentage / 2 / 100)
         );
 
-        totalRealisticPrice += task.realisticPrice;
+        if (!task.optOut) totalRealisticPrice += task.realisticPrice;
       }
 
       /* Pessimistic hours */
@@ -104,7 +123,7 @@ const calculateOverview = () => {
         )
       );
 
-      totalPessimisticHours += task.pessimisticHours;
+      if (!task.optOut) totalPessimisticHours += task.pessimisticHours;
 
       /* Pessimistic price */
       if (currentRole) {
@@ -114,13 +133,20 @@ const calculateOverview = () => {
             (1 + currentRiskProfile.percentage / 100)
         );
 
-        totalPessimisticPrice += task.pessimisticPrice;
+        if (!task.optOut) totalPessimisticPrice += task.pessimisticPrice;
       }
 
       if (currentRole) {
         if (!epic.roles.some((role) => role.id === currentRole.id)) {
           epic.roles.push({ ...currentRole, tasks: [] });
         }
+      }
+
+      if (!task.optOut) {
+        totalEpicsRealisticHours.value += task.realisticHours;
+        totalEpicsRealisticPrice.value += task.realisticPrice;
+        totalEpicsPessimisticHours.value += task.pessimisticHours;
+        totalEpicsPessimisticPrice.value += task.pessimisticPrice;
       }
 
       epicTasks.push(task);
@@ -140,6 +166,7 @@ const calculateOverview = () => {
     epic.totalRealisticPrice = totalRealisticPrice;
     epic.totalPessimisticPrice = totalPessimisticPrice;
     epics.value.push(epic);
+    console.log(epic);
   });
 };
 </script>
@@ -173,12 +200,46 @@ const calculateOverview = () => {
         :totalPessimisticPrice="epic.totalPessimisticPrice"
         :optOuts="epic.optOuts"
         :status="epic.status"
-        :riskProfile="epic.riskProfile"
         :tasks="epic.tasks"
         :role="epic.role"
         :roles="epic.roles"
+        :userId="epic.userId"
+        :user="epic.user"
       />
     </div>
+    i allah:
+    <p>
+      realistisk timer:
+      {{
+        numberDotSeperator(
+          totalEpicsRealisticHours.toFixed(2).replace(".", ",")
+        )
+      }}
+    </p>
+    <p>
+      realistisk pris:
+      {{
+        numberDotSeperator(
+          totalEpicsRealisticPrice.toFixed(2).replace(".", ",")
+        )
+      }}
+    </p>
+    <p>
+      pessimistisk timer:
+      {{
+        numberDotSeperator(
+          totalEpicsPessimisticHours.toFixed(2).replace(".", ",")
+        )
+      }}
+    </p>
+    <p>
+      pessimistisk timer:
+      {{
+        numberDotSeperator(
+          totalEpicsPessimisticPrice.toFixed(2).replace(".", ",")
+        )
+      }}
+    </p>
   </div>
 </template>
 
