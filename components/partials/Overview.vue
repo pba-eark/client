@@ -34,7 +34,6 @@ watch(
   () => [taskStore.TASKS.length, epicStore.EPICS.length],
   () => {
     calculateOverview();
-    console.log("details?", detailsStore.DETAILS);
   }
 );
 
@@ -243,7 +242,7 @@ const sheetStatusOption = computed(() => {
 
 const currentSheetStatus = computed(() => {
   return sheetStatusStore.SHEET_STATUS.filter((status) => {
-    return status.id === sheetStore.CURRENT_ESTIMATE_SHEET.sheetStatusId;
+    return status.id === sheetStore.CURRENT_ESTIMATE_SHEET?.sheetStatusId;
   })[0];
 });
 </script>

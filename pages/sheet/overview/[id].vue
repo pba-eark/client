@@ -9,6 +9,7 @@ const globalStore = useGlobalStore();
 const sheetStore = useEstimateSheetStore();
 const taskStore = useTaskStore();
 const epicStore = useEpicStore();
+const { $swal } = useNuxtApp();
 
 onMounted(() => {
   if (!sheetStore.IS_OVERVIEW_TOGGLED) sheetStore.setToggleSheetOverview(true);
@@ -16,6 +17,15 @@ onMounted(() => {
 
 const handlePasteEpic = async () => {
   const epic = { ...globalStore.EPIC_CLIPBOARD };
+
+  if (!epic || Object.keys(epic).length === 0) {
+    return $swal.fire({
+      icon: "error",
+      title: "Hovsa! ಠ_ಠ",
+      text: "Du har ikke kopiéret nogen epic.",
+    });
+  }
+
   const tasks = [];
 
   for (let i = 0; taskStore.TASKS.length > i; i++) {

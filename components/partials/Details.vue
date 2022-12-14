@@ -3,13 +3,12 @@ import { useGlobalStore } from "~/store/";
 import { useDetailsStore } from "~/store/details";
 import { useEpicStore } from "~/store/epics";
 import { useTaskStore } from "~/store/tasks";
-import { useRiskProfileStore } from "~~/store/riskProfiles";
 
 const globalStore = useGlobalStore();
 const detailsStore = useDetailsStore();
 const epicStore = useEpicStore();
 const taskStore = useTaskStore();
-const riskProfileStore = useRiskProfileStore();
+const { $swal } = useNuxtApp();
 
 const route = useRoute();
 const epicOptions = reactive({
@@ -72,6 +71,22 @@ const handleCopyEpic = (obj) => {
   const epic = { ...obj };
   delete epic.estimateSheetId;
   globalStore.copyEpic(epic);
+
+  const notification = $swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", $swal.stopTimer);
+      toast.addEventListener("mouseleave", $swal.resumeTimer);
+    },
+  });
+  notification.fire({
+    icon: "success",
+    title: `Epic kopiéret! (${obj.epicName})`,
+  });
 };
 
 const handleCopyTask = (obj) => {
@@ -81,10 +96,110 @@ const handleCopyTask = (obj) => {
   globalStore.copyTask(task);
 };
 
-const handlePasteTask = () => {
+const handlePasteTask = async () => {
   const task = { ...globalStore.TASK_CLIPBOARD };
+
+  if (!task || Object.keys(task).length === 0) {
+    return $swal.fire({
+      icon: "error",
+      title: "Hovsa! ಠ_ಠ",
+      text: "Du har ikke kopiéret nogen task.",
+    });
+  }
+
   task.epicId = detailsStore.DETAILS.id;
-  taskStore.createTask(task);
+  await taskStore.createTask(task);
+};
+
+const handleDeleteTask = () => {
+  $swal
+    .fire({
+      title: "Sletter task...",
+      text: "Er du sikker? Denne handling kan ikke fortrydes.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#777",
+      confirmButtonText: `Ja, slet <b>${detailsStore.DETAILS.taskName}</b>`,
+      cancelButtonText: `Fortryd`,
+    })
+    .then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const notification = $swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener("mouseenter", $swal.stopTimer);
+              toast.addEventListener("mouseleave", $swal.resumeTimer);
+            },
+          });
+
+          const taskName = detailsStore.DETAILS.taskName;
+          await taskStore.deleteTask(detailsStore.DETAILS);
+
+          notification.fire({
+            icon: "success",
+            title: `Task slettet (${taskName})`,
+          });
+        } catch (e) {
+          console.log("ERROR", e);
+          $swal.fire(
+            "Ups! Noget gik galt...",
+            "Task blev ikke slettet.",
+            "warning"
+          );
+        }
+      }
+    });
+};
+const handleDeleteEpic = () => {
+  $swal
+    .fire({
+      title: "Sletter epic...",
+      text: "Er du sikker? Denne handling kan ikke fortrydes.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#777",
+      confirmButtonText: `Ja, slet <b>${detailsStore.DETAILS.epicName}</b>`,
+      cancelButtonText: `Fortryd`,
+    })
+    .then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const notification = $swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener("mouseenter", $swal.stopTimer);
+              toast.addEventListener("mouseleave", $swal.resumeTimer);
+            },
+          });
+
+          const epicName = detailsStore.DETAILS.epicName;
+          await epicStore.deleteEpic(detailsStore.DETAILS);
+
+          notification.fire({
+            icon: "success",
+            title: `Epic slettet (${epicName})`,
+          });
+        } catch (e) {
+          console.log("ERROR", e);
+          $swal.fire(
+            "Ups! Noget gik galt...",
+            "Epic blev ikke slettet.",
+            "warning"
+          );
+        }
+      }
+    });
 };
 
 /* Computed */
@@ -211,13 +326,13 @@ const show = () => {
         <Button
           v-if="item.type === 'task'"
           text="Slet task"
-          @click="taskStore.deleteTask(detailsStore.DETAILS)"
+          @click="handleDeleteTask"
         />
 
         <Button
           v-if="item.type === 'epic'"
           text="Slet epic"
-          @click="epicStore.deleteEpic(detailsStore.DETAILS)"
+          @click="handleDeleteEpic"
         />
       </div>
     </div>
