@@ -2,15 +2,20 @@
 import { useEpicStatusStore } from "~/store/epicStatus";
 import { useEpicStore } from "~/store/epics";
 import { useUserStore } from "~/store/users";
+import { useGlobalStore } from "~/store";
+import { useDetailsStore } from "~/store/details";
 
 const epicStatusStore = useEpicStatusStore();
 const epicStore = useEpicStore();
 const userStore = useUserStore();
+const globalStore = useGlobalStore();
+const detailsStore = useDetailsStore();
 
 const isOpen = ref(false);
 const props = defineProps({
   id: Number,
   name: String,
+  comment: String,
   totalRealisticHours: Number,
   totalRealisticPrice: Number,
   totalPessimisticHours: Number,
@@ -82,7 +87,19 @@ const userOptions = computed(() => {
 </script>
 
 <template>
-  <div v-bind="$attrs">
+  <div
+    v-bind="$attrs"
+    @click="
+      detailsStore.setDetails({
+        id,
+        epicName: name,
+        comment,
+        userId,
+        estimateSheetId: parseInt($route.params.id),
+        epicStatusId: status.id,
+      })
+    "
+  >
     <div class="row" :class="{ row__open: isOpen }">
       <div>
         <Icon
@@ -92,7 +109,11 @@ const userOptions = computed(() => {
           :class="{ row__icon__open: isOpen }"
         />
       </div>
-      <div>{{ name }}</div>
+      <div>
+        <span @click="globalStore.scrollToEpic($route.params.id, id)">
+          {{ name }}
+        </span>
+      </div>
       <div>
         {{
           numberDotSeperator(totalRealisticHours.toFixed(2).replace(".", ","))
@@ -194,6 +215,10 @@ const userOptions = computed(() => {
   display: grid;
   grid-template-columns: 50px 200px 150px 150px 150px 150px 125px 150px auto auto;
   user-select: none;
+
+  span {
+    cursor: pointer;
+  }
 
   &__icon {
     height: 15px;

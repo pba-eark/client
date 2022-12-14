@@ -5,6 +5,9 @@ import { useRoleStore } from "~/store/roles";
 import { useEpicStore } from "~/store/epics";
 import { useEpicStatusStore } from "~/store/epicStatus";
 import { useUserStore } from "~/store/users";
+import { useDetailsStore } from "~/store/details";
+import { useSheetStatusStore } from "~/store/sheetStatus";
+import { useEstimateSheetStore } from "~/store/estimateSheets";
 
 const taskStore = useTaskStore();
 const riskProfileStore = useRiskProfileStore();
@@ -12,6 +15,9 @@ const roleStore = useRoleStore();
 const epicStore = useEpicStore();
 const epicStatusStore = useEpicStatusStore();
 const userStore = useUserStore();
+const detailsStore = useDetailsStore();
+const sheetStatusStore = useSheetStatusStore();
+const sheetStore = useEstimateSheetStore();
 
 const route = useRoute();
 const epics = ref([]);
@@ -25,9 +31,27 @@ onMounted(() => {
 });
 
 watch(
-  () => taskStore.TASKS.length,
+  () => [taskStore.TASKS.length, epicStore.EPICS.length],
   () => {
     calculateOverview();
+    console.log("details?", detailsStore.DETAILS);
+  }
+);
+
+/* Update epic name, if updated in details store */
+watch(
+  () => [detailsStore.DETAILS?.epicName, detailsStore.DETAILS?.id],
+  ([newEpicName, newEpicId], [oldEpicName, oldEpicId]) => {
+    if (
+      newEpicName &&
+      oldEpicName &&
+      newEpicName !== oldEpicName &&
+      newEpicId === oldEpicId
+    ) {
+      epics.value.map((e) => {
+        if (e.id === newEpicId) return (e.epicName = newEpicName);
+      })[0];
+    }
   }
 );
 
@@ -145,7 +169,7 @@ const calculateOverview = () => {
           epic.roles.push({ id: 0, roleName: "Ingen rolle", tasks: [] });
         } else {
           const unassignedRole = epic.roles.filter((r) => r.id === 0)[0];
-          unassignedRole.push(task);
+          unassignedRole.tasks.push(task);
         }
       }
 
@@ -173,14 +197,71 @@ const calculateOverview = () => {
     epic.totalRealisticPrice = totalRealisticPrice;
     epic.totalPessimisticPrice = totalPessimisticPrice;
     epics.value.push(epic);
-    console.log(epic);
+    // console.log(epic);
   });
 };
+
+const handleCreateEpic = async () => {
+  const obj = {
+    epicName: "Ny Epic",
+    estimateSheetId: parseInt(route.params.id),
+    epicStatusId: 1,
+  };
+
+  const newEpic = await epicStore.createEpic(obj);
+
+  if (!newEpic) return alert("An error occured while creating the epic!");
+
+  const newTask = {
+    parentId: 0,
+    taskName: "Ny task",
+    hourEstimate: 0,
+    estimateReasoning: "Begrundelse for estimat...",
+    optOut: false,
+    taskDescription: "Beskrivelse...",
+    epicId: newEpic.id,
+    roleId: 0,
+    riskProfileId: 1,
+  };
+
+  await taskStore.createTask(newTask);
+};
+
+const handleUpdateSheetStatusId = ({ id }) => {
+  const updatedSheet = {
+    ...sheetStore.CURRENT_ESTIMATE_SHEET,
+    sheetStatusId: id,
+  };
+  sheetStore.updateEstimateSheet(updatedSheet);
+};
+
+const sheetStatusOption = computed(() => {
+  return sheetStatusStore.SHEET_STATUS.map((status) => {
+    return { id: status.id, name: status.sheetStatusName };
+  });
+});
+
+const currentSheetStatus = computed(() => {
+  return sheetStatusStore.SHEET_STATUS.filter((status) => {
+    return status.id === sheetStore.CURRENT_ESTIMATE_SHEET.sheetStatusId;
+  })[0];
+});
 </script>
 
 <template>
   <div>
     <h1>Overblik</h1>
+    <Input
+      type="select"
+      :placeholder="
+        currentSheetStatus?.sheetStatusName
+          ? currentSheetStatus.sheetStatusName
+          : 'Vælg status'
+      "
+      :options="sheetStatusOption"
+      emit="updateSheetStatusId"
+      @updateSheetStatusId="handleUpdateSheetStatusId"
+    />
 
     <div class="table">
       <div class="table__header">
@@ -201,6 +282,7 @@ const calculateOverview = () => {
         :key="epic.id"
         :id="epic.id"
         :name="epic.epicName"
+        :comment="epic.comment"
         :totalRealisticHours="epic.totalRealisticHours"
         :totalRealisticPrice="epic.totalRealisticPrice"
         :totalPessimisticHours="epic.totalPessimisticHours"
@@ -247,6 +329,7 @@ const calculateOverview = () => {
         )
       }}
     </p>
+    <Button text="Ny epic" @click="handleCreateEpic"></Button>
   </div>
 </template>
 
