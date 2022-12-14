@@ -140,6 +140,13 @@ const calculateOverview = () => {
         if (!epic.roles.some((role) => role.id === currentRole.id)) {
           epic.roles.push({ ...currentRole, tasks: [] });
         }
+      } else {
+        if (!epic.roles.some((role) => role.id === 0)) {
+          epic.roles.push({ id: 0, roleName: "Ingen rolle", tasks: [] });
+        } else {
+          const unassignedRole = epic.roles.filter((r) => r.id === 0)[0];
+          unassignedRole.push(task);
+        }
       }
 
       if (!task.optOut) {
@@ -166,6 +173,7 @@ const calculateOverview = () => {
     epic.totalRealisticPrice = totalRealisticPrice;
     epic.totalPessimisticPrice = totalPessimisticPrice;
     epics.value.push(epic);
+    console.log(epic);
   });
 };
 </script>

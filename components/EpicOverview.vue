@@ -23,7 +23,7 @@ const props = defineProps({
 });
 
 const numberDotSeperator = (x) => {
-  if (!x) return "0,00";
+  if (!x) return "0";
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
@@ -143,7 +143,10 @@ const userOptions = computed(() => {
 
     <div v-for="role in roles" class="row__details" v-show="isOpen">
       <div>{{ role.roleName }}</div>
-      <div>{{ role.hourlyWage }} kr./t</div>
+      <div>
+        {{ role.id > 0 ? numberDotSeperator(role.hourlyWage) : "0" }}
+        kr./t
+      </div>
       <div>
         {{
           numberDotSeperator(
@@ -153,9 +156,11 @@ const userOptions = computed(() => {
       </div>
       <div>
         {{
-          numberDotSeperator(
-            role.totalRealisticPrice?.toFixed(2).replace(".", ",")
-          )
+          role.id > 0
+            ? numberDotSeperator(
+                role.totalRealisticPrice?.toFixed(2).replace(".", ",")
+              )
+            : "0,00"
         }}
       </div>
       <div>
@@ -167,9 +172,11 @@ const userOptions = computed(() => {
       </div>
       <div>
         {{
-          numberDotSeperator(
-            role.totalPessimisticPrice?.toFixed(2).replace(".", ",")
-          )
+          role.id > 0
+            ? numberDotSeperator(
+                role.totalPessimisticPrice?.toFixed(2).replace(".", ",")
+              )
+            : "0,00"
         }}
       </div>
       <div>
