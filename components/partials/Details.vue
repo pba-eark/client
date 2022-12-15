@@ -25,6 +25,8 @@ watch(
     if (detailsStore.DETAILS === null) return (item.isToggled = false);
     item.isToggled = true;
 
+    showSettings.value = false;
+
     if (detailsStore.DETAILS.epicName === undefined) {
       item.type = "task";
     } else {
@@ -213,6 +215,12 @@ let showSettings = ref(false);
 
 const show = () => {
   showSettings.value = !showSettings.value;
+
+};
+
+const handleShowSettings = () => {
+  show();
+  detailsStore.setDetails(null);
 };
 </script>
 
@@ -239,7 +247,7 @@ const show = () => {
       </div>
     </div>
 
-    <Button text="Indstillinger" @click="show" />
+    <Button text="Indstillinger" @click="handleShowSettings" />
     <Settings v-if="showSettings" :sheetId="parseInt(route.params.id)" />
 
     <div v-if="item.isToggled">

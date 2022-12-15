@@ -53,11 +53,24 @@ let disabled = ref(true);
         <br>
 
         <form v-if="props.renderForm == 'sheetStatus'">
-            <p for="name">"icon" Role Navn</p>
+            <p for="name">"icon" Status Navn</p>
             <input type="text" :disabled=disabled v-model="props.data.sheetStatusName">
             <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
             <div v-if="!disabled">
-                <Button text="Save" @click="(($emit('update', props.data, originalData)), disabled = true)" />
+                <Button text="Save" @click="(($emit('update', props.data)), disabled = true)" />
+                <Button text="Unsave" @click="(disabled = true)" />
+                <Button text="Delete" @click="($emit('delete', props.data))"/>
+            </div>
+        </form>
+
+        <br>
+
+        <form v-if="props.renderForm == 'epicStatus'">
+            <p for="name">"icon" Status Navn</p>
+            <input type="text" :disabled=disabled v-model="props.data.epicStatusName">
+            <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
+            <div v-if="!disabled">
+                <Button text="Save" @click="(($emit('update', props.data)), disabled = true)" />
                 <Button text="Unsave" @click="(disabled = true)" />
                 <Button text="Delete" @click="($emit('delete', props.data))"/>
             </div>

@@ -43,6 +43,7 @@ export const useSheetStatusStore = defineStore("sheet-status-store", () => {
       });
 
     sheetStatus.value = [...sheetStatus.value, response];
+    return response;
   };
 
   const updateSheetStatus = async (obj) => {
@@ -75,7 +76,11 @@ export const useSheetStatusStore = defineStore("sheet-status-store", () => {
         },
       });
 
-    remove(id);
+      setSheetStatus(
+        sheetStatus.value.filter((status) => {
+          return status.id !== id;
+        })
+      );
   };
 
   /* Helper functions */
@@ -84,23 +89,6 @@ export const useSheetStatusStore = defineStore("sheet-status-store", () => {
     sheetStatus.value.map((sheetStat) => {
 
       if (sheetStat.id === typeCheck(id)) Object.assign(sheetStat, obj);
-
-    });
-
-  };
-
-  const remove = (id) => {
-
-    sheetStatus.value.forEach((element) => {
-
-      element.id;
-
-      if (element.id === typeCheck(id)) {
-
-        let index = sheetStatus.value.findIndex(element);
-        sheetStatus.value.splice(index, 1);
-
-      }
 
     });
 

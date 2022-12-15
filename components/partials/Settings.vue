@@ -3,8 +3,6 @@
 import { useRiskProfileStore } from "~~/store/riskProfiles";
 import { useEstimateSheetRiskProfileStore } from "~~/store/composites/estimateSheetRiskProfiles";
 import { useRoleStore } from "~~/store/roles";
-import { useTaskStore } from "~~/store/tasks";
-import { useEpicStore } from "~~/store/epics";
 import { useSheetStatusStore } from "~~/store/sheetStatus";
 import { useEpicStatusStore } from "~~/store/epicStatus";
 import { useEstimateSheetRoleStore } from "~~/store/composites/estimateSheetRoles";
@@ -15,8 +13,6 @@ import { typeCheck } from "~~/helpers/functions";
 const riskProfileStore = useRiskProfileStore();
 const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 const roleStore = useRoleStore();
-const taskStore = useTaskStore();
-const epicStore = useEpicStore();
 const sheetStatusStore = useSheetStatusStore();
 const epicStatusStore = useEpicStatusStore();
 const estimateSheetRoleStore = useEstimateSheetRoleStore();
@@ -29,10 +25,15 @@ const props = defineProps({
   },
 });
 
+let onSheet = true;
+
+if (isNaN(props.sheetId)) {
+  onSheet = false;
+}
+
 const localSettingsTab = ref(true)
 
 // #region Profile
-/* Profile */
 const sheetProfiles = ref([]);
 const masterGlobals = ref([]);
 const globals = ref([]);
@@ -198,7 +199,6 @@ const handleDeleteGlobalProfile = async (profile) => {
 // #endregion
 
 // #region Role
-/* Role */
 const sheetRoles = ref([]);
 const globalMasterRoles = ref([]);
 const globalRoles = ref([]);
@@ -364,7 +364,6 @@ const handleDeleteGlobalRole = async (role) => {
 // #endregion
 
 // #region SheetStatus
-/* SheetStatus */
 const globalMasterSheetStatus = ref([]);
 
 sheetStatusStore.SHEET_STATUS.forEach(status => {
@@ -378,21 +377,64 @@ const newSheetStatus = {
 }
 
 const handleCreateGlobalSheetStatus = async () => {
-  let createdSheetStatus = await sheetStatusStore.createSheetStatus(newSheetStatus);
-  console.log(createdSheetStatus)
-  console.log(globalMasterSheetStatus.value)
-  globalMasterSheetStatus.value.push(createdSheetStatus);
+  let response = await sheetStatusStore.createSheetStatus(newSheetStatus);
+  globalMasterSheetStatus.value.push(response);
 }
 
-const handleDeleteGlobalSheetStatus = async (id) => {
-  await sheetStatusStore.deleteSheetStatus(id);
+const handleUpdateGlobalSheetStatus = async (sheetStatus) => {
+  let response = await sheetStatusStore.updateSheetStatus(sheetStatus);
+
+  globalMasterSheetStatus.value.map((updatedSheetStatus) => {
+    if (updatedSheetStatus.id === typeCheck(sheetStatus.id)) Object.assign(updatedSheetStatus, response);
+  });
+}
+
+const handleDeleteGlobalSheetStatus = async (SheetStatus) => {
+  await sheetStatusStore.deleteSheetStatus(SheetStatus.id);
 
   const profileIndex = globalMasterSheetStatus.value.findIndex(
-    (obj) => obj.id === role.id
+    (obj) => obj.id === SheetStatus.id
   );
 
   globalMasterSheetStatus.value.splice(profileIndex, 1);
 }
+// #endregion
+
+// #region EpicStatus
+const globalMasterEpicStatus = ref([]);
+
+epicStatusStore.EPIC_STATUS.forEach(status => {
+  globalMasterEpicStatus.value.push(status);
+});
+
+const newEpicStatus = {
+  global: true,
+  default: false,
+  epicStatusName: "New Status"
+};
+
+const handleCreateGlobalEpicStatus = async () => {
+  let response = await epicStatusStore.createEpicStatus(newEpicStatus);
+  globalMasterEpicStatus.value.push(response);
+};
+
+const handleUpdateGlobalEpicStatus = async (epicStatus) => {
+  let response = await epicStatusStore.updateEpicStatus(epicStatus);
+
+  globalMasterEpicStatus.value.map((updatedEpicStatus) => {
+    if (updatedEpicStatus.id === typeCheck(epicStatus.id)) Object.assign(updatedEpicStatus, response);
+  });
+};
+
+const handleDeleteGlobalEpicStatus = async (epicStatus) => {
+  await epicStatusStore.deleteEpicStatus(epicStatus.id);
+
+  const profileIndex = globalMasterEpicStatus.value.findIndex(
+    (obj) => obj.id === epicStatus.id
+  );
+
+  globalMasterEpicStatus.value.splice(profileIndex, 1);
+};
 // #endregion
 
 </script>
@@ -400,7 +442,7 @@ const handleDeleteGlobalSheetStatus = async (id) => {
 <template>
   <div>
 
-    <Button text="Lokale Indstillinger" @Click="localSettingsTab = true" />
+    <Button v-if="onSheet" text="Lokale Indstillinger" @Click="localSettingsTab = true" />
     <Button text="Globale Indstillinger" @Click="localSettingsTab = false" />
 
     <div v-if="localSettingsTab">
@@ -447,9 +489,15 @@ const handleDeleteGlobalSheetStatus = async (id) => {
 
       <h3>Sheet Status</h3>
       <div v-for="status in globalMasterSheetStatus" :key="status.id">
-        <GlobalSettings :data="status" :renderForm="'sheetStatus'" @delete="handleDeleteGlobalSheetStatus" />
+        <GlobalSettings :data="status" :renderForm="'sheetStatus'" @delete="handleDeleteGlobalSheetStatus" @update="handleUpdateGlobalSheetStatus" />
       </div>
       <Button text="Ny Sheet Status" @Click="handleCreateGlobalSheetStatus" />
+
+      <h3>Epic Status</h3>
+      <div v-for="status in globalMasterEpicStatus" :key="status.id">
+        <GlobalSettings :data="status" :renderForm="'epicStatus'" @delete="handleDeleteGlobalEpicStatus" @update="handleUpdateGlobalEpicStatus" />
+      </div>
+      <Button text="Ny Epic Status" @Click="handleCreateGlobalEpicStatus" />
 
     </div>
 

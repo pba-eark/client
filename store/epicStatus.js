@@ -45,7 +45,8 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
         body: obj,
       });
 
-    epics.value = [...epics.value, response];
+    epicStatus.value = [...epicStatus.value, response];
+    return response;
   };
 
   const updateEpicStatus = async (obj) => {
@@ -78,7 +79,11 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
         },
       });
 
-    remove(id);
+      setEpicStatus(
+        epicStatus.value.filter((status) => {
+        return status.id !== id;
+      })
+    );
   };
 
   /* Helper functions */
@@ -87,23 +92,6 @@ export const useEpicStatusStore = defineStore("epic-status-store", () => {
     epicStatus.value.map((epicStat) => {
 
       if (epicStat.id === typeCheck(id)) Object.assign(epicStat, obj);
-
-    });
-
-  };
-
-  const remove = (id) => {
-
-    epicStatus.value.forEach((element) => {
-
-      element.id;
-
-      if (element.id === typeCheck(id)) {
-
-        let index = epicStatus.value.findIndex(element);
-        epicStatus.value.splice(index, 1);
-
-      }
 
     });
 
