@@ -13,9 +13,9 @@ const taskStore = useTaskStore();
 const route = useRoute();
 const sheetElement = ref(null);
 
-definePageMeta({
-  middleware: ["auth"],
-});
+// definePageMeta({
+//   middleware: ["auth"],
+// });
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);

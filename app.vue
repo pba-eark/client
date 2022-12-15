@@ -4,12 +4,14 @@ import { useUserStore } from "~/store/users";
 import { useAuthStore } from "~/store/auth";
 import { useJiraStore } from "~/store/jira";
 
+const layout = ref("login");
 const authStore = useAuthStore();
 const userStore = useUserStore();
 const jiraStore = useJiraStore();
 const globalStore = useGlobalStore();
 
 onMounted(async () => {
+  handleAuthorization();
   /* Check if user is logged in */
   if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt")) {
     await authStore.setJwt(localStorage.getItem("jwt"));
@@ -24,56 +26,42 @@ onMounted(async () => {
       /* Check for jira jwt in localstorage */
       await jiraStore.setJwt(localStorage.getItem("jira"));
 });
+
+watch(
+  () => authStore.IS_AUTHORIZED,
+  () => {
+    handleAuthorization();
+  }
+);
+
+const handleAuthorization = async () => {
+  if (authStore.IS_AUTHORIZED) {
+    layout.value = "default";
+    await navigateTo("/");
+  } else {
+    await navigateTo("/login");
+  }
+};
+
+/*
+ ** Temporary fix for known bug: https://github.com/nuxt/framework/issues/3141
+ ** Occurs when navigating too fast, due to page transition, and prevents the page content from loading.
+ ** "Fix": Page reloads automatically when error occurs.
+ */
+if (process.client) {
+  window.onerror = function (e) {
+    if (e.includes("NotFoundError:")) {
+      document.location.reload();
+      return true;
+    }
+  };
+}
 </script>
 
 <template>
-  <div
-    v-if="globalStore.IS_LOADED"
-    :class="authStore.IS_AUTHORIZED ? 'layout' : 'loginLayout'"
-  >
-    <Tabs v-if="authStore.IS_AUTHORIZED" class="tab-section" />
-    <Sidebar v-if="authStore.IS_AUTHORIZED" class="sidebar-left" />
-    <main>
+  <div v-if="globalStore.IS_LOADED">
+    <NuxtLayout :name="layout">
       <LazyNuxtPage />
-    </main>
-
-    <Details class="sidebar-right" v-if="authStore.IS_AUTHORIZED" />
+    </NuxtLayout>
   </div>
 </template>
-
-<style lang="scss" scoped>
-.layout {
-  background-color: var(--color-background);
-  position: relative;
-  height: 100vh;
-  overflow: hidden;
-  display: grid;
-  gap: 0 1px;
-  grid-template-columns: 200px auto 350px;
-  grid-template-rows: 60px auto;
-  grid-template-areas:
-    "sidebarLeft tab-section sidebarRight"
-    "sidebarLeft main sidebarRight";
-}
-
-.tab-section {
-  grid-area: tab-section;
-}
-
-.header {
-  grid-area: header;
-}
-
-.sidebar-left {
-  grid-area: sidebarLeft;
-}
-
-main {
-  grid-area: main;
-  overflow-y: auto;
-}
-
-.sidebar-right {
-  grid-area: sidebarRight;
-}
-</style>
