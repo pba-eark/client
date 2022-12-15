@@ -26,10 +26,6 @@ const handleUpdateProfile = (obj) => {
     riskProfileStore.updateRiskProfile(obj);
 };
 
-const handleDeleteProfile = (id) => {
-    riskProfileStore.deleteRiskProfile(id);
-};
-
 /* Role */
 const handleUpdateRole = (obj) => {
     roleStore.updateRole(obj);
@@ -47,10 +43,10 @@ const handleUpdateRole = (obj) => {
                 <p for="name">"icon" Profil Navn</p>
                 <input type="text" :disabled=disabled v-model="data.profileName">
                 <input type="text" :disabled=disabled v-model="data.percentage">
-                <Button text="Delete" @click="handleDeleteProfile(data.id)" />
+                <Button text="Delete" @click="($emit('delete', data.id))" />
                 <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
                 <div v-if="!disabled">
-                    <Button text="Save" @click="handleUpdateProfile(data)"/>
+                    <Button text="Save" @click="handleUpdateProfile(data), (disabled = true)"/>
                     <Button text="Unsave" @click="(disabled = true)"/>
                 </div>
             </form>
@@ -60,9 +56,10 @@ const handleUpdateRole = (obj) => {
                 <p for="name">"icon" Rolle Navn</p>
                 <input type="text" :disabled=disabled v-model="data.roleName">
                 <input type="text" :disabled=disabled v-model="data.hourlyWage">
+                <Button text="Delete" @click="$emit('delete', data.id)" />
                 <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
                 <div v-if="!disabled">
-                    <Button text="Save" @click="handleUpdateRole(data)"/>
+                    <Button text="Save" @click="handleUpdateRole(data), (disabled = true)"/>
                     <Button text="Unsave" @click="(disabled = true)"/>
                 </div>
             </form>
@@ -72,28 +69,6 @@ const handleUpdateRole = (obj) => {
                 <p>Status Navn</p>
                 <p>{{ props.data.sheetStatusName }}</p>
             </form>
-
-            <!-- <Input @change="handleUpdateProfile(props.data, 'name')" v-model="input"
-                :default="props.data.profileName" />
-            <Input @change="handleUpdateProfile(props.data, 'percentage')" v-model="input"
-                :default="props.data.percentage || '0'" />
-            <Input type="checkbox" @change="handleUpdateProfile(props.data, 'global')" v-model="input"
-                :default="props.data.global" />
-            <Input type="checkbox" @change="handleUpdateProfile(props.data, 'default')" v-model="input"
-                :default="props.data.default" />
-            <Button text="Save Profil" @Click="handleUpdateProfile(props.data)" /> -->
         </div>
-        <!-- <br>
-        <Button text="Ny Profil" @Click="handleCreateProfile(newRiskProfile, 'globalSetting')" />
-        <br>
-
-        <div>
-            <Input @change="handleUpdateRole(role, 'name')" v-model="input" :default="role.roleName" />
-            <Input @change="handleUpdateRole(role, 'wage')" v-model="input" :default="role.hourlyWage || '0'" />
-            <Input type="checkbox" @change="handleUpdateRole(role, 'global')" v-model="input" :default="role.global" />
-            <Input type="checkbox" @change="handleUpdateRole(role, 'default')" v-model="input"
-                :default="role.default" />
-            <Button text="Edit Rolle" @Click="handleUpdateRole(props.data, 'name')" />
-        </div> -->
     </div>
 </template>

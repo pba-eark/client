@@ -7,9 +7,10 @@ import { useRiskProfileStore } from "./riskProfiles";
 import { useRoleStore } from "./roles";
 import { useTaskStore } from "./tasks";
 import { useUserStore } from "./users";
-import { useEstimateSheetRiskProfileStore } from "./composites/estimateSheetRiskProfiles";
 import { useEstimateSheetUserStore } from "./composites/estimateSheetUsers";
 import { useSheetStatusStore } from "./sheetStatus";
+import { useEstimateSheetRiskProfileStore } from "~/store/composites/estimateSheetRiskProfiles";
+import { useEstimateSheetRoleStore } from "./composites/estimateSheetRoles";
 
 export const useGlobalStore = defineStore("global-store", () => {
   const customerStore = useCustomerStore();
@@ -23,6 +24,7 @@ export const useGlobalStore = defineStore("global-store", () => {
   const sheetRiskProfileStore = useEstimateSheetRiskProfileStore();
   const sheetUserStore = useEstimateSheetUserStore();
   const sheetStatusStore = useSheetStatusStore();
+  const sheetRoleStore = useEstimateSheetRoleStore();
 
   /* State */
   const isLoaded = ref(false);
@@ -46,6 +48,7 @@ export const useGlobalStore = defineStore("global-store", () => {
     await sheetRiskProfileStore.getEstimateSheetRiskProfiles();
     await sheetUserStore.getEstimateSheetUsers();
     await sheetStatusStore.getSheetStatus();
+    await sheetRoleStore.getEstimateSheetRoles();
     return setLoaded(true);
   };
 

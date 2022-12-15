@@ -15,14 +15,9 @@ const props = defineProps({
     }
 });
 
-let disabled = ref(true);
+let originalData = {...props.data};
 
-/* Profile */
-const handleUpdateProfile = (obj) => {
-    riskProfileStore.updateRiskProfile(obj);
-};
-
-console.log(props.data, props.renderForm)
+let disabled = ref(true); 
 
 </script>
 
@@ -35,8 +30,9 @@ console.log(props.data, props.renderForm)
             <input type="text" :disabled=disabled v-model="props.data.percentage">
             <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
             <div v-if="!disabled">
-                <Button text="Save" @click="handleUpdateProfile(props.data)" />
+                <Button text="Save" @click="(($emit('update', props.data, originalData)), disabled = true)" />
                 <Button text="Unsave" @click="(disabled = true)" />
+                <Button text="Delete" @click="($emit('delete', props.data))"/>
             </div>
         </form>
 
@@ -48,20 +44,35 @@ console.log(props.data, props.renderForm)
             <input type="text" :disabled=disabled v-model="props.data.hourlyWage">
             <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
             <div v-if="!disabled">
-                <Button text="Save" @click="handleUpdateProfile(props.data)" />
+                <Button text="Save" @click="(($emit('update', props.data, originalData)), disabled = true)" />
                 <Button text="Unsave" @click="(disabled = true)" />
+                <Button text="Delete" @click="($emit('delete', props.data))"/>
             </div>
         </form>
 
         <br>
 
         <form v-if="props.renderForm == 'sheetStatus'">
-            <p for="name">"icon" Role Navn</p>
+            <p for="name">"icon" Status Navn</p>
             <input type="text" :disabled=disabled v-model="props.data.sheetStatusName">
             <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
             <div v-if="!disabled">
-                <Button text="Save" @click="handleUpdateProfile(props.data)" />
+                <Button text="Save" @click="(($emit('update', props.data)), disabled = true)" />
                 <Button text="Unsave" @click="(disabled = true)" />
+                <Button text="Delete" @click="($emit('delete', props.data))"/>
+            </div>
+        </form>
+
+        <br>
+
+        <form v-if="props.renderForm == 'epicStatus'">
+            <p for="name">"icon" Status Navn</p>
+            <input type="text" :disabled=disabled v-model="props.data.epicStatusName">
+            <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
+            <div v-if="!disabled">
+                <Button text="Save" @click="(($emit('update', props.data)), disabled = true)" />
+                <Button text="Unsave" @click="(disabled = true)" />
+                <Button text="Delete" @click="($emit('delete', props.data))"/>
             </div>
         </form>
     </div>

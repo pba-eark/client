@@ -27,7 +27,7 @@ export const useEstimateSheetRiskProfileStore = defineStore(
           },
         }
       );
-
+      
       setEstimateSheetRiskProfiles(response);
     };
 
@@ -46,13 +46,27 @@ export const useEstimateSheetRiskProfileStore = defineStore(
           }
         );
 
-        setEstimateSheetRiskProfiles([
-          ...estimateSheetRiskProfiles.value,
-          response,
-        ]);
+        setEstimateSheetRiskProfiles([...estimateSheetRiskProfiles.value, response]);
       } catch (e) {
         console.log("ERROR", e);
       }
+    };
+
+    const deleteEstimateSheetRiskProfile = async (sheetId, profileId) => {
+      await $fetch(`${runtimeConfig.public.API_URL}/estimatesheetriskprofiles/?sheetId=${sheetId}&profileId=${profileId}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+      });
+
+      setEstimateSheetRiskProfiles(
+        estimateSheetRiskProfiles.value.filter((sheetProfile) => {
+          return sheetProfile.id !== profileId;
+        })
+      );
     };
 
     /* Getters */
@@ -63,6 +77,7 @@ export const useEstimateSheetRiskProfileStore = defineStore(
     return {
       getEstimateSheetRiskProfiles,
       createEstimateSheetRiskProfile,
+      deleteEstimateSheetRiskProfile,
       ESTIMATE_SHEET_RISK_PROFILES,
     };
   }
