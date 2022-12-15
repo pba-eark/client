@@ -69,28 +69,6 @@ const handleUpdateRole = (obj) => {
                 <p>Status Navn</p>
                 <p>{{ props.data.sheetStatusName }}</p>
             </form>
-
-            <!-- <Input @change="handleUpdateProfile(props.data, 'name')" v-model="input"
-                :default="props.data.profileName" />
-            <Input @change="handleUpdateProfile(props.data, 'percentage')" v-model="input"
-                :default="props.data.percentage || '0'" />
-            <Input type="checkbox" @change="handleUpdateProfile(props.data, 'global')" v-model="input"
-                :default="props.data.global" />
-            <Input type="checkbox" @change="handleUpdateProfile(props.data, 'default')" v-model="input"
-                :default="props.data.default" />
-            <Button text="Save Profil" @Click="handleUpdateProfile(props.data)" /> -->
         </div>
-        <!-- <br>
-        <Button text="Ny Profil" @Click="handleCreateProfile(newRiskProfile, 'globalSetting')" />
-        <br>
-
-        <div>
-            <Input @change="handleUpdateRole(role, 'name')" v-model="input" :default="role.roleName" />
-            <Input @change="handleUpdateRole(role, 'wage')" v-model="input" :default="role.hourlyWage || '0'" />
-            <Input type="checkbox" @change="handleUpdateRole(role, 'global')" v-model="input" :default="role.global" />
-            <Input type="checkbox" @change="handleUpdateRole(role, 'default')" v-model="input"
-                :default="role.default" />
-            <Button text="Edit Rolle" @Click="handleUpdateRole(props.data, 'name')" />
-        </div> -->
     </div>
 </template>

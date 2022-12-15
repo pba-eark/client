@@ -45,7 +45,6 @@ riskProfileStore.RISK_PROFILES.forEach(element => {
     }
   });
 
-  console.log("first sheetProfiles", sheetProfiles.value)
 });
 
 riskProfileStore.RISK_PROFILES.forEach(element => {
@@ -58,41 +57,26 @@ let indexes = [];
 
 masterGlobals.value.forEach(masterGlobal => {
 
-  //let indexToSplice = 0;
-
   sheetProfiles.value.forEach(sheetProfile => {
 
     const index = sheetProfiles.value.findIndex(
       (profile) => profile.profileName == masterGlobal.profileName
     );
 
-    console.log(sheetProfile.profileName, masterGlobal.profileName)
-
     if (index >= 0 && sheetProfile.profileName == masterGlobal.profileName) {
-      console.log(sheetProfile)
-      globals.value = [...globals.value, sheetProfile]
-      //globals.value.push(sheetProfile);
+      globals.value.push(sheetProfile);
       indexes.push(index);
-      // indexToSplice = index;
-      console.log("building globals", globals.value)
-      // console.log(index)
     }
 
   });
 
-  // globals.value.splice(indexToSplice, 1);
-
 });
 
-indexes.sort(function(a, b){return b - a});
+indexes.sort(function (a, b) { return b - a });
 
 indexes.forEach(index => {
-  globals.value.splice(index, 1);
+  sheetProfiles.value.splice(index, 1);
 });
-
-// console.log("sheetProfiles", sheetProfiles.value)
-// console.log("master", masterGlobals.value)
-// console.log("globals", globals.value)
 
 const newProfile = {
   global: false,
@@ -106,55 +90,42 @@ const newSheetLink = ref({
   riskProfileId: 0
 });
 
-const handleCreateProfile = async (settingType) => {
+const handleCreateLocalProfile = async () => {
 
-  if (settingType == 'local') {
-    let profile = await riskProfileStore.createRiskProfile(newProfile);
+  let profile = await riskProfileStore.createRiskProfile(newProfile);
+  newSheetLink.value.riskProfileId = profile.id;
+  await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
+  sheetProfiles.value.push(profile);
+};
+
+const handleCreateGlobalProfile = async () => {
+
+  newProfile.global = true;
+
+  let profile = await riskProfileStore.createRiskProfile(newProfile);
+
+  estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
+
+    newSheetLink.value.estimateSheetId = sheet.id;
     newSheetLink.value.riskProfileId = profile.id;
     await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
-    sheetProfiles.value.push(profile);
-  }
-  else if (settingType == 'global') {
-    newProfile.global = true;
 
-    let profile = await riskProfileStore.createRiskProfile(newProfile);
-
-    estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
-
-      newSheetLink.value.estimateSheetId = sheet.id;
-      newSheetLink.value.riskProfileId = profile.id;
-      await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
-
-    });
-    masterGlobals.value.push(profile);
-  }
-
+  });
+  globals.value.push(profile);
+  masterGlobals.value.push(profile);
 };
 
 const handleUpdateGlobalProfile = async (profile, originalProfile) => {
-  // create ny profile som ikke er global 
-  // for hver sheet i storen
-  // opdater composite tabel med ny profil 
-  // Gør så alle sheets har en lokalglobal profil
-  // Sheets har her både den globale og den lokalglobale profil
-  // opdater den originale profile med ny info, eller slet den og stop
-  // hvis profilerne har samme navn, men ikke samme procentsats, burde der være en lokalglobal med en anden procentværdig end den under globale settings
-  // hvis profilerne har same procentsats, men ikke samme navn, burde der være en lokal profil men den globalelokale er væk, da task felterne der brugte den nu bruger den nye lokale profil
 
-  //riskProfileStore.updateRiskProfile(profile);
-
-
-  // hvis procentsatsen er ændret skal man lave en ny profil
-  // lav et link til den nye profil for hvert sheet
-  // 
-  console.log("new", profile.percentage, "old", originalProfile.percentage)
   if (profile.percentage != originalProfile.percentage) {
 
     newProfile.global = false;
     newProfile.profileName = profile.profileName;
-    newProfile.percentage = profile.percentage;
+    newProfile.percentage = originalProfile.percentage;
 
     let riskProfile = await riskProfileStore.createRiskProfile(newProfile);
+
+    globals.value.push(riskProfile);
 
     estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
       newSheetLink.value.estimateSheetId = sheet.id;
@@ -162,19 +133,31 @@ const handleUpdateGlobalProfile = async (profile, originalProfile) => {
       await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
     });
 
+    globals.value.forEach(globalProfile => {
+      const index = globals.value.findIndex(
+        (profile) => profile.profileName == originalProfile.profileName
+      );
+
+      if (index >= 0 && globalProfile.profileName == originalProfile.profileName) {
+        globals.value.splice(index, 1);
+      }
+    });
+
     await riskProfileStore.updateRiskProfile(profile, originalProfile);
 
   } else {
 
-    let result = riskProfileStore.updateRiskProfile(profile);
+    let response = await riskProfileStore.updateRiskProfile(profile);
 
-    masterGlobals.value.map((updatedProfile) => {
-      if (updatedProfile.id === typeCheck(profile.id)) Object.assign(updatedProfile, result);
+    globals.value.map((updatedProfile) => {
+      if (updatedProfile.id === typeCheck(profile.id)) Object.assign(updatedProfile, response);
     });
+
   }
+
 };
 
-const handleDeleteProfile = async (id) => {
+const handleDeleteLocalProfile = async (id) => {
 
   await riskProfileStore.deleteRiskProfile(id);
 
@@ -264,7 +247,7 @@ globalMasterRoles.value.forEach(masterRole => {
 
 });
 
-const newLokalRole = {
+const newRole = {
   global: false,
   default: false,
   roleName: "Ny Rolle",
@@ -276,14 +259,73 @@ const newSheetRoleLink = ref({
   roleId: 0
 });
 
-const handleCreateRole = async () => {
-  let newRole = await roleStore.createRole(newLokalRole);
-  newSheetRoleLink.value.roleId = newRole.id;
+const handleCreateLocalRole = async () => {
+  let role = await roleStore.createRole(newRole);
+  newSheetRoleLink.value.roleId = role.id;
   await estimateSheetRoleStore.createEstimateSheetRole(newSheetRoleLink.value);
-  sheetRoles.value.push(newRole);
+  sheetRoles.value.push(role);
 };
 
-const handleDeleteRole = (id) => {
+const handleCreateGlobalRole = async () => {
+
+  newRole.global = true;
+
+  let role = await roleStore.createRole(newRole);
+
+  estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
+
+    newSheetRoleLink.value.estimateSheetId = sheet.id;
+    newSheetRoleLink.value.roleId = role.id;
+    await estimateSheetRoleStore.createEstimateSheetRole(newSheetRoleLink.value);
+
+  });
+  globalRoles.value.push(role);
+  globalMasterRoles.value.push(role);
+};
+
+const handleUpdateGlobalRole = async (role, originalRole) => {
+
+  if (role.hourlyWage != originalRole.hourlyWage) {
+
+    newRole.global = false;
+    newRole.roleName = role.roleName;
+    newRole.hourlyWage = originalRole.hourlyWage;
+
+    let createdRole = await roleStore.createRole(newRole);
+
+    globalRoles.value.push(createdRole);
+
+    estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
+      newSheetRoleLink.value.estimateSheetId = sheet.id;
+      newSheetRoleLink.value.roleId = createdRole.id;
+      await estimateSheetRoleStore.createEstimateSheetRole(newSheetRoleLink.value);
+    });
+
+    globalRoles.value.forEach(globalRole => {
+      const index = globalRoles.value.findIndex(
+        (role) => role.roleName == originalRole.roleName
+      );
+
+      if (index >= 0 && globalRole.roleName == originalRole.roleName) {
+        globalRoles.value.splice(index, 1);
+      }
+    });
+
+    await roleStore.updateRole(role, originalRole);
+
+  } else {
+
+    let response = await roleStore.updateRole(role);
+
+    globalRoles.value.map((updatedRole) => {
+      if (updatedRole.id === typeCheck(role.id)) Object.assign(updatedRole, response);
+    });
+
+  }
+
+};
+
+const handleDeleteLocalRole = (id) => {
 
   roleStore.deleteRole(id);
 
@@ -293,6 +335,32 @@ const handleDeleteRole = (id) => {
 
   sheetRoles.value.splice(profileIndex, 1);
 };
+
+const handleDeleteGlobalRole = async (role) => {
+  newRole.global = false;
+  newRole.roleName = role.roleName;
+  newRole.hourlyWage = role.hourlyWage;
+
+  let createdRole = await roleStore.createRole(newRole);
+
+  estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
+    newSheetRoleLink.value.estimateSheetId = sheet.id;
+    newSheetRoleLink.value.roleId = createdRole.id;
+    await estimateSheetRoleStore.createEstimateSheetRole(newSheetRoleLink.value);
+
+    if (sheet.id == props.sheetId) {
+      sheetRoles.value.push(newRole);
+    }
+  });
+
+  await roleStore.deleteRole(role.id);
+
+  const profileIndex = globalMasterRoles.value.findIndex(
+    (obj) => obj.id === role.id
+  );
+
+  globalMasterRoles.value.splice(profileIndex, 1);
+}
 // #endregion
 
 // #region SheetStatus
@@ -302,6 +370,29 @@ const globalMasterSheetStatus = ref([]);
 sheetStatusStore.SHEET_STATUS.forEach(status => {
   globalMasterSheetStatus.value.push(status);
 });
+
+const newSheetStatus = {
+  global: true,
+  default: false,
+  sheetStatusName: "New Status"
+}
+
+const handleCreateGlobalSheetStatus = async () => {
+  let createdSheetStatus = await sheetStatusStore.createSheetStatus(newSheetStatus);
+  console.log(createdSheetStatus)
+  console.log(globalMasterSheetStatus.value)
+  globalMasterSheetStatus.value.push(createdSheetStatus);
+}
+
+const handleDeleteGlobalSheetStatus = async (id) => {
+  await sheetStatusStore.deleteSheetStatus(id);
+
+  const profileIndex = globalMasterSheetStatus.value.findIndex(
+    (obj) => obj.id === role.id
+  );
+
+  globalMasterSheetStatus.value.splice(profileIndex, 1);
+}
 // #endregion
 
 </script>
@@ -321,19 +412,19 @@ sheetStatusStore.SHEET_STATUS.forEach(status => {
       </div>
       <p>-----------------------------</p>
       <div v-for="riskProfile in sheetProfiles" :key="riskProfile.id">
-        <LocalSettings :data="riskProfile" :renderForm="'riskProfile'" @delete="handleDeleteProfile" />
+        <LocalSettings :data="riskProfile" :renderForm="'riskProfile'" @delete="handleDeleteLocalProfile" />
       </div>
-      <Button text="New Profile" @Click="handleCreateProfile('local')" />
+      <Button text="Ny Profile" @Click="handleCreateLocalProfile" />
 
       <h3>Roller</h3>
       <div v-for="role in globalRoles" :key="role.id">
-        <LocalGlobalSettings :data="role" :renderForm="'role'" @delete="handleDeleteRole" />
+        <LocalGlobalSettings :data="role" :renderForm="'role'" />
       </div>
       <p>-----------------------------</p>
       <div v-for="role in sheetRoles" :key="role.id">
-        <LocalSettings :data="role" :renderForm="'role'" @delete="handleDeleteRole" />
+        <LocalSettings :data="role" :renderForm="'role'" @delete="handleDeleteLocalRole" />
       </div>
-      <Button text="New Role" @Click="handleCreateRole" />
+      <Button text="Ny Role" @Click="handleCreateLocalRole" />
 
     </div>
 
@@ -345,17 +436,21 @@ sheetStatusStore.SHEET_STATUS.forEach(status => {
         <GlobalSettings :data="profile" :renderForm="'riskProfile'" @delete="handleDeleteGlobalProfile"
           @update="handleUpdateGlobalProfile" />
       </div>
-      <Button text="New Profile" @Click="handleCreateProfile('global')" />
+      <Button text="Ny Profile" @Click="handleCreateGlobalProfile" />
 
       <h3>Roller</h3>
       <div v-for="role in globalMasterRoles" :key="role.id">
-        <GlobalSettings :data="role" :renderForm="'role'" />
+        <GlobalSettings :data="role" :renderForm="'role'" @delete="handleDeleteGlobalRole"
+          @update="handleUpdateGlobalRole" />
       </div>
+      <Button text="Ny Rolle" @Click="handleCreateGlobalRole" />
 
       <h3>Sheet Status</h3>
       <div v-for="status in globalMasterSheetStatus" :key="status.id">
-        <GlobalSettings :data="status" :renderForm="'sheetStatus'" />
+        <GlobalSettings :data="status" :renderForm="'sheetStatus'" @delete="handleDeleteGlobalSheetStatus" />
       </div>
+      <Button text="Ny Sheet Status" @Click="handleCreateGlobalSheetStatus" />
+
     </div>
 
 
