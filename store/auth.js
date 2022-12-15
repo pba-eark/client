@@ -31,13 +31,13 @@ export const useAuthStore = defineStore("auth-store", () => {
     navigateTo("/");
   };
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
     jwt.value = "";
     isAuthorized.value = false;
 
     if (localStorage.getItem("jwt")) localStorage.removeItem("jwt");
     if (localStorage.getItem("lastPath")) localStorage.removeItem("lastPath");
-    navigateTo("/login");
+    await navigateTo("/login");
   };
 
   const handleSignUp = async (firstName, lastName, email, password) => {

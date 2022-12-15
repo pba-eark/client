@@ -39,13 +39,14 @@ const handleAuthorization = async () => {
     layout.value = "default";
     await navigateTo("/");
   } else {
+    layout.value = "login";
     await navigateTo("/login");
   }
 };
 
 /*
  ** Temporary fix for known bug: https://github.com/nuxt/framework/issues/3141
- ** Occurs when navigating too fast, due to page transition, and prevents the page content from loading.
+ ** Occurs when navigating during page transition and prevents the page content from loading.
  ** "Fix": Page reloads automatically when error occurs.
  */
 if (process.client) {
