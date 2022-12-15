@@ -26,7 +26,7 @@ export const useTabsStore = defineStore("tabs-store", () => {
   };
 
   const openTab = (payload) => {
-    temporaryTab.value = null;
+    if (payload === temporaryTab.value) temporaryTab.value = null;
 
     const index = tabs.value.findIndex((tab) => {
       return tab.id === payload.id;
