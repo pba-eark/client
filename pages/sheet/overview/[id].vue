@@ -47,6 +47,8 @@ const handlePasteEpic = async () => {
 </script>
 
 <template>
-  <Overview />
-  <Button text="Paste epic" @click="handlePasteEpic" />
+  <div>
+    <Overview />
+    <Button text="Paste epic" @click="handlePasteEpic" />
+  </div>
 </template>
