@@ -46,10 +46,7 @@ export const useEstimateSheetRiskProfileStore = defineStore(
           }
         );
 
-        setEstimateSheetRiskProfiles([
-          ...estimateSheetRiskProfiles.value,
-          response,
-        ]);
+        setEstimateSheetRiskProfiles([...estimateSheetRiskProfiles.value, response]);
       } catch (e) {
         console.log("ERROR", e);
       }
