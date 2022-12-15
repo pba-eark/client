@@ -55,9 +55,12 @@ export const useGlobalStore = defineStore("global-store", () => {
   const scrollToEpic = async (sheetId, epicId) => {
     if (sheetStore.IS_OVERVIEW_TOGGLED)
       await sheetStore.toggleSheetOverview(sheetId);
-    const element = document.querySelector(`[data-epic-id="${epicId}"]`);
-    const topPos = element.offsetTop;
-    document.querySelector("main").scrollTop = topPos - 60;
+
+    setTimeout(() => {
+      const element = document.querySelector(`[data-epic-id="${epicId}"]`);
+      const topPos = element.offsetTop;
+      document.querySelector("main").scrollTop = topPos - 60;
+    }, 250);
   };
 
   const copyEpic = (payload) => {
