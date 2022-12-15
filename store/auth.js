@@ -5,6 +5,7 @@ import { useUserStore } from "./users";
 export const useAuthStore = defineStore("auth-store", () => {
   const globalStore = useGlobalStore();
   const userStore = useUserStore();
+  const { $swal } = useNuxtApp();
 
   /* State */
   const jwt = ref("");
@@ -21,37 +22,60 @@ export const useAuthStore = defineStore("auth-store", () => {
   };
 
   const handleLogin = async (email, password) => {
-    const res = await $fetch(`${runtimeConfig.public.API_URL}/auth/login`, {
-      method: "POST",
-      body: { email, password },
-    });
+    try {
+      const res = await $fetch(`${runtimeConfig.public.API_URL}/auth/login`, {
+        method: "POST",
+        body: { email, password },
+      });
 
-    userStore.setCurrentUser(res.user);
-    setJwt(res.token);
-    navigateTo("/");
+      userStore.setCurrentUser(res.user);
+      setJwt(res.token);
+      await navigateTo("/");
+    } catch (e) {
+      console.log("ERROR", e);
+      return false;
+    }
   };
 
   const handleLogOut = async () => {
     jwt.value = "";
     isAuthorized.value = false;
 
+    $swal.fire({
+      position: "center",
+      icon: "success",
+      title: `Logget ud!`,
+      text: `Vi ses forhåbentligt snart igen😉`,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    if (localStorage.getItem("tabs")) localStorage.removeItem("tabs");
+    if (localStorage.getItem("recentSheets"))
+      localStorage.removeItem("recentSheets");
+    if (localStorage.getItem("user")) localStorage.removeItem("user");
     if (localStorage.getItem("jwt")) localStorage.removeItem("jwt");
     if (localStorage.getItem("lastPath")) localStorage.removeItem("lastPath");
     await navigateTo("/login");
   };
 
   const handleSignUp = async (firstName, lastName, email, password) => {
-    const user = await $fetch(`${runtimeConfig.API_URL}/users`, {
-      method: "POST",
-      body: {
-        firstName,
-        lastName,
-        email,
-        password,
-      },
-    });
-
-    await handleLogin(user.email, user.password);
+    try {
+      const user = await $fetch(`${runtimeConfig.API_URL}/users`, {
+        method: "POST",
+        body: {
+          firstName,
+          lastName,
+          email,
+          password,
+        },
+      });
+      if (typeof user == "string") return false;
+      await handleLogin(user.email, user.password);
+    } catch (e) {
+      console.log("ERROR", e);
+      return false;
+    }
   };
 
   /* Getters */

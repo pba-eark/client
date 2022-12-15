@@ -22,6 +22,7 @@ const props = defineProps({
 
 <template>
   <button
+    v-bind="$attrs"
     @click="if (props.emit && props.emit.length) $emit(`${props.emit}`);"
     :type="type"
   >
@@ -41,5 +42,18 @@ button {
 svg {
   height: 25px;
   width: 25px;
+}
+
+.auth-cta {
+  margin: 0 auto;
+  padding: 0.6rem 8rem;
+  border-radius: 50px;
+  outline: none;
+  border: none;
+  background: var(--color-realistic);
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  display: block;
 }
 </style>

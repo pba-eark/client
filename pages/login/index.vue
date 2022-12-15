@@ -1,87 +1,96 @@
-<script>
+<script setup>
 import { useAuthStore } from "~/store/auth";
-// import { useGlobalStore } from "~/store";
+import { useUserStore } from "~/store/users";
 
-export default defineComponent({
-  async setup() {
-    // const globalStore = useGlobalStore();
-    const authStore = useAuthStore();
-
-    /* Make sure user can't access this page, if logged in */
-    watchEffect(async () => {
-      if (authStore.IS_AUTHORIZED) {
-        // await globalStore.fetchData();
-        return navigateTo(localStorage.getItem("lastPath") ?? "/");
-      }
-    });
-
-    /* State */
-    const data = reactive({
-      email: "",
-      password: "",
-
-      newEmail: "",
-      newPassword: "",
-      firstName: "",
-      lastName: "",
-    });
-
-    /* If using async setup(), make sure to register lifecycle hooks before the first await statement. */
-    // onMounted(() => {
-    //   if (authStore.IS_AUTHORIZED) return navigateTo("/");
-    // });
-
-    return {
-      data,
-      authStore,
-    };
-  },
+const { $swal } = useNuxtApp();
+const authStore = useAuthStore();
+const userStore = useUserStore();
+const data = reactive({
+  email: "",
+  password: "",
 });
+
+/* Make sure user can't access this page, if logged in */
+watchEffect(async () => {
+  if (authStore.IS_AUTHORIZED) {
+    return navigateTo(localStorage.getItem("lastPath") ?? "/");
+  }
+});
+
+const handleUpdateEmail = (val) => {
+  data.email = val;
+};
+
+const handleUpdatePassword = (val) => {
+  data.password = val;
+};
+
+const handleLogin = async () => {
+  if (!data.email.length || !data.password.length)
+    return $swal.fire({
+      icon: "error",
+      title: "Ups! Der skete en fejl.",
+      text: `Email adresse og adgangskode passer ikke sammen. Prøv igen!`,
+    });
+
+  const res = await authStore.handleLogin(data.email, data.password);
+
+  if (res === false)
+    return $swal.fire({
+      icon: "error",
+      title: "Ups! Der skete en fejl.",
+      text: `Email adresse og adgangskode passer ikke sammen. Prøv igen!`,
+    });
+
+  return $swal.fire({
+    position: "center",
+    icon: "success",
+    title: `Logget ind 🎉`,
+    text: `Velkommen ${userStore.CURRENT_USER.firstName}!`,
+    showConfirmButton: false,
+    timer: 1500,
+  });
+};
 </script>
 
 <template>
   <div class="block">
-    <div class="login">
-      <form @submit.prevent="authStore.handleLogin(data.email, data.password)">
-        <h1>Login</h1>
-        <label>
-          <p>Email</p>
-          <input type="text" v-model="data.email" />
-          <p>Password</p>
-          <input type="password" v-model="data.password" />
+    <form @submit.prevent="handleLogin">
+      <h1>Login</h1>
+      <Input
+        class="input__default"
+        placeholder="Indtast din email adresse"
+        type="text"
+        label="Email"
+        emit="updateEmailInput"
+        @updateEmailInput="handleUpdateEmail"
+      />
 
-          <br />
-          <Button text="Sign in" type="submit" />
-        </label>
-      </form>
-    </div>
+      <Input
+        class="input__default"
+        placeholder="Indtast din adgangskode"
+        type="password"
+        label="Adgangskode"
+        emit="updatePasswordInput"
+        @updatePasswordInput="handleUpdatePassword"
+      />
 
-    <div class="register">
-      <form
-        @submit.prevent="
-          authStore.handleSignUp(
-            data.firstName,
-            data.lastName,
-            data.newEmail,
-            data.newPassword
-          )
-        "
-      >
-        <h1>Create user</h1>
-        <label>
-          <p>First name</p>
-          <input type="text" v-model="data.firstName" />
-          <p>Last name</p>
-          <input type="text" v-model="data.lastName" />
-          <p>Email</p>
-          <input type="text" v-model="data.newEmail" />
-          <p>Password</p>
-          <input type="password" v-model="data.newPassword" />
+      <Button class="auth-cta" text="Log ind" type="submit" />
+    </form>
 
-          <br />
-          <Button text="Sign up" type="submit" />
-        </label>
-      </form>
-    </div>
+    <NuxtLink class="auth-secondary" to="/login/register">Opret konto</NuxtLink>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.block {
+  h1 {
+    text-align: center;
+  }
+  .auth-secondary {
+    text-align: center;
+    display: block;
+    margin: 1.5rem 0;
+  }
+}
+</style>
