@@ -445,7 +445,7 @@ const handleDeleteGlobalEpicStatus = async (epicStatus) => {
     <Button v-if="onSheet" text="Lokale Indstillinger" @Click="localSettingsTab = true" />
     <Button text="Globale Indstillinger" @Click="localSettingsTab = false" />
 
-    <div v-if="localSettingsTab">
+    <div v-if="(localSettingsTab && onSheet)">
       <h2>Lokal</h2>
 
       <h3>Risikoprofiler</h3>
