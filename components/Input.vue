@@ -77,6 +77,7 @@ defineExpose({
 
     <!-- Textarea -->
     <textarea
+      :required="props.required"
       v-if="props.type === 'textarea'"
       v-bind="$attrs"
       v-model="data.value"
@@ -89,6 +90,7 @@ defineExpose({
 
     <!-- Select -->
     <select
+      :required="props.required"
       v-else-if="props.type === 'select'"
       v-model="data.value"
       v-bind="$attrs"
@@ -106,6 +108,7 @@ defineExpose({
 
     <!-- Search -->
     <input
+      :required="props.required"
       v-else-if="props.type === 'search'"
       v-model="data.value"
       v-bind="$attrs"
@@ -118,6 +121,7 @@ defineExpose({
 
     <!-- Default Input -->
     <input
+      :required="props.required"
       v-else
       v-model="data.value"
       v-bind="$attrs"
@@ -132,10 +136,10 @@ defineExpose({
 
 <style lang="scss" scoped>
 .input {
-  width: 100%;
-  height: 100%;
   font-size: 1rem;
   line-height: 1;
+  display: block;
+  margin-bottom: 0.5rem;
 
   &__label {
     display: block;
@@ -191,9 +195,26 @@ defineExpose({
       width: 25px;
     }
   }
+
+  &__default {
+    margin: 1rem 0;
+    input {
+      padding: 0.3rem;
+      width: 100%;
+      border: 0;
+      outline: none;
+      border-bottom: 1px solid #777;
+    }
+  }
 }
 
 .required {
   color: red;
+}
+
+.warning {
+  input {
+    outline: 2px solid red;
+  }
 }
 </style>
