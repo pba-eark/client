@@ -41,13 +41,21 @@ export const useAuthStore = defineStore("auth-store", () => {
     jwt.value = "";
     isAuthorized.value = false;
 
-    $swal.fire({
-      position: "center",
-      icon: "success",
-      title: `Logget ud!`,
-      text: `Vi ses forhåbentligt snart igen😉`,
+    const notification = $swal.mixin({
+      toast: true,
+      position: "top-end",
       showConfirmButton: false,
-      timer: 1500,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener("mouseenter", $swal.stopTimer);
+        toast.addEventListener("mouseleave", $swal.resumeTimer);
+      },
+    });
+
+    notification.fire({
+      icon: "success",
+      title: `Logget ud`,
     });
 
     if (localStorage.getItem("tabs")) localStorage.removeItem("tabs");
