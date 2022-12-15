@@ -3,11 +3,13 @@ import { useGlobalStore } from "~/store/";
 import { useDetailsStore } from "~/store/details";
 import { useEpicStore } from "~/store/epics";
 import { useTaskStore } from "~/store/tasks";
+import { useAuthStore } from "~/store/auth";
 
 const globalStore = useGlobalStore();
 const detailsStore = useDetailsStore();
 const epicStore = useEpicStore();
 const taskStore = useTaskStore();
+const authStore = useAuthStore();
 const { $swal } = useNuxtApp();
 
 const route = useRoute();
@@ -17,6 +19,17 @@ const epicOptions = reactive({
 let item = reactive({
   type: null,
   isToggled: false,
+});
+const isProfileDropdownToggled = ref(false);
+const sidebar = ref(null);
+
+onBeforeMount(() => {
+  window.addEventListener("click", handleClick);
+});
+
+onBeforeUnmount(() => {
+  /* Clean up eventlistener */
+  window.removeEventListener("click", handleClick);
 });
 
 watch(
@@ -156,6 +169,7 @@ const handleDeleteTask = () => {
       }
     });
 };
+
 const handleDeleteEpic = () => {
   $swal
     .fire({
@@ -202,6 +216,29 @@ const handleDeleteEpic = () => {
     });
 };
 
+const getParents = (node) => {
+  let current = node,
+    list = [];
+  while (
+    current.parentNode != null &&
+    current.parentNode != document.documentElement
+  ) {
+    list.push(current.parentNode);
+    current = current.parentNode;
+  }
+  return list;
+};
+
+const handleClick = (e) => {
+  if (!isProfileDropdownToggled.value) return;
+
+  if (
+    e.target === sidebar.value ||
+    !getParents(e.target).includes(sidebar.value)
+  )
+    return (isProfileDropdownToggled.value = false);
+};
+
 /* Computed */
 const currentEpic = computed(() => {
   return epicStore.EPICS.filter((epic) => {
@@ -217,25 +254,35 @@ const show = () => {
 </script>
 
 <template>
-  <div class="meta">
+  <div class="meta" ref="sidebar">
     <div class="meta__settings">
       <div class="filter">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-          <path
-            d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z"
-          />
-        </svg>
+        <Icon icon="icon-filter" />
         <span>Filtrér</span>
       </div>
 
-      <div class="settings"><Icon icon="icon-cog" /> Indstillinger</div>
+      <div class="settings">
+        <Icon icon="icon-cog" />
+        <span> Indstillinger </span>
+      </div>
 
       <div class="profile">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-          <path
-            d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0S96 57.3 96 128s57.3 128 128 128zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"
+        <Icon
+          icon="icon-profile"
+          @click="isProfileDropdownToggled = !isProfileDropdownToggled"
+        />
+        <!-- Profile dropdown -->
+        <div
+          v-show="isProfileDropdownToggled"
+          ref="profileDropdown"
+          class="dropdown"
+        >
+          <Button
+            text="Log ud"
+            icon="icon-logout"
+            @click="authStore.handleLogOut"
           />
-        </svg>
+        </div>
       </div>
     </div>
 
@@ -364,10 +411,30 @@ const show = () => {
       cursor: pointer;
     }
 
-    .profile svg {
-      display: block;
-      margin-left: auto;
-      cursor: pointer;
+    .profile {
+      position: relative;
+
+      svg {
+        display: block;
+        margin-left: auto;
+        cursor: pointer;
+      }
+
+      .dropdown {
+        position: absolute;
+        padding: 8px 16px;
+        border: 2px solid #777;
+        border-radius: 3px;
+        right: 0;
+        top: 30px;
+
+        button {
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          width: 10ch;
+        }
+      }
     }
   }
 
