@@ -11,10 +11,6 @@ const estimations = ref([]);
 const responsibilities = ref([]);
 const recentlyOpen = ref([]);
 
-definePageMeta({
-  middleware: ["auth"],
-});
-
 onMounted(() => {
   /* Get sheets estimated & done by current user */
   sheetUserStore.ESTIMATE_SHEET_USERS.forEach((connection) => {

@@ -57,9 +57,9 @@ onBeforeUnmount(() => {
   window.removeEventListener("click", handleClick);
 });
 
-definePageMeta({
-  middleware: ["auth"],
-});
+// definePageMeta({
+//   middleware: ["auth"],
+// });
 
 const handleSubmit = async () => {
   if (!postData.sheet.SheetName) return alert("Sheet name missing");
