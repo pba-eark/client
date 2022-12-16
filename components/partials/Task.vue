@@ -156,10 +156,12 @@ const pricePessimistic = computed(() => {
 </script>
 
 <template>
+
   <div class="task__row" :class="{ 'task--disabled': props.data.optOut }">
+
     <div class="task__col">
       <Input
-        class="input__text--task"
+        class="input__text--task task__input--name"
         :default="props.data.taskName"
         emit="updateTaskName"
         @updateTaskName="handleUpdateTaskName"
@@ -168,7 +170,7 @@ const pricePessimistic = computed(() => {
 
     <div class="task__col">
       <Input
-        class="input__select--task"
+        class="input__select--task task__input--risk"
         type="select"
         :options="riskProfileOptions"
         emit="updateRiskProfile"
@@ -179,11 +181,9 @@ const pricePessimistic = computed(() => {
 
     <div class="task__col">
       <Input
-        class="input__select--task"
+        class="input__select--task task__input--role"
         type="select"
-        :placeholder="
-          currentRole?.roleName ? currentRole.roleName : 'Vælg rolle'
-        "
+        :placeholder="currentRole?.roleName ? currentRole.roleName : 'Vælg rolle'"
         :options="roleOptions"
         emit="updateRole"
         @updateRole="handleUpdateRole"
@@ -192,7 +192,7 @@ const pricePessimistic = computed(() => {
 
     <div class="task__col">
       <Input
-        class="input__number--task"
+        class="input__number--task task__input--estimate"
         :default="currentEstimate"
         emit="updateEstimate"
         @updateEstimate="handleUpdateEstimate"
@@ -200,89 +200,124 @@ const pricePessimistic = computed(() => {
       />
     </div>
 
-    <div class="task__col task--number task--realistic">
-      {{ hoursRealistic }}
+    <div class="task--realistic">
+      <div class="task__col">
+        <span class="task__hours">
+          {{ hoursRealistic }}
+        </span>
+      </div>
+      <div class="task__col">
+        <span class="task__price">
+          {{ priceRealistic }}
+        </span>
+      </div>
     </div>
 
-    <div class="task__col task--number task--realistic">
-      {{ priceRealistic }}
+    <div class="task--pessimistic">
+      <div class="task__col">
+        <span class="task__hours">
+          {{ hoursPessimistic }}
+        </span>
+      </div>
+      <div class="task__col">
+        <span class="task__price">
+          {{ pricePessimistic }}
+        </span>
+      </div>
     </div>
 
-    <div class="task__col task--number task--pessimistic">
-      {{ hoursPessimistic }}
-    </div>
-
-    <div class="task__col task--number task--pessimistic">
-      {{ pricePessimistic }}
-    </div>
-
-    <div class="task__col task--center">
+    <div class="task__col">
       <Input
+        class="input__checkbox--task task__input--opt-out"
         type="checkbox"
-        class="input__checkbox--task"
         emit="updateOptOut"
         @updateOptOut="handleUpdateOptOut"
         :default="props.data.optOut"
       />
     </div>
 
-    <div class="task__col task--center">
-      <Icon icon="icon-dots" class="task__details-icon" />
+    <div class="task__col task__col--more">
+      <Icon icon="icon-dots" class="task__icon" />
     </div>
+
   </div>
+
 </template>
 
 <style lang="scss" scoped>
+
 .task {
   &__row {
-    width: 100%;
-    background-color: var(--color-task);
     display: grid;
-    gap: var(--table-gap);
     grid-template-columns: var(--table-columns);
+    // gap: var(--table-gap);
+    color: var(--font-color-primary);
+    background-color: var(--color-task);
+    border-radius: 4px;
   }
+  &__col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--table-columns-padding);
 
-  &--disabled {
-    background: var(--color-disabled);
-    .task__col {
-      background: var(--color-disabled);
+    &--more {
+      padding-right: calc(var(--table-columns-padding) / 2);
+      padding-left: 0;
     }
   }
-
-  &__col {
-    color: var(--font-color-primary);
-    padding: 2px;
+  &__icon {
+    max-height: var(--width-more);
+    max-width: var(--width-more);
+    cursor: pointer;
   }
-
-  &--number {
+  &__hours {
+    text-align: right;
+    width: var(--width-hours);
+    margin: var(--input-padding);
+  }
+  &__price {
+    text-align: right;
+    width: var(--width-price);
+    margin: var(--input-padding);
+  }
+  &__input {
+    &--name {
+    }
+    &--risk {
+      width: var(--width-risk);
+    }
+    &--role {
+      width: var(--width-role);
+    }
+    &--estimate {
+      width: var(--width-estimate);
+    }
+    &--opt-out {
+      width: var(--width-opt-out);
+    }
+  }
+  &--realistic, &--pessimistic {
     display: flex;
-    align-items: center;
-    flex-direction: row-reverse;
+    color: var(--font-color-secondary);
+    grid-column: span 2;
   }
-
   &--realistic {
     background-color: var(--color-realistic);
-    color: var(--font-color-secondary);
-    padding: 8px;
   }
-
   &--pessimistic {
     background-color: var(--color-pessimistic);
+  }
+  &--disabled {
+    background: var(--color-disabled);
     color: var(--font-color-secondary);
-    padding: 8px;
-  }
-
-  &--center {
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  &__details-icon {
-    max-height: 20px;
-    max-width: 20px;
-    cursor: pointer;
+    font-style: italic;
+    .task--realistic, .task--pessimistic {
+      background: var(--color-disabled);
+    }
+    .task__col {
+      opacity: 0.6;
+    }
   }
 }
 </style>

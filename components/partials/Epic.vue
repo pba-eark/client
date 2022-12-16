@@ -129,15 +129,64 @@ const tasksForEpic = computed(() => {
         <Button text="Edit" @click="detailsStore.setDetails(props.data)" />
       </div>
       <div class="epic__table-header">
-        <div class="epic__table-col">Task navn</div>
-        <div class="epic__table-col">Risikoprofil</div>
-        <div class="epic__table-col">Rolle</div>
-        <div class="epic__table-col epic__table--right">Estimat</div>
-        <div class="epic__table-col epic__table--right">Timer</div>
-        <div class="epic__table-col epic__table--right">Pris DKK</div>
-        <div class="epic__table-col epic__table--right">Timer</div>
-        <div class="epic__table-col epic__table--right">Pris DKK</div>
-        <div class="epic__table-col">Fravalgt</div>
+
+        <div class="epic__table-col">
+          <span class="epic__table-heading--name">
+            Task navn
+          </span>
+        </div>
+
+        <div class="epic__table-col">
+          <span class="epic__table-heading--risk">
+            Risikoprofil
+          </span>
+        </div>
+
+        <div class="epic__table-col">
+          <span class="epic__table-heading--role">
+            Rolle
+          </span>
+        </div>
+
+        <div class="epic__table-col epic__table--right">
+          <span class="epic__table-heading--estimate">
+            Estimat
+          </span>
+        </div>
+
+        <div class="epic__table-header--realistic">
+          <div class="epic__table-col epic__table--right">
+            <span class="epic__table-heading--hours">
+              Timer
+            </span>
+          </div>
+          
+          <div class="epic__table-col epic__table--right">
+            <span class="epic__table-heading--price">
+              Pris DKK
+            </span>
+          </div>
+        </div>
+
+        <div class="epic__table-header--pessimistic">
+          <div class="epic__table-col epic__table--right">
+            <span class="epic__table-heading--hours">
+              Timer
+            </span>
+          </div>
+
+          <div class="epic__table-col epic__table--right">
+            <span class="epic__table-heading--price">
+              Pris DKK
+            </span>
+          </div>
+        </div>
+        
+        <div class="epic__table-col">
+          <span class="epic__table-heading--opt-out">
+              Fravalgt
+            </span>
+        </div>
       </div>
     </div>
 
@@ -152,39 +201,62 @@ const tasksForEpic = computed(() => {
     </div>
 
     <div class="epic__footer">
-      <Button
-        :text="`Ny task (${props.data.epicName})`"
-        @click="handleCreateTask"
-      />
 
-      <div>
-        Estimat i alt {{ totalEstimatedHours.toFixed(2).replace(".", ",") }}
+      <div class="epic__table-footer">
+
+        <div class="epic__table-col epic__table-col--button">
+          <Button
+            class="new-task"
+            text="Tilføj task"
+            icon="icon-plus"
+            @click="handleCreateTask"
+          />
+        </div>
+
+        <!-- <div class="epic__table-col">
+          <span class="epic__table-sum">
+            I alt:
+          </span>
+        </div> -->
+
+        <div class="epic__table-col">
+          <span class="epic__table-sum--estimate">
+            {{ totalEstimatedHours.toFixed(2).replace(".", ",") }}
+          </span>
+        </div>
+
+        <div class="epic__table-footer--realistic">
+          <div class="epic__table-col">
+            <span class="epic__table-sum--hours">
+              {{ totalRealisticHours.toFixed(2).replace(".", ",") }}
+            </span>
+          </div>
+
+          <div class="epic__table-col">
+            <span class="epic__table-sum--price">
+              {{ numberDotSeperator(totalRealisticPrice.toFixed(2).replace(".", ",")) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="epic__table-footer--pessimistic">
+          <div class="epic__table-col">
+            <span class="epic__table-sum--hours">
+              {{ totalPessimisticHours.toFixed(2).replace(".", ",") }}
+            </span>
+          </div>
+
+          <div class="epic__table-col">
+            <span class="epic__table-sum--price">
+              {{ numberDotSeperator(totalPessimisticPrice.toFixed(2).replace(".", ",")) }}
+            </span>
+          </div>
+        </div>
+        
       </div>
 
-      <div>
-        Realistisk timer i alt
-        {{ totalRealisticHours.toFixed(2).replace(".", ",") }}
-      </div>
-
-      <div>
-        Realistisk pris i alt
-        {{
-          numberDotSeperator(totalRealisticPrice.toFixed(2).replace(".", ","))
-        }}
-      </div>
-
-      <div>
-        Pessimistic timer i alt
-        {{ totalPessimisticHours.toFixed(2).replace(".", ",") }}
-      </div>
-
-      <div>
-        Pessimistic pris i alt
-        {{
-          numberDotSeperator(totalPessimisticPrice.toFixed(2).replace(".", ","))
-        }}
-      </div>
     </div>
+    <div class="epic__divider"></div>
   </div>
 </template>
 
@@ -196,37 +268,101 @@ const tasksForEpic = computed(() => {
     display: grid;
     gap: var(--table-gap);
 
-    &-header {
+    &-col {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: var(--table-columns-padding) ;
+
+      &--button {
+        display: block;
+      }
+    }
+
+    &-header, &-footer {
       width: 100%;
       display: grid;
-      gap: var(--table-gap);
       grid-template-columns: var(--table-columns);
-      font-weight: 600;
-    }
-
-    &-col {
+      // gap: var(--table-gap);
       color: var(--font-color-primary);
-      padding: 7px;
+      font-weight: 600;
+
+      span {
+        display: block;
+      }
     }
 
-    &--right {
-      text-align: right;
+    &-header {
+      padding-right: calc(var(--width-more) + var(--table-columns-padding) / 2);
+
+      &--realistic, &--pessimistic {
+        display: flex;
+        grid-column: span 2;
+      }
     }
 
-    &--realistic {
-      grid-column: span 2;
-      display: grid;
-      grid-template-columns: 70px 100px;
+    &-footer {
+      padding-right: calc(var(--width-more) + var(--width-opt-out) + var(--table-columns-padding) * 2.5);
+      padding-top: var(--table-gap);
+
+      &--realistic, &--pessimistic {
+        display: flex;
+        grid-column: span 2;
+        color: var(--font-color-secondary);
+      }
+      &--realistic {
+        background-color: var(--color-realistic);
+        // color: var(--color-realistic);
+      }
+      &--pessimistic {
+        background-color: var(--color-pessimistic);
+        // color: var(--color-pessimistic);
+      }
     }
 
-    &--pessimistic {
-      grid-column: span 2;
-      display: grid;
-      grid-template-columns: 70px 100px;
+    &-heading, &-sum {
+
+      &--name {
+        width: 100%;
+        padding-left: var(--input-padding);
+      }
+      &--risk {
+        width: var(--width-risk);
+        padding-left: var(--input-padding);
+      }
+      &--role {
+        width: var(--width-role);
+        padding-left: var(--input-padding);
+      }
+      &--estimate {
+        width: var(--width-estimate);
+        text-align: right;
+        padding-right: var(--input-padding);
+      }
+      &--hours {
+        width: var(--width-hours);
+        text-align: right;
+        margin: var(--input-padding);
+      }
+      &--price {
+        width: var(--width-price);
+        text-align: right;
+        margin: var(--input-padding);
+      }
+      &--opt-out {
+        width: var(--width-opt-out);
+        text-align: center;
+      }
     }
+
+    // &--sum {
+    //   text-align: right;
+    //   width: var(--width-role);
+    // }
   }
 
   &__header {
+    padding-top: 25px;
     position: sticky;
     top: -20px;
     background: var(--color-background);
@@ -240,6 +376,14 @@ const tasksForEpic = computed(() => {
     position: sticky;
     bottom: -20px;
     background: var(--color-background);
+  }
+
+  &__divider {
+    margin-top: 75px;
+    height: 1px;
+    width: 100%;
+    background-color: var(--color-tabs);
+    opacity: 0.33;
   }
 }
 </style>

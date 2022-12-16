@@ -1,5 +1,9 @@
 <script setup>
 const props = defineProps({
+  classes: {
+    type: String,
+    required: false,
+  },
   label: {
     type: String,
     required: false,
@@ -68,7 +72,7 @@ defineExpose({
 </script>
 
 <template>
-  <label class="input">
+  <label class="input" v-bind="$attrs">
     <!-- Label -->
     <span class="input__label">
       {{ props.label && props.label.length ? props.label : "" }}
@@ -79,7 +83,6 @@ defineExpose({
     <textarea
       :required="props.required"
       v-if="props.type === 'textarea'"
-      v-bind="$attrs"
       v-model="data.value"
       @change="
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
@@ -93,7 +96,6 @@ defineExpose({
       :required="props.required"
       v-else-if="props.type === 'select'"
       v-model="data.value"
-      v-bind="$attrs"
       @change="handleSelect"
     >
       <option value="" selected disabled>{{ props.placeholder }}</option>
@@ -111,7 +113,6 @@ defineExpose({
       :required="props.required"
       v-else-if="props.type === 'search'"
       v-model="data.value"
-      v-bind="$attrs"
       @keyup="
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
@@ -124,7 +125,6 @@ defineExpose({
       :required="props.required"
       v-else
       v-model="data.value"
-      v-bind="$attrs"
       @change="
         if (props.emit && props.emit.length) $emit(`${props.emit}`, data.value);
       "
@@ -138,8 +138,10 @@ defineExpose({
 .input {
   font-size: 1rem;
   line-height: 1;
-  display: block;
-  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // margin-bottom: 0.5rem;
 
   &__label {
     display: block;
@@ -149,30 +151,56 @@ defineExpose({
   &__text {
     &--task {
       width: 100%;
-      height: 100%;
-      background-color: transparent;
-      border: none;
-      border-radius: 0;
-      font-size: inherit;
-      line-height: inherit;
+      input {
+        width: 100%;
+        background-color: transparent;
+        border: none;
+        border-radius: 3px;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+        font-style: inherit;
+        padding: var(--input-padding);
+
+        &:hover, &:focus-visible {
+          background-color: var(--color-task-input);
+        }
+        &:focus-visible {
+          outline: none;
+          border-bottom: 1px solid var(--color-scrollbar);
+        }
+      }
     }
   }
 
   &__number {
     &--task {
       width: 100%;
-      height: 100%;
-      text-align: right;
-      background-color: transparent;
-      border: none;
-      border-radius: 0;
-      font-size: inherit;
-      line-height: inherit;
+      input {
+        width: 100%;
+        text-align: right;
+        background-color: transparent;
+        border: none;
+        border-radius: 3px;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+        font-style: inherit;
+        padding: var(--input-padding);
 
-      &::-webkit-outer-spin-button,
-      &::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
+        &:hover, &:focus-visible {
+          background-color: var(--color-task-input);
+        }
+        &:focus-visible {
+          outline: none;
+          border-bottom: 1px solid var(--color-scrollbar);
+        }
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
       }
     }
   }
@@ -180,19 +208,33 @@ defineExpose({
   &__select {
     &--task {
       width: 100%;
-      height: 100%;
-      border: none;
-      background-color: transparent;
-      border-radius: 0;
-      font-size: inherit;
-      line-height: inherit;
+      select {
+        width: 100%;
+        border: none;
+        background-color: transparent;
+        border-radius: 3px;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+        font-style: inherit;
+        padding: var(--input-padding);
+
+        &:hover, &:focus-visible {
+          background-color: var(--color-task-input);
+        }
+        &:focus-visible {
+          outline: none;
+        }
+      }
     }
   }
 
   &__checkbox {
     &--task {
-      height: 25px;
-      width: 25px;
+      input {
+        height: 20px;
+        width: 20px;
+      }
     }
   }
 

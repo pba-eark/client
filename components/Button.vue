@@ -33,6 +33,7 @@ const props = defineProps({
 </template>
 
 <style lang="scss" scoped>
+
 button {
   display: flex;
   align-items: center;
@@ -40,8 +41,27 @@ button {
   cursor: pointer;
 }
 svg {
-  height: 25px;
-  width: 25px;
+  height: 20px;
+  width: 20px;
+}
+
+.new {
+  &-task {
+    border: none;
+    border-radius: 3px;
+    background-color: transparent;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: var(--input-padding);
+
+    svg {
+      margin-left: 10px;
+    }
+
+    &:hover {
+      background-color: #d8d8d8;
+    }
+  }
 }
 
 .auth-cta {

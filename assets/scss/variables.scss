@@ -5,6 +5,7 @@
   --color-background: #e0e0e0;
   --color-sidebar: #fff;
   --color-task: #fff;
+  --color-task-input: #F2F2F2;
   --color-tabs: #393939;
 
   --color-realistic: #3DB59E;
@@ -14,8 +15,23 @@
   --font-color-primary: #000;
   --font-color-secondary: #fff;
 
-  --scrollbar: #606060;
+  --color-scrollbar: #606060;
 
-  --table-columns: auto 150px 200px 70px 70px 100px 70px 100px 75px 30px;
+
+  --table-columns-padding: 2px;
+  --table-columns-amount: 9;
+  --table-columns: 1fr repeat(var(--table-columns-amount), auto);
   --table-gap: 1px;
+
+
+  // Widths for table columns
+  --width-risk: 150px;
+  --width-role: 170px;
+  --width-estimate: 100px;
+  --width-hours: 45px;
+  --width-price: 75px;
+  --width-opt-out: 65px;
+  --width-more: 20px;
+
+  --input-padding: 10px;
 }
