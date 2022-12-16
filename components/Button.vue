@@ -101,4 +101,14 @@ svg {
     }
   }
 }
+
+.customer-selection {
+  padding: 4px 8px;
+  margin-left: auto;
+  height: 36px;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
 </style>

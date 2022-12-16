@@ -1,21 +1,15 @@
 <script setup>
-import { useGlobalStore } from "~/store/";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
 import { useEpicStore } from "~/store/epics";
 import { useTabsStore } from "~/store/tabs";
 import { useTaskStore } from "~/store/tasks";
 
-const globalStore = useGlobalStore();
 const sheetStore = useEstimateSheetStore();
 const epicStore = useEpicStore();
 const tabStore = useTabsStore();
 const taskStore = useTaskStore();
 const route = useRoute();
 const sheetElement = ref(null);
-
-// definePageMeta({
-//   middleware: ["auth"],
-// });
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);
