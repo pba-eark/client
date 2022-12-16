@@ -7,6 +7,8 @@ import { useTaskStore } from "~/store/tasks";
 import { useRiskProfileStore } from "~/store/riskProfiles";
 import { useEstimateSheetRiskProfileStore } from "~/store/composites/estimateSheetRiskProfiles";
 import { useEstimateSheetUserStore } from "~/store/composites/estimateSheetUsers";
+import { useRoleStore } from "~/store/roles";
+import { useEstimateSheetRoleStore } from "~/store/composites/estimateSheetRoles";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
@@ -14,8 +16,10 @@ const tabStore = useTabsStore();
 const epicStore = useEpicStore();
 const taskStore = useTaskStore();
 const riskProfileStore = useRiskProfileStore();
+const roleStore = useRoleStore();
 const sheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 const sheetUserStore = useEstimateSheetUserStore();
+const sheetRoleStore = useEstimateSheetRoleStore();
 
 const customers = ref([]);
 const copyFromCustomer = ref(null);
@@ -91,6 +95,21 @@ const handleSubmit = async () => {
       riskProfileId: globalProfile.id,
     };
     sheetRiskProfileStore.createEstimateSheetRiskProfile(obj);
+  });
+
+  /* Create connection between global sheet statuses and new sheet */
+  const roles = [...roleStore.ROLES];
+
+  const globalRoles = roles.filter((role) => {
+    return role.global;
+  });
+
+  globalRoles.forEach((globalRole) => {
+    const obj = {
+      estimateSheetId: newSheet.id,
+      roleId: globalRole.id,
+    };
+    sheetRoleStore.createEstimateSheetRole(obj);
   });
 
   /* Create connection between users and new sheet */

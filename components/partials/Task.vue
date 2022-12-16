@@ -118,7 +118,7 @@ const hoursRealistic = computed(() => {
 });
 
 const priceRealistic = computed(() => {
-  if (!currentRole.value?.hourlyWage) return "Ingen rolle";
+  if (!currentRole.value?.id) return "Ingen rolle";
   return numberDotSeperator(
     parseFloat(
       currentRole.value?.hourlyWage *
@@ -141,7 +141,7 @@ const hoursPessimistic = computed(() => {
 });
 
 const pricePessimistic = computed(() => {
-  if (!currentRole.value?.hourlyWage) return "Ingen rolle";
+  if (!currentRole.value?.id) return "Ingen rolle";
 
   return numberDotSeperator(
     parseFloat(
@@ -156,9 +156,7 @@ const pricePessimistic = computed(() => {
 </script>
 
 <template>
-
   <div class="task__row" :class="{ 'task--disabled': props.data.optOut }">
-
     <div class="task__col">
       <Input
         class="input__text--task task__input--name"
@@ -183,7 +181,9 @@ const pricePessimistic = computed(() => {
       <Input
         class="input__select--task task__input--role"
         type="select"
-        :placeholder="currentRole?.roleName ? currentRole.roleName : 'Vælg rolle'"
+        :placeholder="
+          currentRole?.roleName ? currentRole.roleName : 'Vælg rolle'
+        "
         :options="roleOptions"
         emit="updateRole"
         @updateRole="handleUpdateRole"
@@ -239,13 +239,10 @@ const pricePessimistic = computed(() => {
     <div class="task__col task__col--more">
       <Icon icon="icon-dots" class="task__icon" />
     </div>
-
   </div>
-
 </template>
 
 <style lang="scss" scoped>
-
 .task {
   &__row {
     display: grid;
@@ -262,7 +259,9 @@ const pricePessimistic = computed(() => {
     padding: var(--table-columns-padding);
 
     &--more {
-      padding-right: calc(var(--table-columns-padding) / 2 + var(--input-padding) / 2);
+      padding-right: calc(
+        var(--table-columns-padding) / 2 + var(--input-padding) / 2
+      );
       padding-left: 0;
     }
   }
@@ -297,7 +296,8 @@ const pricePessimistic = computed(() => {
       width: var(--width-opt-out);
     }
   }
-  &--realistic, &--pessimistic {
+  &--realistic,
+  &--pessimistic {
     display: flex;
     color: var(--font-color-secondary);
     grid-column: span 2;
@@ -312,7 +312,8 @@ const pricePessimistic = computed(() => {
     background: var(--color-disabled);
     color: var(--font-color-secondary);
     font-style: italic;
-    .task--realistic, .task--pessimistic {
+    .task--realistic,
+    .task--pessimistic {
       background: var(--color-disabled);
     }
     .task__col {
