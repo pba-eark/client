@@ -36,30 +36,26 @@ onMounted(() => {
     if (recentSheets.length > 5) recentSheets.pop();
     window.localStorage.setItem("recentSheets", JSON.stringify(recentSheets));
   }
-
-  if (
-    tabStore.TABS.filter((tab) => tab.id == route.params.id).length < 1 &&
-    tabStore.TEMP_TAB === null
-  ) {
-    /* If page is reloaded while being on a temporary tab, remake the temporary tab */
-    tabStore.handleOpenTab(
-      sheetStore.ESTIMATE_SHEETS.filter(
-        (sheet) => sheet.id == route.params.id
-      )[0]
-    );
-  }
-
-  if (
-    tabStore.TABS.filter((tab) => tab.id == route.params.id).length < 1 &&
-    tabStore.TEMP_TAB?.id !== parseInt(route.params.id)
-  ) {
-    tabStore.handleOpenTab(
-      sheetStore.ESTIMATE_SHEETS.filter(
-        (sheet) => sheet.id == route.params.id
-      )[0]
-    );
-  }
 });
+
+/* If page is reloaded while being on a temporary tab, remake the temporary tab */
+if (
+  tabStore.TABS.filter((tab) => tab.id == route.params.id).length < 1 &&
+  tabStore.TEMP_TAB === null
+) {
+  tabStore.handleOpenTab(
+    sheetStore.ESTIMATE_SHEETS.filter((sheet) => sheet.id == route.params.id)[0]
+  );
+}
+
+if (
+  tabStore.TABS.filter((tab) => tab.id == route.params.id).length < 1 &&
+  tabStore.TEMP_TAB?.id !== parseInt(route.params.id)
+) {
+  tabStore.handleOpenTab(
+    sheetStore.ESTIMATE_SHEETS.filter((sheet) => sheet.id == route.params.id)[0]
+  );
+}
 
 onBeforeUnmount(() => {
   /* Clean up eventlistener */

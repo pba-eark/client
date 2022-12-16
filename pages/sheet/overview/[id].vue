@@ -3,17 +3,28 @@ import { useGlobalStore } from "~/store/";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
 import { useTaskStore } from "~/store/tasks";
 import { useEpicStore } from "~/store/epics";
+import { useTabsStore } from "~/store/tabs";
 
 const route = useRoute();
 const globalStore = useGlobalStore();
 const sheetStore = useEstimateSheetStore();
 const taskStore = useTaskStore();
 const epicStore = useEpicStore();
+const tabStore = useTabsStore();
 const { $swal } = useNuxtApp();
 
 onMounted(() => {
   if (!sheetStore.IS_OVERVIEW_TOGGLED) sheetStore.setToggleSheetOverview(true);
 });
+
+if (
+  tabStore.TABS.filter((tab) => tab.id == route.params.id).length < 1 &&
+  tabStore.TEMP_TAB?.id !== parseInt(route.params.id)
+) {
+  tabStore.handleOpenTab(
+    sheetStore.ESTIMATE_SHEETS.filter((sheet) => sheet.id == route.params.id)[0]
+  );
+}
 
 const handlePasteEpic = async () => {
   const epic = { ...globalStore.EPIC_CLIPBOARD };
