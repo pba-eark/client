@@ -37,7 +37,7 @@ watch(
 const handleAuthorization = async () => {
   if (authStore.IS_AUTHORIZED) {
     layout.value = "default";
-    await navigateTo("/");
+    await navigateTo(localStorage.getItem("lastPath"));
   } else {
     layout.value = "login";
     await navigateTo("/login");
