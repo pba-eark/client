@@ -197,12 +197,6 @@ defineExpose({
           outline: none;
           border-bottom: 1px solid var(--color-scrollbar);
         }
-
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
       }
     }
   }

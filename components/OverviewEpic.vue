@@ -213,7 +213,7 @@ const userOptions = computed(() => {
   align-items: center;
   padding: 16px 8px;
   display: grid;
-  grid-template-columns: 50px 200px 150px 150px 150px 150px 125px 150px auto auto;
+  grid-template-columns: var(--table-columns-overview);
   user-select: none;
 
   span {

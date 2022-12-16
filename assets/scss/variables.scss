@@ -17,14 +17,16 @@
 
   --color-scrollbar: #606060;
 
-
   --table-columns-padding: 2px;
   --table-columns-amount: 9;
   --table-columns: 1fr repeat(var(--table-columns-amount), auto);
   --table-gap: 1px;
 
+  --table-columns-amount-overview: 9;
+  --table-columns-overview: auto 1fr repeat(var(--table-columns-amount-overview), auto);
 
-  // Widths for table columns
+
+  // Widths for task table columns
   --width-risk: 150px;
   --width-role: 170px;
   --width-estimate: 100px;
@@ -32,6 +34,13 @@
   --width-price: 75px;
   --width-opt-out: 65px;
   --width-more: 20px;
+
+  // Widths for overview table columns
+  --width-hours-overview: 45px;
+  --width-price-overview: 45px;
+  --width-hours-overview: 45px;
+  --width-hours-overview: 45px;
+  --width-hours-overview: 45px;
 
   --input-padding: 10px;
 }
