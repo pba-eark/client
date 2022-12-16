@@ -288,6 +288,10 @@ const sheetEpics = computed(() => {
       &-item {
         button {
           padding: 6px 15px;
+
+          &:hover {
+            background: var(--color-background) !important;
+          }
         }
       }
     }

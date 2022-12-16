@@ -20,6 +20,7 @@ const roleStore = useRoleStore();
 const sheetRiskProfileStore = useEstimateSheetRiskProfileStore();
 const sheetUserStore = useEstimateSheetUserStore();
 const sheetRoleStore = useEstimateSheetRoleStore();
+const { $swal } = useNuxtApp();
 
 const customers = ref([]);
 const copyFromCustomer = ref(null);
@@ -61,10 +62,6 @@ onBeforeUnmount(() => {
   window.removeEventListener("click", handleClick);
 });
 
-// definePageMeta({
-//   middleware: ["auth"],
-// });
-
 const handleSubmit = async () => {
   if (!postData.sheet.SheetName) return alert("Sheet name missing");
 
@@ -81,6 +78,15 @@ const handleSubmit = async () => {
   }
 
   const newSheet = await sheetStore.createEstimateSheet(postData.sheet);
+
+  if (!newSheet.id)
+    return $swal.fire({
+      position: "center",
+      icon: "error",
+      title: `Der skete en fejl!`,
+      text: `Estimatarket blev ikke oprettet.`,
+      showConfirmButton: true,
+    });
 
   /* Create connection between global risk profiles and new sheet */
   const riskProfiles = [...riskProfileStore.RISK_PROFILES];
@@ -157,9 +163,16 @@ const handleSubmit = async () => {
     });
   }
 
-  tabStore.openTab(newSheet);
+  $swal.fire({
+    position: "center",
+    icon: "success",
+    title: `Estimatark oprettet!`,
+    showConfirmButton: false,
+    timer: 1500,
+  });
 
-  navigateTo(`/sheet/${newSheet.id}`);
+  tabStore.openTab(newSheet);
+  await navigateTo(`/sheet/${newSheet.id}`);
 };
 
 const handleCreateCustomer = (customer) => {
@@ -273,28 +286,29 @@ const validateNewCustomer = computed(() => {
 <template>
   <div class="block">
     <form @submit.prevent="handleSubmit">
+      <h1>Nyt estimat</h1>
       <!-- Select project customer -->
       <div
         v-if="!isCustomerSelected"
         class="block__customer customer-selection"
       >
-        <div class="customer-selection">
-          <Input
-            label="Kunde"
-            type="search"
-            class="customer-selection"
-            v-model="searchTerm"
-            ref="customerSearchInput"
-            @focus="customerSelection.hidden = false"
-            emit="customerSearch"
-            @customerSearch="handleCustomerSearch"
-          />
+        <div class="block__customer-flex">
+          <div>
+            <Input
+              class="customer-selection input__default"
+              label="Kunde"
+              type="search"
+              v-model="searchTerm"
+              ref="customerSearchInput"
+              @focus="customerSelection.hidden = false"
+              emit="customerSearch"
+              @customerSearch="handleCustomerSearch"
+            />
 
-          <div
-            v-show="!customerSelection.hidden"
-            class="customerList customer-selection"
-          >
-            <ul class="customer-selection">
+            <ul
+              v-show="!customerSelection.hidden"
+              class="customerList customer-selection"
+            >
               <li
                 v-for="customer in searchCustomers"
                 @click="handleSelectCustomer(customer)"
@@ -303,14 +317,13 @@ const validateNewCustomer = computed(() => {
               </li>
             </ul>
           </div>
+          <Button
+            :disabled="!validateNewCustomer"
+            class="customer-selection"
+            text="Opret kunde"
+            @click.prevent="handleCreateCustomer(searchTerm)"
+          />
         </div>
-
-        <Button
-          :disabled="!validateNewCustomer"
-          class="customer-selection"
-          text="Opret kunde"
-          @click.prevent="handleCreateCustomer(searchTerm)"
-        />
       </div>
 
       <div v-else>
@@ -326,6 +339,7 @@ const validateNewCustomer = computed(() => {
 
       <!-- Sheet info -->
       <Input
+        class="input__default"
         required
         label="Navn på ark"
         emit="sheetName"
@@ -339,6 +353,7 @@ const validateNewCustomer = computed(() => {
 
       <!-- Jira -->
       <Input
+        class="input__default"
         label="Workbook"
         emit="workbook"
         @workbook="handleSetWorkbook"
@@ -346,6 +361,7 @@ const validateNewCustomer = computed(() => {
       />
 
       <Input
+        class="input__default"
         label="Jira"
         emit="jira"
         @jira="handleSetJira"
@@ -353,6 +369,7 @@ const validateNewCustomer = computed(() => {
       />
 
       <Input
+        class="input__default"
         label="Wireframe"
         emit="wireframe"
         @wireframe="handleSetWireframe"
@@ -363,17 +380,17 @@ const validateNewCustomer = computed(() => {
         >Jira
       </a> -->
 
-      <br />
-      <Button text="Opret estimatark" type="submit" />
+      <Button class="auth-cta" text="Opret estimatark" type="submit" />
     </form>
 
     <div>
+      <h1>Skabelon</h1>
       <div class="block__select">
         <div
           :class="{ active: selectType.selected === 'empty' }"
           @click="handleSelectEmptySheet"
         >
-          Tom
+          Tomt estimat
         </div>
         <div
           :class="{ active: selectType.selected === 'template' }"
@@ -385,17 +402,27 @@ const validateNewCustomer = computed(() => {
           :class="{ active: selectType.selected === 'copy' }"
           @click="handleSelectCopySheet"
         >
-          Kopiér
+          Kopiér estimat
         </div>
       </div>
 
-      <div v-show="selectType.selected === 'copy'">
-        <ul>
-          <li v-for="customer in customers">
+      <!-- Copy existing estimate sheet -->
+      <div class="template" v-show="selectType.selected === 'template'">
+        <h3>Benyt template:</h3>
+      </div>
+
+      <!-- Copy existing estimate sheet -->
+      <div class="copy" v-show="selectType.selected === 'copy'">
+        <h3>Kopiér eksisterende estimat:</h3>
+        <ul class="copy__customers">
+          <li class="copy__customer" v-for="customer in customers">
             <b>{{ customer.customerName }}</b>
 
-            <ul v-if="customer.sheets && customer.sheets.length">
-              <li v-for="sheet in customer.sheets">
+            <ul
+              v-if="customer.sheets && customer.sheets.length"
+              class="copy__sheets"
+            >
+              <li class="copy__sheet" v-for="sheet in customer.sheets">
                 <label>
                   {{ sheet.sheetName }}
                   <input
@@ -408,7 +435,11 @@ const validateNewCustomer = computed(() => {
               </li>
             </ul>
           </li>
-          <Button text="Clear" @click="handleClearCopyCustomer" />
+          <Button
+            v-show="copyFromCustomer !== null"
+            text="Fjern valgt estimat"
+            @click="handleClearCopyCustomer"
+          />
         </ul>
       </div>
     </div>
@@ -417,6 +448,9 @@ const validateNewCustomer = computed(() => {
 
 <style lang="scss" scoped>
 .block {
+  background: #fff;
+  padding: 24px;
+  border-radius: 3px;
   display: grid;
   width: 100%;
   grid-template-columns: 1fr 1fr;
@@ -440,9 +474,12 @@ const validateNewCustomer = computed(() => {
   }
 
   &__customer {
-    display: flex;
-    flex-wrap: wrap;
     position: relative;
+    &-flex {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+    }
 
     .label {
       width: 100%;
@@ -458,12 +495,41 @@ const validateNewCustomer = computed(() => {
       background: #fff;
       border: 1px solid #eee;
       max-height: 150px;
+      width: 100%;
+      max-width: 520px;
       overflow-y: scroll;
+      top: 4.3rem;
 
       li {
         cursor: pointer;
+        padding: 4px;
+        margin-bottom: 4px;
+
+        &:hover {
+          background: var(--color-background);
+        }
       }
     }
+  }
+}
+
+.copy {
+  padding-top: 15px;
+
+  h3 {
+    margin-bottom: 0.6rem;
+  }
+
+  &__sheets {
+    padding-left: 1rem;
+  }
+}
+
+.template {
+  padding-top: 15px;
+
+  h3 {
+    margin-bottom: 0.6rem;
   }
 }
 </style>

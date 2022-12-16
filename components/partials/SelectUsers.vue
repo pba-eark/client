@@ -48,10 +48,6 @@ const handleRemoveSelectedUser = (user) => {
 </script>
 
 <template>
-  <p>
-    <b>{{ label }}</b>
-  </p>
-
   <ul v-if="userOptions.selected.length > 0">
     <li v-for="user in userOptions.selected">
       {{ `${user.firstName} ${user.lastName}` }}
@@ -60,10 +56,12 @@ const handleRemoveSelectedUser = (user) => {
   </ul>
 
   <Input
+    class="input__default"
     :required="required"
     type="select"
     :options="userOptions.available"
     emit="selectedUser"
+    :label="label"
     placeholder="Vælg brugere"
     @selectedUser="handleSelectUser"
   />
