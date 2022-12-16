@@ -164,6 +164,7 @@ defineExpose({
 
         &:hover, &:focus-visible {
           background-color: var(--color-task-input);
+          color: var(--font-color-primary);
         }
         &:focus-visible {
           outline: none;
@@ -190,6 +191,7 @@ defineExpose({
 
         &:hover, &:focus-visible {
           background-color: var(--color-task-input);
+          color: var(--font-color-primary);
         }
         &:focus-visible {
           outline: none;
@@ -221,6 +223,7 @@ defineExpose({
 
         &:hover, &:focus-visible {
           background-color: var(--color-task-input);
+          color: var(--font-color-primary);
         }
         &:focus-visible {
           outline: none;

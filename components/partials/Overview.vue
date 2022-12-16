@@ -276,7 +276,7 @@ const currentSheetStatus = computed(() => {
         <div>Usikkerhed</div>
       </div>
 
-      <EpicOverview
+      <OverviewEpic
         v-for="epic in epics"
         :key="epic.id"
         :id="epic.id"
