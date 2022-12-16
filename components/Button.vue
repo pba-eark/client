@@ -33,16 +33,18 @@ const props = defineProps({
 </template>
 
 <style lang="scss" scoped>
-
 button {
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  font-size: 1rem;
 }
+
 svg {
   height: 20px;
   width: 20px;
+  transition: all 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .new {
@@ -86,5 +88,17 @@ svg {
   font-weight: 600;
   text-align: center;
   display: block;
+}
+
+.sheet-overview {
+  font-weight: 600;
+  height: 36px;
+  padding: 6px 15px;
+
+  &.open {
+    svg {
+      rotate: 180deg;
+    }
+  }
 }
 </style>

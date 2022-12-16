@@ -72,7 +72,7 @@ defineExpose({
 </script>
 
 <template>
-  <label class="input" v-bind="$attrs">
+  <label class="input">
     <!-- Label -->
     <span class="input__label">
       {{ props.label && props.label.length ? props.label : "" }}
@@ -110,6 +110,7 @@ defineExpose({
 
     <!-- Search -->
     <input
+      v-bind="$attrs"
       :required="props.required"
       v-else-if="props.type === 'search'"
       v-model="data.value"
@@ -162,7 +163,8 @@ defineExpose({
         font-style: inherit;
         padding: var(--input-padding);
 
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
           background-color: var(--color-task-input);
           color: var(--font-color-primary);
         }
@@ -189,7 +191,8 @@ defineExpose({
         font-style: inherit;
         padding: var(--input-padding);
 
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
           background-color: var(--color-task-input);
           color: var(--font-color-primary);
         }
@@ -215,7 +218,8 @@ defineExpose({
         font-style: inherit;
         padding: var(--input-padding);
 
-        &:hover, &:focus-visible {
+        &:hover,
+        &:focus-visible {
           background-color: var(--color-task-input);
           color: var(--font-color-primary);
         }
@@ -237,7 +241,9 @@ defineExpose({
 
   &__default {
     margin: 1rem 0;
+    display: block;
     input {
+      margin: 0.6rem 0;
       padding: 0.3rem;
       width: 100%;
       border: 0;

@@ -83,95 +83,107 @@ const sheetEpics = computed(() => {
 </script>
 
 <template>
-  <div class="block" :class="{ 'block--epics-open': isEpicsOpen }">
+  <div class="block">
     <Logo />
-    <div class="block__header">
-      <div class="block__projects">
+    <div class="block__wrapper">
+      <div class="block__header">
+        <div class="block__projects">
+          <Button
+            text="Estimater"
+            icon="icon-folder"
+            @click="isProjectsOpen = !isProjectsOpen"
+            class="projects"
+          />
+          <ul v-show="isProjectsOpen" class="customers">
+            <!-- Customer list -->
+            <li
+              v-for="customer in customers"
+              :key="customer.id"
+              v-show="customer.sheets && customer.sheets.length"
+            >
+              <p @click="customer.visible = !customer.visible">
+                <span>
+                  <Icon
+                    icon="icon-chevron"
+                    :class="{ rotate: !customer.visible }"
+                  />
+                </span>
+                <span>
+                  {{ customer.customerName }}
+                </span>
+              </p>
+
+              <!-- Projects for customer -->
+              <ul v-show="customer.visible" class="sheets">
+                <li v-for="sheet in customer.sheets">
+                  <div class="sheet-status"></div>
+                  <NuxtLink
+                    :to="`/sheet/${sheet.id}`"
+                    @click="tabStore.handleOpenTab(sheet)"
+                  >
+                    {{ sheet.sheetName }}
+                  </NuxtLink>
+                </li>
+              </ul>
+            </li>
+
+            <li v-if="sheetsWithoutCustomers && sheetsWithoutCustomers.length">
+              <p
+                @click="showMissingCustomerSheets = !showMissingCustomerSheets"
+              >
+                <span>
+                  <Icon
+                    icon="icon-chevron"
+                    :class="{ rotate: !showMissingCustomerSheets }"
+                  />
+                </span>
+                <span>Mangler kunde</span>
+              </p>
+
+              <ul v-show="showMissingCustomerSheets" class="sheets">
+                <li v-for="sheet in sheetsWithoutCustomers">
+                  <div class="sheet-status"></div>
+                  <NuxtLink
+                    :to="`/sheet/${sheet.id}`"
+                    @click="tabStore.handleOpenTab(sheet)"
+                  >
+                    {{ sheet.sheetName }}
+                  </NuxtLink>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div v-show="sheetStore.CURRENT_ESTIMATE_SHEET" class="block__epics">
+        <!-- Sheet epic nav -->
         <Button
-          text="Projekter"
-          icon="icon-folder"
-          @click="isProjectsOpen = !isProjectsOpen"
-          class="projects"
+          :class="{ open: isEpicsOpen }"
+          class="sheet-overview"
+          :text="sheetStore.CURRENT_ESTIMATE_SHEET?.sheetName"
+          icon="icon-chevron"
+          @click="isEpicsOpen = !isEpicsOpen"
         />
-        <ul v-show="isProjectsOpen" class="customers">
-          <!-- Customer list -->
-          <li
-            v-for="customer in customers"
-            :key="customer.id"
-            v-show="customer.sheets && customer.sheets.length"
-          >
-            <p @click="customer.visible = !customer.visible">
-              <span>
-                <Icon
-                  icon="icon-chevron"
-                  :class="{ rotate: !customer.visible }"
-                />
-              </span>
-              <span>
-                {{ customer.customerName }}
-              </span>
-            </p>
-
-            <!-- Projects for customer -->
-            <ul v-show="customer.visible" class="sheets">
-              <li v-for="sheet in customer.sheets">
-                <div class="sheet-status"></div>
-                <NuxtLink
-                  :to="`/sheet/${sheet.id}`"
-                  @click="tabStore.handleOpenTab(sheet)"
-                >
-                  {{ sheet.sheetName }}
-                </NuxtLink>
-              </li>
-            </ul>
+        <ul v-show="isEpicsOpen" class="block__epics-list">
+          <li class="block__epics-list-item">
+            <button
+              @click="sheetStore.toggleSheetOverview($route.params.id)"
+              class="block__epics-toggle"
+              :class="{ active: sheetStore.IS_OVERVIEW_TOGGLED }"
+            >
+              {{ sheetStore.IS_OVERVIEW_TOGGLED ? "Epics" : "Overblik" }}
+            </button>
           </li>
-
-          <li v-if="sheetsWithoutCustomers && sheetsWithoutCustomers.length">
-            <p @click="showMissingCustomerSheets = !showMissingCustomerSheets">
-              <span>
-                <Icon
-                  icon="icon-chevron"
-                  :class="{ rotate: !showMissingCustomerSheets }"
-                />
-              </span>
-              <span>Mangler kunde</span>
-            </p>
-
-            <ul v-show="showMissingCustomerSheets" class="sheets">
-              <li v-for="sheet in sheetsWithoutCustomers">
-                <div class="sheet-status"></div>
-                <NuxtLink
-                  :to="`/sheet/${sheet.id}`"
-                  @click="tabStore.handleOpenTab(sheet)"
-                >
-                  {{ sheet.sheetName }}
-                </NuxtLink>
-              </li>
-            </ul>
+          <li v-for="epic in sheetEpics" class="block__epics-list-item">
+            <button
+              @click="globalStore.scrollToEpic($route.params.id, epic.id)"
+            >
+              {{ epic.epicName }}
+            </button>
           </li>
         </ul>
       </div>
-    </div>
-
-    <div v-show="sheetStore.CURRENT_ESTIMATE_SHEET" class="block__epics">
-      <!-- Sheet epic nav -->
-      <Button
-        :text="sheetStore.CURRENT_ESTIMATE_SHEET?.sheetName"
-        icon="icon-chevron"
-        @click="isEpicsOpen = !isEpicsOpen"
-      />
-      <ul v-show="isEpicsOpen">
-        <li>
-          <button @click="sheetStore.toggleSheetOverview($route.params.id)">
-            {{ sheetStore.IS_OVERVIEW_TOGGLED ? "Epics" : "Overblik" }}
-          </button>
-        </li>
-        <li v-for="epic in sheetEpics">
-          <button @click="globalStore.scrollToEpic($route.params.id, epic.id)">
-            {{ epic.epicName }}
-          </button>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
@@ -179,21 +191,44 @@ const sheetEpics = computed(() => {
 <style lang="scss" scoped>
 .block {
   display: grid;
-  grid-template-rows: 60px auto 1fr;
+  // grid-template-rows: 60px auto 1fr;
+  grid-template-rows: 60px auto;
   height: 100vh;
-  overflow-y: auto;
   background-color: var(--color-sidebar);
-  padding: 0 10px;
+
+  &__wrapper {
+    max-height: calc(100vh - 60px);
+    overflow-y: overlay;
+    /* width */
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-scrollbar);
+      border-radius: 10px;
+    }
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+      background: #b30000;
+    }
+  }
 
   &__header {
+    border-top: 1px solid var(--color-background);
+    border-bottom: 1px solid var(--color-background);
+    padding: 3px 0;
+
     button {
       width: 100%;
       height: 36px;
-      padding: 0 5px;
+      padding: 0 15px;
       border: none;
+      font-weight: 600;
 
       &.projects {
         margin: 0;
+        background: #fff;
       }
 
       a {
@@ -206,17 +241,17 @@ const sheetEpics = computed(() => {
   &__projects {
     height: 100%;
     overflow: hidden;
-    margin-bottom: 15px;
-
+    display: flex;
+    flex-direction: column;
     > ul.customers {
-      border-top: 1px solid #242424;
-      padding: 5px 8px;
+      padding: 0px 15px;
 
       p {
         padding: 5px 0;
         cursor: pointer;
         user-select: none;
-        font-weight: 600;
+        text-decoration: underline;
+        // font-weight: 600;
 
         svg {
           height: 10px;
@@ -237,7 +272,7 @@ const sheetEpics = computed(() => {
           gap: 5px;
 
           .sheet-status {
-            margin-top: 0.25rem;
+            margin-top: 0.2rem;
             height: 10px;
             width: 10px;
             border-radius: 50px;
@@ -249,8 +284,27 @@ const sheetEpics = computed(() => {
   }
 
   &__epics {
+    &-list {
+      &-item {
+        button {
+          padding: 6px 15px;
+        }
+      }
+    }
+
+    &-toggle {
+      background: var(--color-background) !important;
+      // &.active {
+      // }
+    }
+
     button {
       width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      text-align: left;
+      cursor: pointer;
     }
   }
 }
