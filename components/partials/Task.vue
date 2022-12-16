@@ -262,7 +262,7 @@ const pricePessimistic = computed(() => {
     padding: var(--table-columns-padding);
 
     &--more {
-      padding-right: calc(var(--table-columns-padding) / 2);
+      padding-right: calc(var(--table-columns-padding) / 2 + var(--input-padding) / 2);
       padding-left: 0;
     }
   }

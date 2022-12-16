@@ -63,6 +63,17 @@ svg {
     }
   }
 }
+.edit {
+  &-epic {
+    border: none;
+    background-color: transparent;
+    margin-left: 10px;
+
+    &:hover {
+      scale: 1.1;
+    }
+  }
+}
 
 .auth-cta {
   margin: 0 auto;

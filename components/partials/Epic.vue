@@ -125,9 +125,10 @@ const tasksForEpic = computed(() => {
   <div class="epic" :data-epic-id="props.data.id">
     <div class="epic__header">
       <div class="flex">
-        <h2>{{ props.data.epicName }}</h2>
-        <Button text="Edit" @click="detailsStore.setDetails(props.data)" />
+        <h2 class="epic__name">{{ props.data.epicName }}</h2>
+        <Button class="edit-epic" icon="icon-dots" @click="detailsStore.setDetails(props.data)" />
       </div>
+      <span class="epic__opted-out">? tasks fravalgt</span>
       <div class="epic__table-header">
 
         <div class="epic__table-col">
@@ -255,14 +256,13 @@ const tasksForEpic = computed(() => {
         
       </div>
 
+      <div class="epic__divider"></div>
     </div>
-    <div class="epic__divider"></div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .epic {
-  margin: 5px 0;
 
   &__table {
     display: grid;
@@ -293,16 +293,39 @@ const tasksForEpic = computed(() => {
     }
 
     &-header {
-      padding-right: calc(var(--width-more) + var(--table-columns-padding) / 2);
+      padding-right: calc(var(--width-more) + var(--table-columns-padding) / 2 + var(--input-padding) / 2);
 
       &--realistic, &--pessimistic {
         display: flex;
         grid-column: span 2;
+        position: relative;
+      }
+      &--realistic {
+        &::before {
+          content: "Realistisk";
+          position: absolute;
+          bottom: 45px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          opacity: 0.5;
+        }
+      }
+      &--pessimistic {
+        &::before {
+          content: "Pessimistisk";
+          position: absolute;
+          bottom: 45px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          opacity: 0.5;
+        }
       }
     }
 
     &-footer {
-      padding-right: calc(var(--width-more) + var(--width-opt-out) + var(--table-columns-padding) * 2.5);
+      padding-right: calc(var(--width-more) + var(--width-opt-out) + var(--table-columns-padding) * 2.5 + var(--input-padding) / 2);
       padding-top: var(--table-gap);
 
       &--realistic, &--pessimistic {
@@ -370,20 +393,33 @@ const tasksForEpic = computed(() => {
     .flex {
       display: flex;
     }
+    .flex, .epic__opted-out {
+      padding-left: calc(var(--table-columns-padding) + var(--input-padding));
+    }
+    .epic__name {
+      font-size: 2rem;
+    }
+    .epic__opted-out {
+      display: block;
+      color: var(--color-disabled);
+      margin-bottom: 20px;
+    }
+
   }
 
   &__footer {
     position: sticky;
     bottom: -20px;
     background: var(--color-background);
+    z-index: 2;
   }
 
   &__divider {
-    margin-top: 75px;
+    margin-top: 50px;
     height: 1px;
     width: 100%;
     background-color: var(--color-tabs);
-    opacity: 0.33;
+    opacity: 0.25;
   }
 }
 </style>
