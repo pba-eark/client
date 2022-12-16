@@ -5,24 +5,22 @@
   --color-background: #e0e0e0;
   --color-sidebar: #fff;
   --color-task: #fff;
-  --color-task-input: #F2F2F2;
+  --color-task-input: #f2f2f2;
   --color-tabs: #393939;
 
-  --color-realistic: #3DB59E;
-  --color-pessimistic: #3D94B5;
-  --color-disabled: #C85D5D;
+  --color-realistic: #3db59e;
+  --color-pessimistic: #3d94b5;
+  --color-disabled: #c85d5d;
 
   --font-color-primary: #000;
   --font-color-secondary: #fff;
 
-  --color-scrollbar: #606060;
-
+  --color-scrollbar: #60606050;
 
   --table-columns-padding: 2px;
   --table-columns-amount: 9;
   --table-columns: 1fr repeat(var(--table-columns-amount), auto);
   --table-gap: 1px;
-
 
   // Widths for table columns
   --width-risk: 150px;
