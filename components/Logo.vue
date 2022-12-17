@@ -1,10 +1,15 @@
 <template>
-  <NuxtLink to="/"> <h1>Oxygen</h1> </NuxtLink>
+  <div class="container">
+    <NuxtLink to="/">
+      <h1>Oxygen</h1>
+    </NuxtLink>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-h1 {
-  margin: 0;
-  color: var(--font-color-primary);
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
