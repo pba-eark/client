@@ -48,7 +48,7 @@ const doneSheets = computed(() => {
   <div class="block">
     <h1>Dashboard</h1>
     <div class="block__dashboard">
-      <div>
+      <div class="dashboard__item">
         <h2>Estimeret af dig</h2>
         <ul>
           <li v-for="sheet in estimatedSheets">
@@ -69,7 +69,7 @@ const doneSheets = computed(() => {
         </ul>
       </div>
       <div>
-        <h2>Sidste åbne ark</h2>
+        <h2>Senest åbne ark</h2>
         <ul>
           <li v-for="sheet in recentlyOpen">
             <NuxtLink :to="`/sheet/${sheet.id}`">
@@ -84,9 +84,21 @@ const doneSheets = computed(() => {
 
 <style lang="scss" scoped>
 .block {
+  padding: 24px;
+  border-radius: 3px;
+  background: #fff;
   &__dashboard {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+.dashboard {
+  &__item {
+    margin-top: 15px;
+
+    border-radius: 3px;
   }
 }
 </style>

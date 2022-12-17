@@ -454,7 +454,7 @@ const validateNewCustomer = computed(() => {
   display: grid;
   width: 100%;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 5rem;
 
   &__select {
     display: flex;
