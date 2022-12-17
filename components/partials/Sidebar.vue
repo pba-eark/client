@@ -4,9 +4,11 @@ import { useEstimateSheetStore } from "~~/store/estimateSheets";
 import { useEpicStore } from "~/store/epics";
 import { useTabsStore } from "~/store/tabs";
 import { useGlobalStore } from "~/store";
+import { useSheetStatusStore } from "~/store/sheetStatus";
 
 const customerStore = useCustomerStore();
 const sheetStore = useEstimateSheetStore();
+const sheetStatusStore = useSheetStatusStore();
 const epicStore = useEpicStore();
 const tabStore = useTabsStore();
 const globalStore = useGlobalStore();
@@ -20,11 +22,19 @@ onMounted(() => {
   customers.value = [];
   customerStore.CUSTOMERS.map((c) => {
     c.visible = false;
-    const userSheets = sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
+    const customerSheets = sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
       if (sheet.customerId === c.id) return sheet;
     });
 
-    customers.value.push({ ...c, sheets: userSheets });
+    const customerSheetsWithStatus = customerSheets.map((sheet) => {
+      const sheetStatus = sheetStatusStore.SHEET_STATUS.filter((status) => {
+        return status.id === sheet.sheetStatusId;
+      })[0];
+
+      return { ...sheet, status: sheetStatus || null };
+    });
+
+    customers.value.push({ ...c, sheets: customerSheetsWithStatus });
   });
 });
 
@@ -46,11 +56,11 @@ watch(
       const newCustomer =
         customerStore.CUSTOMERS[customerStore.CUSTOMERS.length - 1];
 
-      const userSheets = sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
+      const customerSheets = sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
         if (sheet.customerId === newCustomer.id) return sheet;
       });
 
-      newCustomer.sheets = userSheets;
+      newCustomer.sheets = customerSheets;
       newCustomer.visible = false;
 
       customers.value = [...customers.value, newCustomer];
@@ -69,8 +79,33 @@ watch(
   }
 );
 
+/* If sheet status change */
+watch(
+  () => sheetStore.CURRENT_ESTIMATE_SHEET,
+  (newSheet, oldSheet) => {
+    if (newSheet.id !== oldSheet.id || customers.value.length < 1) return;
+
+    const customerIndex = customers.value.findIndex((customer) => {
+      return customer.id === newSheet.customerId;
+    });
+
+    const sheetIndex = customers.value[customerIndex].sheets.findIndex(
+      (sheet) => {
+        return sheet.id === newSheet.id;
+      }
+    );
+
+    return (customers.value[customerIndex].sheets[sheetIndex] = newSheet);
+  },
+  { deep: true }
+);
+
 const sheetsWithoutCustomers = computed(() => {
   return sheetStore.ESTIMATE_SHEETS.filter((sheet) => {
+    const sheetStatus = sheetStatusStore.SHEET_STATUS.filter((status) => {
+      return status.id === sheet.sheetStatusId;
+    })[0];
+    sheet.status = sheetStatus || null;
     return !sheet.customerId;
   });
 });
@@ -90,7 +125,7 @@ const sheetEpics = computed(() => {
         <div class="block__projects">
           <Button
             text="Estimater"
-            icon="icon-folder"
+            :icon="isProjectsOpen ? 'icon-folder' : 'icon-folder-closed'"
             @click="isProjectsOpen = !isProjectsOpen"
             class="projects"
           />
@@ -116,7 +151,14 @@ const sheetEpics = computed(() => {
               <!-- Projects for customer -->
               <ul v-show="customer.visible" class="sheets">
                 <li v-for="sheet in customer.sheets">
-                  <div class="sheet-status"></div>
+                  <div
+                    class="sheet-status"
+                    :style="{
+                      backgroundColor: sheet.status?.sheetStatusColor
+                        ? sheet.status.sheetStatusColor
+                        : '#777',
+                    }"
+                  ></div>
                   <NuxtLink
                     :to="`/sheet/${sheet.id}`"
                     @click="tabStore.handleOpenTab(sheet)"
@@ -142,7 +184,14 @@ const sheetEpics = computed(() => {
 
               <ul v-show="showMissingCustomerSheets" class="sheets">
                 <li v-for="sheet in sheetsWithoutCustomers">
-                  <div class="sheet-status"></div>
+                  <div
+                    class="sheet-status"
+                    :style="{
+                      backgroundColor: sheet.status?.sheetStatusColor
+                        ? sheet.status.sheetStatusColor
+                        : '#777',
+                    }"
+                  ></div>
                   <NuxtLink
                     :to="`/sheet/${sheet.id}`"
                     @click="tabStore.handleOpenTab(sheet)"
@@ -276,7 +325,7 @@ const sheetEpics = computed(() => {
             height: 10px;
             width: 10px;
             border-radius: 50px;
-            background: red;
+            // background: #777;
           }
         }
       }
