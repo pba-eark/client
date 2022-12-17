@@ -14,19 +14,19 @@ export const useTabsStore = defineStore("tabs-store", () => {
 
   /* Actions */
 
-  const handleOpenTab = (payload) => {
+  const handleOpenTab = (payload, force = false) => {
     const index = tabs.value.findIndex((tab) => {
       return tab.id === payload.id;
     });
 
     if (index > -1) return;
 
-    if (temporaryTab.value === payload) return openTab(payload);
+    if (temporaryTab.value?.id === payload.id) return openTab(payload);
     openTempTab(payload);
   };
 
   const openTab = (payload) => {
-    if (payload === temporaryTab.value) temporaryTab.value = null;
+    if (payload.id === temporaryTab.value?.id) temporaryTab.value = null;
 
     const index = tabs.value.findIndex((tab) => {
       return tab.id === payload.id;
