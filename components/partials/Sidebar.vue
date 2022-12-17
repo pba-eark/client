@@ -83,7 +83,8 @@ watch(
 watch(
   () => sheetStore.CURRENT_ESTIMATE_SHEET,
   (newSheet, oldSheet) => {
-    if (newSheet.id !== oldSheet.id || customers.value.length < 1) return;
+    if (!newSheet || !oldSheet) return;
+    if (newSheet?.id !== oldSheet?.id || customers.value.length < 1) return;
 
     const customerIndex = customers.value.findIndex((customer) => {
       return customer.id === newSheet.customerId;
