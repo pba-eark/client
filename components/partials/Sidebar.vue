@@ -89,6 +89,8 @@ watch(
       return customer.id === newSheet.customerId;
     });
 
+    if (customerIndex === -1) return;
+
     const sheetIndex = customers.value[customerIndex].sheets.findIndex(
       (sheet) => {
         return sheet.id === newSheet.id;
