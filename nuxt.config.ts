@@ -24,6 +24,9 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  build: {
+    transpile: ["chart.js"],
+  },
   runtimeConfig: {
     // The private keys which are only available within server-side
     apiSecret: "123",

@@ -21,6 +21,11 @@ const sheetStore = useEstimateSheetStore();
 
 const route = useRoute();
 const epics = ref([]);
+
+const labels = reactive([]);
+const datasets = reactive([]);
+const currentChartIndex = ref(0);
+
 const totalEpicsRealisticHours = ref(0);
 const totalEpicsRealisticPrice = ref(0);
 const totalEpicsPessimisticHours = ref(0);
@@ -191,15 +196,63 @@ const calculateOverview = () => {
       }
     });
 
-    console.log("epic roles", epic.roles);
+    /* ******** CHART JS *********** */
+    /* ******** CHART JS *********** */
+    epic.roles.forEach((role) => {
+      role.optOuts = 0;
+      let totalRealisticHours = 0;
+      let totalRealisticPrice = 0;
+      let totalPessimisticHours = 0;
+      let totalPessimisticPrice = 0;
+      role.tasks.forEach((task) => {
+        if (task.optOut) return role.optOuts++;
+        totalRealisticHours += task.realisticHours;
+        totalRealisticPrice += task.realisticPrice;
+        totalPessimisticHours += task.pessimisticHours;
+        totalPessimisticPrice += task.pessimisticPrice;
+      });
+
+      const index = labels.findIndex((label) => label == role.roleName);
+
+      if (index > -1) {
+        datasets[index].data[index] += totalRealisticHours;
+        datasets[index].data[index] += totalRealisticPrice;
+        // datasets[index].data[index] += totalPessimisticHours;
+        // datasets[index].data[index] += totalPessimisticPrice;
+      } else {
+        labels.push(role.roleName);
+        datasets.push({
+          backgroundColor: ["#123456", "#654321"],
+          data: [
+            totalRealisticHours,
+            totalRealisticPrice,
+            // totalPessimisticHours,
+            // totalPessimisticPrice,
+          ],
+        });
+      }
+    });
+    // data = {
+    //   labels: ["VueJs", "EmberJs", "ReactJs", "AngularJs"],
+    //   datasets: [
+    //     {
+    //       backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#DD1B16"],
+    //       data: [40, 20, 80, 10],
+    //     },
+    //   ],
+    // };
+    /* ******** CHART JS *********** */
+    /* ******** CHART JS *********** */
 
     epic.totalRealisticHours = totalRealisticHours;
     epic.totalPessimisticHours = totalPessimisticHours;
     epic.totalRealisticPrice = totalRealisticPrice;
     epic.totalPessimisticPrice = totalPessimisticPrice;
     epics.value.push(epic);
-    // console.log(epic);
   });
+
+  console.log("labels", labels);
+  console.log("datasets", datasets);
 };
 
 const handleCreateEpic = async () => {
@@ -251,6 +304,8 @@ const currentSheetStatus = computed(() => {
 
 <template>
   <div>
+    <p>labels: {{ labels }}</p>
+    <p>datasets: {{ datasets[0] }}</p>
     <h1>Overblik</h1>
     <Input
       type="select"
@@ -297,6 +352,28 @@ const currentSheetStatus = computed(() => {
         :user="epic.user"
       />
     </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+
+    <div>
+      <button @click="currentChartIndex = currentChartIndex - 1">-</button>
+      <button @click="currentChartIndex = currentChartIndex + 1">+</button>
+      <ClientOnly>
+        <PieChart
+          :labels="labels"
+          :datasets="[{ ...datasets[currentChartIndex] }]"
+        />
+      </ClientOnly>
+
+      <PieChart />
+    </div>
+
+    <br />
+    <br />
+    <br />
     i allah:
     <p>
       realistisk timer:
