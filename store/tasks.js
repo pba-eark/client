@@ -82,7 +82,8 @@ export const useTaskStore = defineStore("task-store", () => {
         },
       });
     } catch (e) {
-      return console.log("Error", e);
+      console.log("Error", e);
+      return false;
     }
 
     setTasks(
@@ -90,6 +91,7 @@ export const useTaskStore = defineStore("task-store", () => {
         return task.id !== id;
       })
     );
+    return true;
   };
 
   /* Getters */

@@ -219,13 +219,17 @@ const sheetEpics = computed(() => {
         />
         <ul v-show="isEpicsOpen" class="block__epics-list">
           <li class="block__epics-list-item">
-            <button
+            <Button
               @click="sheetStore.toggleSheetOverview($route.params.id)"
               class="block__epics-toggle"
               :class="{ active: sheetStore.IS_OVERVIEW_TOGGLED }"
-            >
-              {{ sheetStore.IS_OVERVIEW_TOGGLED ? "Epics" : "Overblik" }}
-            </button>
+              :text="sheetStore.IS_OVERVIEW_TOGGLED ? 'Epics' : 'Overblik'"
+              :icon="
+                sheetStore.IS_OVERVIEW_TOGGLED
+                  ? 'icon-list'
+                  : 'icon-square-list'
+              "
+            />
           </li>
           <li v-for="epic in sheetEpics" class="block__epics-list-item">
             <button
