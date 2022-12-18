@@ -34,11 +34,6 @@ const options = {
 
 <template>
   <div>
-    {{ labels }}
-    <br />
-    {{ datasets }}
-    <div>
-      <Pie :data="data" :options="options" />
-    </div>
+    <Pie :data="data" :options="options" />
   </div>
 </template>

@@ -23,7 +23,50 @@ const route = useRoute();
 const epics = ref([]);
 
 const labels = reactive([]);
-const datasets = reactive([]);
+// const datasets = reactive([
+//   /* Realistic hrs */
+//   {
+//     backgroundColor: [],
+//     data: [],
+//   },
+//   /* Realistic price */
+//   {
+//     backgroundColor: [],
+//     data: [],
+//   },
+//   /* Pessimistic hrs */
+//   {
+//     backgroundColor: [],
+//     data: [],
+//   },
+//   /* Pessimistic hrs */
+//   {
+//     backgroundColor: [],
+//     data: [],
+//   },
+// ]);
+const datasets = reactive({
+  /* Realistic hrs */
+  realisticHours: {
+    backgroundColor: [],
+    data: [],
+  },
+  /* Realistic price */
+  realisticPrice: {
+    backgroundColor: [],
+    data: [],
+  },
+  /* Pessimistic hrs */
+  pessimisticHours: {
+    backgroundColor: [],
+    data: [],
+  },
+  /* Pessimistic hrs */
+  pessimisticPrice: {
+    backgroundColor: [],
+    data: [],
+  },
+});
 const currentChartIndex = ref(0);
 
 const totalEpicsRealisticHours = ref(0);
@@ -211,25 +254,30 @@ const calculateOverview = () => {
         totalPessimisticHours += task.pessimisticHours;
         totalPessimisticPrice += task.pessimisticPrice;
       });
+      role.totalRealisticHours = totalRealisticHours;
+      role.totalRealisticPrice = totalRealisticPrice;
+      role.totalPessimisticHours = totalPessimisticHours;
+      role.totalPessimisticPrice = totalPessimisticPrice;
 
       const index = labels.findIndex((label) => label == role.roleName);
-
       if (index > -1) {
-        datasets[index].data[index] += totalRealisticHours;
-        datasets[index].data[index] += totalRealisticPrice;
-        // datasets[index].data[index] += totalPessimisticHours;
-        // datasets[index].data[index] += totalPessimisticPrice;
+        datasets.realisticHours.data[index] += totalRealisticHours;
+        datasets.realisticPrice.data[index] += totalRealisticPrice;
+        datasets.pessimisticHours.data[index] += totalPessimisticHours;
+        datasets.pessimisticPrice.data[index] += totalPessimisticPrice;
       } else {
+        const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
         labels.push(role.roleName);
-        datasets.push({
-          backgroundColor: ["#123456", "#654321"],
-          data: [
-            totalRealisticHours,
-            totalRealisticPrice,
-            // totalPessimisticHours,
-            // totalPessimisticPrice,
-          ],
-        });
+
+        datasets.realisticHours.backgroundColor.push(color);
+        datasets.realisticPrice.backgroundColor.push(color);
+        datasets.pessimisticHours.backgroundColor.push(color);
+        datasets.pessimisticPrice.backgroundColor.push(color);
+
+        datasets.realisticHours.data.push(totalRealisticHours);
+        datasets.realisticPrice.data.push(totalRealisticPrice);
+        datasets.pessimisticHours.data.push(totalPessimisticHours);
+        datasets.pessimisticPrice.data.push(totalPessimisticPrice);
       }
     });
     // data = {
@@ -300,12 +348,24 @@ const currentSheetStatus = computed(() => {
     return status.id === sheetStore.CURRENT_ESTIMATE_SHEET?.sheetStatusId;
   })[0];
 });
+
+const currentChart = computed(() => {
+  if (currentChartIndex.value == 0) return datasets.realisticHours;
+  if (currentChartIndex.value == 1) return datasets.realisticPrice;
+  if (currentChartIndex.value == 2) return datasets.pessimisticHours;
+  if (currentChartIndex.value == 3) return datasets.pessimisticPrice;
+});
+
+const currentChartLabel = computed(() => {
+  if (currentChartIndex.value == 0) return "Realistisk antal timer pr. rolle";
+  if (currentChartIndex.value == 1) return "Realistisk pris pr. rolle";
+  if (currentChartIndex.value == 2) return "Pessimistisk antal timer pr. rolle";
+  if (currentChartIndex.value == 3) return "Pessimistisk pris pr. rolle";
+});
 </script>
 
 <template>
   <div>
-    <p>labels: {{ labels }}</p>
-    <p>datasets: {{ datasets[0] }}</p>
     <h1>Overblik</h1>
     <Input
       type="select"
@@ -362,13 +422,9 @@ const currentSheetStatus = computed(() => {
       <button @click="currentChartIndex = currentChartIndex - 1">-</button>
       <button @click="currentChartIndex = currentChartIndex + 1">+</button>
       <ClientOnly>
-        <PieChart
-          :labels="labels"
-          :datasets="[{ ...datasets[currentChartIndex] }]"
-        />
+        <h2>{{ currentChartLabel }}</h2>
+        <PieChart :labels="labels" :datasets="[{ ...currentChart }]" />
       </ClientOnly>
-
-      <PieChart />
     </div>
 
     <br />
