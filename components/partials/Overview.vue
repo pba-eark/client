@@ -23,28 +23,6 @@ const route = useRoute();
 const epics = ref([]);
 
 const labels = reactive([]);
-// const datasets = reactive([
-//   /* Realistic hrs */
-//   {
-//     backgroundColor: [],
-//     data: [],
-//   },
-//   /* Realistic price */
-//   {
-//     backgroundColor: [],
-//     data: [],
-//   },
-//   /* Pessimistic hrs */
-//   {
-//     backgroundColor: [],
-//     data: [],
-//   },
-//   /* Pessimistic hrs */
-//   {
-//     backgroundColor: [],
-//     data: [],
-//   },
-// ]);
 const datasets = reactive({
   /* Realistic hrs */
   realisticHours: {
@@ -77,12 +55,18 @@ onMounted(() => {
   calculateOverview();
 });
 
-watch(
-  () => [taskStore.TASKS.length, epicStore.EPICS.length],
-  () => {
-    calculateOverview();
-  }
-);
+onUnmounted(() => {
+  detailsStore.setDetailsChart({
+    labels: [],
+    datasets: {},
+  });
+}),
+  watch(
+    () => [taskStore.TASKS.length, epicStore.EPICS.length],
+    () => {
+      calculateOverview();
+    }
+  );
 
 /* Update epic name, if updated in details store */
 watch(
@@ -397,19 +381,6 @@ const currentSheetStatus = computed(() => {
         :userId="epic.userId"
         :user="epic.user"
       />
-    </div>
-
-    <div>
-      <!-- <Input
-        type="select"
-        :options="chartOptions"
-        :placeholder="chartOptions[currentChartIndex]?.name"
-        emit="updateChart"
-        @updateChart="handleUpdateChart"
-      /> -->
-      <!-- <ClientOnly>
-        <PieChart :labels="labels" :datasets="[{ ...currentChart }]" />
-      </ClientOnly> -->
     </div>
 
     i allah:

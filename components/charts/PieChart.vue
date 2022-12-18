@@ -20,6 +20,11 @@ const props = defineProps({
       },
     ],
   },
+  unit: {
+    type: String,
+    required: false,
+    default: "",
+  },
 });
 
 const data = computed(() => {
@@ -30,10 +35,48 @@ const options = {
   responsive: true,
   maintainAspectRatio: false,
 };
+
+const roles = computed(() => {
+  const roles = [];
+  if (props.labels.length < 1 || props.datasets.length < 1) return;
+  props.datasets[0].data.forEach((value, index) => {
+    roles.push({
+      name: props.labels[index],
+      value,
+      color: props.datasets[0].backgroundColor[index],
+    });
+  });
+
+  return roles;
+});
 </script>
 
 <template>
-  <div>
-    <Pie :data="data" :options="options" />
+  <div class="chart">
+    <div>
+      <Pie :data="data" :options="options" />
+    </div>
+
+    <ul class="chart__roles">
+      <li v-for="role in roles">
+        <b :style="{ color: role.color }">{{ role.name }}</b>
+        <i>{{ `${role.value} ${unit.length ? unit : ""}` }}</i>
+      </li>
+    </ul>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.chart {
+  &__roles {
+    li {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      max-width: 80%;
+      gap: 5ch;
+      margin: 0 auto;
+    }
+  }
+}
+</style>

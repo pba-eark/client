@@ -294,6 +294,11 @@ const currentChart = computed(() => {
     return detailsStore.DETAILS_CHART.datasets.pessimisticPrice;
 });
 
+const currentChartUnit = computed(() => {
+  if (currentChartIndex.value % 2 === 0) return "timer";
+  return "kr.";
+});
+
 const chartOptions = computed(() => {
   const options = [];
   let i = 0;
@@ -374,6 +379,7 @@ const chartOptions = computed(() => {
         <PieChart
           :labels="detailsStore.DETAILS_CHART.labels"
           :datasets="[{ ...currentChart }]"
+          :unit="currentChartUnit"
         />
       </ClientOnly>
     </div>
