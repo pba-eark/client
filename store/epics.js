@@ -86,7 +86,8 @@ export const useEpicStore = defineStore("epic-store", () => {
         },
       });
     } catch (e) {
-      return console.log("Error", e);
+      console.log("Error", e);
+      return false;
     }
 
     setEpics(
@@ -94,6 +95,7 @@ export const useEpicStore = defineStore("epic-store", () => {
         return epic.id !== id;
       })
     );
+    return true;
   };
 
   /* Getters */

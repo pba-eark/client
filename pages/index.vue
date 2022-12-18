@@ -47,6 +47,17 @@ const doneSheets = computed(() => {
 <template>
   <div class="block">
     <h1>Dashboard</h1>
+
+    <div class="block__charts">
+      <div class="block__charts--customers">
+        <h1>Kunder</h1>
+        <NuxtLink to="/">Redigér kunder</NuxtLink>
+        <div class="chart">
+          <PieChart />
+        </div>
+      </div>
+    </div>
+
     <div class="block__dashboard">
       <div class="dashboard__item">
         <h2>Mine estimatark</h2>
@@ -90,6 +101,13 @@ const doneSheets = computed(() => {
   &__dashboard {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+
+  &__charts {
+    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
   }
 }

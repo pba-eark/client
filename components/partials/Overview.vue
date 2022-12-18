@@ -191,6 +191,8 @@ const calculateOverview = () => {
       }
     });
 
+    console.log("epic roles", epic.roles);
+
     epic.totalRealisticHours = totalRealisticHours;
     epic.totalPessimisticHours = totalPessimisticHours;
     epic.totalRealisticPrice = totalRealisticPrice;

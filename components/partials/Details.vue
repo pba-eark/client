@@ -154,15 +154,24 @@ const handleDeleteTask = () => {
           });
 
           const taskName = detailsStore.DETAILS.taskName;
-          await taskStore.deleteTask(detailsStore.DETAILS);
+          const res = await taskStore.deleteTask(detailsStore.DETAILS);
+
+          if (!res)
+            return $swal.fire(
+              "Ups! Noget gik galt...",
+              "Task blev ikke slettet.",
+              "warning"
+            );
 
           notification.fire({
             icon: "success",
             title: `Task slettet (${taskName})`,
           });
+
+          return detailsStore.setDetails(null);
         } catch (e) {
           console.log("ERROR", e);
-          $swal.fire(
+          return $swal.fire(
             "Ups! Noget gik galt...",
             "Task blev ikke slettet.",
             "warning"
@@ -200,15 +209,24 @@ const handleDeleteEpic = () => {
           });
 
           const epicName = detailsStore.DETAILS.epicName;
-          await epicStore.deleteEpic(detailsStore.DETAILS);
+          const res = await epicStore.deleteEpic(detailsStore.DETAILS);
+
+          if (!res)
+            return $swal.fire(
+              "Ups! Noget gik galt...",
+              "Epic blev ikke slettet.",
+              "error"
+            );
 
           notification.fire({
             icon: "success",
             title: `Epic slettet (${epicName})`,
           });
+
+          return detailsStore.setDetails(null);
         } catch (e) {
           console.log("ERROR", e);
-          $swal.fire(
+          return $swal.fire(
             "Ups! Noget gik galt...",
             "Epic blev ikke slettet.",
             "warning"
@@ -252,7 +270,6 @@ let showSettings = ref(false);
 
 const show = () => {
   showSettings.value = !showSettings.value;
-
 };
 
 const handleShowSettings = () => {
