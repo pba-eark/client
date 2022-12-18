@@ -67,7 +67,6 @@ const datasets = reactive({
     data: [],
   },
 });
-const currentChartIndex = ref(0);
 
 const totalEpicsRealisticHours = ref(0);
 const totalEpicsRealisticPrice = ref(0);
@@ -299,8 +298,9 @@ const calculateOverview = () => {
     epics.value.push(epic);
   });
 
-  console.log("labels", labels);
-  console.log("datasets", datasets);
+  detailsStore.setDetailsChart({ labels, datasets });
+  // console.log("labels", labels);
+  // console.log("datasets", datasets);
 };
 
 const handleCreateEpic = async () => {
@@ -347,20 +347,6 @@ const currentSheetStatus = computed(() => {
   return sheetStatusStore.SHEET_STATUS.filter((status) => {
     return status.id === sheetStore.CURRENT_ESTIMATE_SHEET?.sheetStatusId;
   })[0];
-});
-
-const currentChart = computed(() => {
-  if (currentChartIndex.value == 0) return datasets.realisticHours;
-  if (currentChartIndex.value == 1) return datasets.realisticPrice;
-  if (currentChartIndex.value == 2) return datasets.pessimisticHours;
-  if (currentChartIndex.value == 3) return datasets.pessimisticPrice;
-});
-
-const currentChartLabel = computed(() => {
-  if (currentChartIndex.value == 0) return "Realistisk antal timer pr. rolle";
-  if (currentChartIndex.value == 1) return "Realistisk pris pr. rolle";
-  if (currentChartIndex.value == 2) return "Pessimistisk antal timer pr. rolle";
-  if (currentChartIndex.value == 3) return "Pessimistisk pris pr. rolle";
 });
 </script>
 
@@ -413,23 +399,19 @@ const currentChartLabel = computed(() => {
       />
     </div>
 
-    <br />
-    <br />
-    <br />
-    <br />
-
     <div>
-      <button @click="currentChartIndex = currentChartIndex - 1">-</button>
-      <button @click="currentChartIndex = currentChartIndex + 1">+</button>
-      <ClientOnly>
-        <h2>{{ currentChartLabel }}</h2>
+      <!-- <Input
+        type="select"
+        :options="chartOptions"
+        :placeholder="chartOptions[currentChartIndex]?.name"
+        emit="updateChart"
+        @updateChart="handleUpdateChart"
+      /> -->
+      <!-- <ClientOnly>
         <PieChart :labels="labels" :datasets="[{ ...currentChart }]" />
-      </ClientOnly>
+      </ClientOnly> -->
     </div>
 
-    <br />
-    <br />
-    <br />
     i allah:
     <p>
       realistisk timer:

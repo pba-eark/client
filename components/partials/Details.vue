@@ -22,6 +22,7 @@ let item = reactive({
 });
 const isProfileDropdownToggled = ref(false);
 const sidebar = ref(null);
+const currentChartIndex = ref(0);
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);
@@ -276,6 +277,47 @@ const handleShowSettings = () => {
   show();
   detailsStore.setDetails(null);
 };
+
+/* Chart */
+const handleUpdateChart = ({ value }) => {
+  currentChartIndex.value = value;
+};
+
+const currentChart = computed(() => {
+  if (currentChartIndex.value == 0)
+    return detailsStore.DETAILS_CHART.datasets.realisticHours;
+  if (currentChartIndex.value == 1)
+    return detailsStore.DETAILS_CHART.datasets.realisticPrice;
+  if (currentChartIndex.value == 2)
+    return detailsStore.DETAILS_CHART.datasets.pessimisticHours;
+  if (currentChartIndex.value == 3)
+    return detailsStore.DETAILS_CHART.datasets.pessimisticPrice;
+});
+
+const chartOptions = computed(() => {
+  const options = [];
+  let i = 0;
+  let name;
+  for (var prop in detailsStore.DETAILS_CHART.datasets) {
+    switch (prop) {
+      case "realisticHours":
+        name = "Realistiske timer pr. rolle";
+        break;
+      case "realisticPrice":
+        name = "Realistisk pris pr. rolle";
+        break;
+      case "pessimisticHours":
+        name = "Pessimistiske timer pr. rolle";
+        break;
+      case "pessimisticPrice":
+        name = "Pessimistisk pris pr. rolle";
+        break;
+    }
+    options.push({ value: i, name });
+    i++;
+  }
+  return options;
+});
 </script>
 
 <template>
@@ -313,6 +355,28 @@ const handleShowSettings = () => {
 
     <Button text="Indstillinger" @click="handleShowSettings" />
     <Settings v-if="showSettings" :sheetId="parseInt(route.params.id)" />
+
+    <!-- Chart -->
+    <div
+      v-if="
+        detailsStore.DETAILS == null &&
+        detailsStore.DETAILS_CHART.labels.length > 0
+      "
+    >
+      <Input
+        type="select"
+        :options="chartOptions"
+        :placeholder="chartOptions[currentChartIndex]?.name"
+        emit="updateChart"
+        @updateChart="handleUpdateChart"
+      />
+      <ClientOnly>
+        <PieChart
+          :labels="detailsStore.DETAILS_CHART.labels"
+          :datasets="[{ ...currentChart }]"
+        />
+      </ClientOnly>
+    </div>
 
     <div v-if="item.isToggled">
       <div class="meta__header">
