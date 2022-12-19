@@ -37,7 +37,7 @@ export default defineNuxtConfig({
       API_URL:
         env === "development"
           ? "https://localhost:7087/api"
-          : "https://estimatarkapi.azurewebsites.net/api/",
+          : "https://estimatarkapi.azurewebsites.net/api",
     },
   },
 
