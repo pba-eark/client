@@ -35,7 +35,6 @@ const sheetProfiles = ref([]);
 const masterGlobals = ref([]);
 const globals = ref([]);
 
-let exists = true;
 let onSheet = true;
 const newProfile = {
   global: false,
@@ -64,6 +63,7 @@ if (isNaN(props.sheetId)) {
   onSheet = false;
 }
 
+/* Update on sheet change */
 watch(
   () => props.sheetId,
   () => {
@@ -151,17 +151,7 @@ const handleCreateGlobalProfile = async () => {
 };
 
 const handleUpdateGlobalProfile = async (profile, originalProfile) => {
-  estimateSheetStore.ESTIMATE_SHEETS.forEach((sheet) => {
-    estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(
-      (sheetProfile) => {
-        if (sheet.id == sheetProfile.sheetId) {
-          exists = false;
-        }
-      }
-    );
-  });
-
-  if (profile.percentage != originalProfile.percentage && !exists) {
+  if (profile.percentage != originalProfile.percentage) {
     newProfile.global = false;
     newProfile.profileName = profile.profileName;
     newProfile.percentage = originalProfile.percentage;
@@ -192,7 +182,6 @@ const handleUpdateGlobalProfile = async (profile, originalProfile) => {
     });
 
     await riskProfileStore.updateRiskProfile(profile, originalProfile);
-    exists = true;
   } else {
     let response = await riskProfileStore.updateRiskProfile(profile);
 
@@ -313,17 +302,7 @@ const handleCreateGlobalRole = async () => {
 };
 
 const handleUpdateGlobalRole = async (role, originalRole) => {
-  estimateSheetStore.ESTIMATE_SHEETS.forEach((sheet) => {
-    estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(
-      (sheetProfile) => {
-        if (sheet.id == sheetProfile.sheetId) {
-          exists = false;
-        }
-      }
-    );
-  });
-
-  if (role.hourlyWage != originalRole.hourlyWage && !exists) {
+  if (role.hourlyWage != originalRole.hourlyWage) {
     newRole.global = false;
     newRole.roleName = role.roleName;
     newRole.hourlyWage = originalRole.hourlyWage;
@@ -351,7 +330,6 @@ const handleUpdateGlobalRole = async (role, originalRole) => {
     });
 
     await roleStore.updateRole(role, originalRole);
-    exists = false;
   } else {
     let response = await roleStore.updateRole(role);
 
@@ -479,6 +457,7 @@ getEpicStatus();
     />
     <Button text="Globale Indstillinger" @Click="localSettingsTab = false" />
 
+    <!-- Local settings -->
     <div v-if="localSettingsTab && onSheet">
       <h2>Lokal</h2>
 
@@ -486,7 +465,7 @@ getEpicStatus();
       <div v-for="riskProfile in globals" :key="riskProfile.id">
         <LocalGlobalSettings :data="riskProfile" :renderForm="'riskProfile'" />
       </div>
-      <p>-----------------------------</p>
+
       <div v-for="riskProfile in sheetProfiles" :key="riskProfile.id">
         <LocalSettings
           :data="riskProfile"
@@ -496,11 +475,15 @@ getEpicStatus();
       </div>
       <Button text="Ny Profile" @Click="handleCreateLocalProfile" />
 
+      <!-- Local global roles -->
       <h3>Roller</h3>
       <div v-for="role in globalRoles" :key="role.id">
         <LocalGlobalSettings :data="role" :renderForm="'role'" />
       </div>
-      <p>-----------------------------</p>
+
+      <hr />
+
+      <!-- Local roles -->
       <div v-for="role in sheetRoles" :key="role.id">
         <LocalSettings
           :data="role"
@@ -511,9 +494,11 @@ getEpicStatus();
       <Button text="Ny Role" @Click="handleCreateLocalRole" />
     </div>
 
+    <!-- Global settings -->
     <div v-if="!localSettingsTab">
       <h2>Global</h2>
 
+      <!-- Global riskprofiles -->
       <h3>Risikoprofiler</h3>
       <div v-for="profile in masterGlobals" :key="profile.id">
         <GlobalSettings
@@ -525,6 +510,7 @@ getEpicStatus();
       </div>
       <Button text="Ny Profile" @Click="handleCreateGlobalProfile" />
 
+      <!-- Global roles -->
       <h3>Roller</h3>
       <div v-for="role in globalMasterRoles" :key="role.id">
         <GlobalSettings
@@ -536,22 +522,24 @@ getEpicStatus();
       </div>
       <Button text="Ny Rolle" @Click="handleCreateGlobalRole" />
 
+      <!-- Global sheet status -->
       <h3>Sheet Status</h3>
       <div v-for="status in globalMasterSheetStatus" :key="status.id">
         <GlobalSettings
           :data="status"
-          :renderForm="'sheetStatus'"
+          renderForm="sheetStatus"
           @delete="handleDeleteGlobalSheetStatus"
           @update="handleUpdateGlobalSheetStatus"
         />
       </div>
       <Button text="Ny Sheet Status" @Click="handleCreateGlobalSheetStatus" />
 
+      <!-- Global epic status -->
       <h3>Epic Status</h3>
       <div v-for="status in globalMasterEpicStatus" :key="status.id">
         <GlobalSettings
           :data="status"
-          :renderForm="'epicStatus'"
+          renderForm="epicStatus"
           @delete="handleDeleteGlobalEpicStatus"
           @update="handleUpdateGlobalEpicStatus"
         />
