@@ -27,7 +27,7 @@ export const useEstimateSheetRiskProfileStore = defineStore(
           },
         }
       );
-      
+
       setEstimateSheetRiskProfiles(response);
     };
 
@@ -46,21 +46,30 @@ export const useEstimateSheetRiskProfileStore = defineStore(
           }
         );
 
-        setEstimateSheetRiskProfiles([...estimateSheetRiskProfiles.value, response]);
+        setEstimateSheetRiskProfiles([
+          ...estimateSheetRiskProfiles.value,
+          response,
+        ]);
       } catch (e) {
         console.log("ERROR", e);
+        if (e.toString().includes("FetchError: 401"))
+          return authStore.handleRelog();
+        return false;
       }
     };
 
     const deleteEstimateSheetRiskProfile = async (sheetId, profileId) => {
-      await $fetch(`${runtimeConfig.public.API_URL}/estimatesheetriskprofiles/?sheetId=${sheetId}&profileId=${profileId}`, {
-        method: "DELETE",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authStore.API_TOKEN}`,
-        },
-      });
+      await $fetch(
+        `${runtimeConfig.public.API_URL}/estimatesheetriskprofiles/?sheetId=${sheetId}&profileId=${profileId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authStore.API_TOKEN}`,
+          },
+        }
+      );
 
       setEstimateSheetRiskProfiles(
         estimateSheetRiskProfiles.value.filter((sheetProfile) => {

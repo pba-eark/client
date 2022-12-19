@@ -78,7 +78,10 @@ export const useRiskProfileStore = defineStore("risk-profile-store", () => {
         },
       });
     } catch (e) {
-      return console.log("Error", e);
+      console.log("ERROR", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
     }
 
     setRiskProfiles(

@@ -27,7 +27,10 @@ export const useEpicStore = defineStore("epic-store", () => {
 
       setEpics(epics);
     } catch (e) {
-      return console.log("Error", e);
+      console.log("Error", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
     }
   };
 
@@ -46,7 +49,10 @@ export const useEpicStore = defineStore("epic-store", () => {
       setEpics([...epics.value, response]);
       return response;
     } catch (e) {
-      return console.log("Error", e);
+      console.log("Error", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
     }
   };
 
@@ -72,6 +78,9 @@ export const useEpicStore = defineStore("epic-store", () => {
       });
     } catch (e) {
       console.log("Error", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
     }
   };
 
@@ -87,6 +96,8 @@ export const useEpicStore = defineStore("epic-store", () => {
       });
     } catch (e) {
       console.log("Error", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
       return false;
     }
 

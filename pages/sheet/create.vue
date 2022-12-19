@@ -70,7 +70,15 @@ const handleSubmit = async () => {
     if (customerSelection.selected.id) {
       postData.sheet.customerId = customerSelection.selected.id;
     } else {
-      await customerStore.createCustomer(customerSelection.selected);
+      const res = await customerStore.createCustomer(
+        customerSelection.selected
+      );
+      if (!res)
+        return $swal.fire({
+          icon: "error",
+          title: "Ups! Der skete en fejl.",
+          text: `Estimat blev ikke oprettet.`,
+        });
 
       postData.sheet.customerId =
         customerStore.CUSTOMERS[customerStore.CUSTOMERS.length - 1].id;
@@ -84,7 +92,7 @@ const handleSubmit = async () => {
       position: "center",
       icon: "error",
       title: `Der skete en fejl!`,
-      text: `Estimatarket blev ikke oprettet.`,
+      text: `Estimat blev ikke oprettet.`,
       showConfirmButton: true,
     });
 

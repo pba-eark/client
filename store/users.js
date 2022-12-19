@@ -19,16 +19,23 @@ export const useUserStore = defineStore("user-store", () => {
   };
 
   const getUsers = async () => {
-    const response = await $fetch(`${runtimeConfig.public.API_URL}/users`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authStore.API_TOKEN}`,
-      },
-    });
+    try {
+      const response = await $fetch(`${runtimeConfig.public.API_URL}/users`, {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authStore.API_TOKEN}`,
+        },
+      });
 
-    setUsers(response);
+      setUsers(response);
+    } catch (e) {
+      console.log("Error", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
+    }
   };
 
   /* Getters */

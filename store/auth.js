@@ -86,6 +86,25 @@ export const useAuthStore = defineStore("auth-store", () => {
     }
   };
 
+  const handleRelog = async () => {
+    jwt.value = "";
+    isAuthorized.value = false;
+    if (localStorage.getItem("user")) localStorage.removeItem("user");
+    if (localStorage.getItem("jwt")) localStorage.removeItem("jwt");
+
+    return $swal
+      .fire({
+        icon: "warning",
+        title: "Login session udløbet!",
+        text: "Log venligst på igen 🎃",
+        showCancelButton: false,
+        confirmButtonText: "OK",
+      })
+      .then(() => {
+        if (process.client) document.location.reload();
+      });
+  };
+
   /* Getters */
   const API_TOKEN = computed(() => jwt.value);
   const IS_AUTHORIZED = computed(() => isAuthorized.value);
@@ -94,6 +113,7 @@ export const useAuthStore = defineStore("auth-store", () => {
     handleLogin,
     handleLogOut,
     handleSignUp,
+    handleRelog,
     API_TOKEN,
     IS_AUTHORIZED,
     setJwt,
