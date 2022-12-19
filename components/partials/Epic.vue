@@ -36,6 +36,19 @@ watch(
 );
 
 const handleCreateTask = async () => {
+  const firstGlobalRiskProfile = riskProfileStore.RISK_PROFILES.filter(
+    (profile) => {
+      return profile;
+    }
+  )[0];
+
+  if (!firstGlobalRiskProfile)
+    return $swal.fire(
+      "Der skete en fejl.",
+      "Der findes endnu ingen globale risikoprofiler. Opret en global risikoprofil og prøv igen.",
+      "warning"
+    );
+
   const newTask = {
     parentId: 0,
     taskName: "Ny task",
@@ -45,7 +58,7 @@ const handleCreateTask = async () => {
     taskDescription: "Beskrivelse...",
     epicId: parseInt(props.data.id),
     roleId: 0,
-    riskProfileId: 1,
+    riskProfileId: firstGlobalRiskProfile.id,
   };
 
   await taskStore.createTask(newTask);
