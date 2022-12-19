@@ -60,6 +60,7 @@ if (process.client) {
 
 const runtimeConfig = useRuntimeConfig();
 console.log("API", runtimeConfig.public.API_URL);
+console.log("env", process.env.NODE_ENV);
 </script>
 
 <template>

@@ -1,3 +1,5 @@
+const env = process.env.NODE_ENV || "development";
+
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   // app: {
@@ -32,7 +34,10 @@ export default defineNuxtConfig({
     apiSecret: "123",
     // Keys within public, will be also exposed to the client-side
     public: {
-      API_URL: process.env.API_URL ?? "https://localhost:7087/api",
+      API_URL:
+        env === "development"
+          ? "https://localhost:7087/api"
+          : "https://estimatarkapi.azurewebsites.net/api/",
     },
   },
 
