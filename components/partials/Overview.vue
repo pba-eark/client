@@ -21,6 +21,31 @@ const sheetStore = useEstimateSheetStore();
 
 const route = useRoute();
 const epics = ref([]);
+
+const labels = reactive([]);
+const datasets = reactive({
+  /* Realistic hrs */
+  realisticHours: {
+    backgroundColor: [],
+    data: [],
+  },
+  /* Realistic price */
+  realisticPrice: {
+    backgroundColor: [],
+    data: [],
+  },
+  /* Pessimistic hrs */
+  pessimisticHours: {
+    backgroundColor: [],
+    data: [],
+  },
+  /* Pessimistic hrs */
+  pessimisticPrice: {
+    backgroundColor: [],
+    data: [],
+  },
+});
+
 const totalEpicsRealisticHours = ref(0);
 const totalEpicsRealisticPrice = ref(0);
 const totalEpicsPessimisticHours = ref(0);
@@ -30,12 +55,18 @@ onMounted(() => {
   calculateOverview();
 });
 
-watch(
-  () => [taskStore.TASKS.length, epicStore.EPICS.length],
-  () => {
-    calculateOverview();
-  }
-);
+onUnmounted(() => {
+  detailsStore.setDetailsChart({
+    labels: [],
+    datasets: {},
+  });
+}),
+  watch(
+    () => [taskStore.TASKS.length, epicStore.EPICS.length],
+    () => {
+      calculateOverview();
+    }
+  );
 
 /* Update epic name, if updated in details store */
 watch(
@@ -191,13 +222,69 @@ const calculateOverview = () => {
       }
     });
 
+    /* ******** CHART JS *********** */
+    /* ******** CHART JS *********** */
+    epic.roles.forEach((role) => {
+      role.optOuts = 0;
+      let totalRealisticHours = 0;
+      let totalRealisticPrice = 0;
+      let totalPessimisticHours = 0;
+      let totalPessimisticPrice = 0;
+      role.tasks.forEach((task) => {
+        if (task.optOut) return role.optOuts++;
+        totalRealisticHours += task.realisticHours;
+        totalRealisticPrice += task.realisticPrice;
+        totalPessimisticHours += task.pessimisticHours;
+        totalPessimisticPrice += task.pessimisticPrice;
+      });
+      role.totalRealisticHours = totalRealisticHours;
+      role.totalRealisticPrice = totalRealisticPrice;
+      role.totalPessimisticHours = totalPessimisticHours;
+      role.totalPessimisticPrice = totalPessimisticPrice;
+
+      const index = labels.findIndex((label) => label == role.roleName);
+      if (index > -1) {
+        datasets.realisticHours.data[index] += totalRealisticHours;
+        datasets.realisticPrice.data[index] += totalRealisticPrice;
+        datasets.pessimisticHours.data[index] += totalPessimisticHours;
+        datasets.pessimisticPrice.data[index] += totalPessimisticPrice;
+      } else {
+        const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+        labels.push(role.roleName);
+
+        datasets.realisticHours.backgroundColor.push(color);
+        datasets.realisticPrice.backgroundColor.push(color);
+        datasets.pessimisticHours.backgroundColor.push(color);
+        datasets.pessimisticPrice.backgroundColor.push(color);
+
+        datasets.realisticHours.data.push(totalRealisticHours);
+        datasets.realisticPrice.data.push(totalRealisticPrice);
+        datasets.pessimisticHours.data.push(totalPessimisticHours);
+        datasets.pessimisticPrice.data.push(totalPessimisticPrice);
+      }
+    });
+    // data = {
+    //   labels: ["VueJs", "EmberJs", "ReactJs", "AngularJs"],
+    //   datasets: [
+    //     {
+    //       backgroundColor: ["#41B883", "#E46651", "#00D8FF", "#DD1B16"],
+    //       data: [40, 20, 80, 10],
+    //     },
+    //   ],
+    // };
+    /* ******** CHART JS *********** */
+    /* ******** CHART JS *********** */
+
     epic.totalRealisticHours = totalRealisticHours;
     epic.totalPessimisticHours = totalPessimisticHours;
     epic.totalRealisticPrice = totalRealisticPrice;
     epic.totalPessimisticPrice = totalPessimisticPrice;
     epics.value.push(epic);
-    // console.log(epic);
   });
+
+  detailsStore.setDetailsChart({ labels, datasets });
+  // console.log("labels", labels);
+  // console.log("datasets", datasets);
 };
 
 const handleCreateEpic = async () => {
@@ -295,6 +382,7 @@ const currentSheetStatus = computed(() => {
         :user="epic.user"
       />
     </div>
+
     i allah:
     <p>
       realistisk timer:

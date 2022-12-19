@@ -27,7 +27,10 @@ export const useTaskStore = defineStore("task-store", () => {
 
       setTasks(tasks);
     } catch (e) {
-      return console.log("Error", e);
+      console.log("ERROR", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
     }
   };
 
@@ -46,6 +49,9 @@ export const useTaskStore = defineStore("task-store", () => {
       tasks.value = [...tasks.value, res];
     } catch (e) {
       console.log("ERROR", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
     }
   };
 
@@ -63,7 +69,10 @@ export const useTaskStore = defineStore("task-store", () => {
         body: obj,
       });
     } catch (e) {
-      return console.log("Error", e);
+      console.log("ERROR", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
     }
 
     tasks.value.map((task) => {
@@ -82,7 +91,10 @@ export const useTaskStore = defineStore("task-store", () => {
         },
       });
     } catch (e) {
-      return console.log("Error", e);
+      console.log("ERROR", e);
+      if (e.toString().includes("FetchError: 401"))
+        return authStore.handleRelog();
+      return false;
     }
 
     setTasks(
@@ -90,6 +102,7 @@ export const useTaskStore = defineStore("task-store", () => {
         return task.id !== id;
       })
     );
+    return true;
   };
 
   /* Getters */

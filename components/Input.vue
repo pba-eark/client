@@ -136,6 +136,27 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
+select {
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  border-radius: 3px;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  font-style: inherit;
+  padding: var(--input-padding);
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-task-input);
+    color: var(--font-color-primary);
+  }
+  &:focus-visible {
+    outline: none;
+  }
+}
+
 .input {
   font-size: 1rem;
   line-height: 1;

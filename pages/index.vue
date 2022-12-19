@@ -47,9 +47,20 @@ const doneSheets = computed(() => {
 <template>
   <div class="block">
     <h1>Dashboard</h1>
+
+    <div class="block__charts">
+      <div class="block__charts--customers">
+        <h1>Kunder</h1>
+        <NuxtLink to="/">Redigér kunder</NuxtLink>
+        <div class="chart">
+          <PieChart />
+        </div>
+      </div>
+    </div>
+
     <div class="block__dashboard">
-      <div>
-        <h2>Estimeret af dig</h2>
+      <div class="dashboard__item">
+        <h2>Mine estimatark</h2>
         <ul>
           <li v-for="sheet in estimatedSheets">
             <NuxtLink :to="`/sheet/${sheet.id}`">
@@ -58,8 +69,8 @@ const doneSheets = computed(() => {
           </li>
         </ul>
       </div>
-      <div>
-        <h2>Udført af dig</h2>
+      <div class="dashboard__item">
+        <h2>Mine udførte estimater</h2>
         <ul>
           <li v-for="sheet in doneSheets">
             <NuxtLink :to="`/sheet/${sheet.id}`">
@@ -68,8 +79,8 @@ const doneSheets = computed(() => {
           </li>
         </ul>
       </div>
-      <div>
-        <h2>Sidste åbne ark</h2>
+      <div class="dashboard__item">
+        <h2>Senest åbne estimater</h2>
         <ul>
           <li v-for="sheet in recentlyOpen">
             <NuxtLink :to="`/sheet/${sheet.id}`">
@@ -84,9 +95,36 @@ const doneSheets = computed(() => {
 
 <style lang="scss" scoped>
 .block {
+  padding: 24px;
+  border-radius: 3px;
+  background: #fff;
   &__dashboard {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+  }
+
+  &__charts {
+    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+}
+
+.dashboard {
+  &__item {
+    margin-top: 15px;
+
+    h2 {
+      margin-bottom: 5px;
+    }
+
+    ul {
+      li {
+        margin: 5px 0;
+      }
+    }
   }
 }
 </style>

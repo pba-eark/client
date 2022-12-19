@@ -1,5 +1,4 @@
 <script setup>
-
 import { useRiskProfileStore } from "~~/store/riskProfiles";
 import { useEstimateSheetRiskProfileStore } from "~~/store/composites/estimateSheetRiskProfiles";
 import { useRoleStore } from "~~/store/roles";
@@ -8,7 +7,6 @@ import { useEpicStatusStore } from "~~/store/epicStatus";
 import { useEstimateSheetRoleStore } from "~~/store/composites/estimateSheetRoles";
 import { useEstimateSheetStore } from "~~/store/estimateSheets";
 import { typeCheck } from "~~/helpers/functions";
-
 
 const riskProfileStore = useRiskProfileStore();
 const estimateSheetRiskProfileStore = useEstimateSheetRiskProfileStore();
@@ -21,114 +19,149 @@ const estimateSheetStore = useEstimateSheetStore();
 const props = defineProps({
   sheetId: {
     type: Number,
-    required: true
+    required: true,
   },
 });
 
+const newSheetLink = ref(null);
+const newSheetRoleLink = ref(null);
+const sheetRoles = ref([]);
+const globalMasterRoles = ref([]);
+const globalRoles = ref([]);
+const globalMasterSheetStatus = ref([]);
+const globalMasterEpicStatus = ref([]);
+const localSettingsTab = ref(true);
+const sheetProfiles = ref([]);
+const masterGlobals = ref([]);
+const globals = ref([]);
+
+let exists = true;
 let onSheet = true;
+const newProfile = {
+  global: false,
+  default: false,
+  profileName: "Ny Profil",
+  percentage: 0,
+};
+const newRole = {
+  global: false,
+  default: false,
+  roleName: "Ny Rolle",
+  hourlyWage: 0,
+};
+const newSheetStatus = {
+  global: true,
+  default: false,
+  sheetStatusName: "New Status",
+};
+const newEpicStatus = {
+  global: true,
+  default: false,
+  epicStatusName: "New Status",
+};
 
 if (isNaN(props.sheetId)) {
   onSheet = false;
 }
 
-const localSettingsTab = ref(true);
-let exists = true; 
-
-// #region Profile
-const sheetProfiles = ref([]);
-const masterGlobals = ref([]);
-const globals = ref([]);
-
-riskProfileStore.RISK_PROFILES.forEach(element => {
-
-  estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(item => {
-    if (element.id == item.riskProfileId && props.sheetId == item.estimateSheetId) {
-      sheetProfiles.value.push(element);
-    }
-  });
-
-});
-
-riskProfileStore.RISK_PROFILES.forEach(element => {
-  if (element.global) {
-    masterGlobals.value.push(element);
+watch(
+  () => props.sheetId,
+  () => {
+    getProfiles();
+    getRoles();
+    getSheetStatus();
+    getEpicStatus();
   }
-});
+);
 
-let indexes = [];
-
-masterGlobals.value.forEach(masterGlobal => {
-
-  sheetProfiles.value.forEach(sheetProfile => {
-
-    const index = sheetProfiles.value.findIndex(
-      (profile) => profile.profileName == masterGlobal.profileName
+const getProfiles = () => {
+  let indexes = [];
+  sheetProfiles.value = [];
+  masterGlobals.value = [];
+  globals.value = [];
+  riskProfileStore.RISK_PROFILES.forEach((element) => {
+    estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(
+      (item) => {
+        if (
+          element.id == item.riskProfileId &&
+          props.sheetId == item.estimateSheetId
+        ) {
+          sheetProfiles.value.push(element);
+        }
+      }
     );
-
-    if (index >= 0 && sheetProfile.profileName == masterGlobal.profileName) {
-      globals.value.push(sheetProfile);
-      indexes.push(index);
-    }
-
   });
 
-});
+  riskProfileStore.RISK_PROFILES.forEach((element) => {
+    if (element.global) {
+      masterGlobals.value.push(element);
+    }
+  });
 
-indexes.sort(function (a, b) { return b - a });
+  masterGlobals.value.forEach((masterGlobal) => {
+    sheetProfiles.value.forEach((sheetProfile) => {
+      const index = sheetProfiles.value.findIndex(
+        (profile) => profile.profileName == masterGlobal.profileName
+      );
 
-indexes.forEach(index => {
-  sheetProfiles.value.splice(index, 1);
-});
+      if (index >= 0 && sheetProfile.profileName == masterGlobal.profileName) {
+        globals.value.push(sheetProfile);
+        indexes.push(index);
+      }
+    });
+  });
 
-const newProfile = {
-  global: false,
-  default: false,
-  profileName: "Ny Profil",
-  percentage: 0
+  indexes.sort(function (a, b) {
+    return b - a;
+  });
+
+  indexes.forEach((index) => {
+    sheetProfiles.value.splice(index, 1);
+  });
+
+  newSheetLink.value = {
+    estimateSheetId: props.sheetId,
+    riskProfileId: 0,
+  };
 };
 
-const newSheetLink = ref({
-  estimateSheetId: props.sheetId,
-  riskProfileId: 0
-});
-
 const handleCreateLocalProfile = async () => {
-
   let profile = await riskProfileStore.createRiskProfile(newProfile);
   newSheetLink.value.riskProfileId = profile.id;
-  await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
+  await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(
+    newSheetLink.value
+  );
   sheetProfiles.value.push(profile);
 };
 
 const handleCreateGlobalProfile = async () => {
-
   newProfile.global = true;
 
   let profile = await riskProfileStore.createRiskProfile(newProfile);
 
-  estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
-
+  estimateSheetStore.ESTIMATE_SHEETS.forEach(async (sheet) => {
     newSheetLink.value.estimateSheetId = sheet.id;
     newSheetLink.value.riskProfileId = profile.id;
-    await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
-
+    await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(
+      newSheetLink.value
+    );
   });
   globals.value.push(profile);
   masterGlobals.value.push(profile);
 };
 
 const handleUpdateGlobalProfile = async (profile, originalProfile) => {
-
-  estimateSheetStore.ESTIMATE_SHEETS.forEach(sheet => {
-    estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(sheetProfile => {
-      if (sheet.id == sheetProfile.sheetId) {
-        exists = false;
-      };
-    });
+  estimateSheetStore.ESTIMATE_SHEETS.forEach((sheet) => {
+    estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(
+      (sheetProfile) => {
+        if (sheet.id == sheetProfile.sheetId) {
+          exists = false;
+        }
+      }
+    );
   });
 
   if (profile.percentage != originalProfile.percentage && !exists) {
-
     newProfile.global = false;
     newProfile.profileName = profile.profileName;
     newProfile.percentage = originalProfile.percentage;
@@ -137,47 +170,45 @@ const handleUpdateGlobalProfile = async (profile, originalProfile) => {
 
     globals.value.push(riskProfile);
 
-    estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
+    estimateSheetStore.ESTIMATE_SHEETS.forEach(async (sheet) => {
       newSheetLink.value.estimateSheetId = sheet.id;
       newSheetLink.value.riskProfileId = riskProfile.id;
-      await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
+      await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(
+        newSheetLink.value
+      );
     });
 
-    globals.value.forEach(globalProfile => {
+    globals.value.forEach((globalProfile) => {
       const index = globals.value.findIndex(
         (profile) => profile.profileName == originalProfile.profileName
       );
 
-      if (index >= 0 && globalProfile.profileName == originalProfile.profileName) {
+      if (
+        index >= 0 &&
+        globalProfile.profileName == originalProfile.profileName
+      ) {
         globals.value.splice(index, 1);
       }
     });
 
     await riskProfileStore.updateRiskProfile(profile, originalProfile);
     exists = true;
-
   } else {
-
     let response = await riskProfileStore.updateRiskProfile(profile);
 
     globals.value.map((updatedProfile) => {
-      if (updatedProfile.id === typeCheck(profile.id)) Object.assign(updatedProfile, response);
+      if (updatedProfile.id === typeCheck(profile.id))
+        Object.assign(updatedProfile, response);
     });
-
   }
-
 };
 
 const handleDeleteLocalProfile = async (id) => {
-
   await riskProfileStore.deleteRiskProfile(id);
 
-  const profileIndex = sheetProfiles.value.findIndex(
-    (obj) => obj.id === id
-  );
+  const profileIndex = sheetProfiles.value.findIndex((obj) => obj.id === id);
 
   sheetProfiles.value.splice(profileIndex, 1);
-
 };
 
 const handleDeleteGlobalProfile = async (profile) => {
@@ -187,10 +218,12 @@ const handleDeleteGlobalProfile = async (profile) => {
 
   let riskProfile = await riskProfileStore.createRiskProfile(newProfile);
 
-  estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
+  estimateSheetStore.ESTIMATE_SHEETS.forEach(async (sheet) => {
     newSheetLink.value.estimateSheetId = sheet.id;
     newSheetLink.value.riskProfileId = riskProfile.id;
-    await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(newSheetLink.value);
+    await estimateSheetRiskProfileStore.createEstimateSheetRiskProfile(
+      newSheetLink.value
+    );
 
     if (sheet.id == props.sheetId) {
       sheetProfiles.value.push(newProfile);
@@ -204,70 +237,57 @@ const handleDeleteGlobalProfile = async (profile) => {
   );
 
   masterGlobals.value.splice(profileIndex, 1);
-}
-
-// #endregion
-
-// #region Role
-const sheetRoles = ref([]);
-const globalMasterRoles = ref([]);
-const globalRoles = ref([]);
-
-roleStore.ROLES.forEach(element => {
-
-  estimateSheetRoleStore.ESTIMATE_SHEET_ROLES.forEach(item => {
-    if (element.id == item.roleId && props.sheetId == item.estimateSheetId) {
-      sheetRoles.value.push(element);
-    }
-  });
-});
-
-roleStore.ROLES.forEach(role => {
-  sheetRoles.value.forEach(sheetRole => {
-    if (role.id == sheetRole.id && !sheetRoles.value.includes(role)) {
-      sheetRoles.value.push(role)
-    }
-  });
-});
-
-roleStore.ROLES.forEach(role => {
-  if (role.global) {
-    globalMasterRoles.value.push(role);
-  }
-});
-
-globalMasterRoles.value.forEach(masterRole => {
-
-  let indexToSplice = 0;
-
-  sheetRoles.value.forEach(sheetRole => {
-
-    const index = sheetRoles.value.findIndex(
-      (role) => role.roleName == masterRole.roleName
-    );
-
-    if (index >= 0 && sheetRole.roleName == masterRole.roleName) {
-      globalRoles.value.push(sheetRole);
-      indexToSplice = index;
-    }
-
-  });
-
-  sheetRoles.value.splice(indexToSplice, 1);
-
-});
-
-const newRole = {
-  global: false,
-  default: false,
-  roleName: "Ny Rolle",
-  hourlyWage: 0
 };
 
-const newSheetRoleLink = ref({
-  estimateSheetId: props.sheetId,
-  roleId: 0
-});
+const getRoles = () => {
+  sheetRoles.value = [];
+  globalMasterRoles.value = [];
+  globalRoles.value = [];
+
+  roleStore.ROLES.forEach((element) => {
+    estimateSheetRoleStore.ESTIMATE_SHEET_ROLES.forEach((item) => {
+      if (element.id == item.roleId && props.sheetId == item.estimateSheetId) {
+        sheetRoles.value.push(element);
+      }
+    });
+  });
+
+  roleStore.ROLES.forEach((role) => {
+    sheetRoles.value.forEach((sheetRole) => {
+      if (role.id == sheetRole.id && !sheetRoles.value.includes(role)) {
+        sheetRoles.value.push(role);
+      }
+    });
+  });
+
+  roleStore.ROLES.forEach((role) => {
+    if (role.global) {
+      globalMasterRoles.value.push(role);
+    }
+  });
+
+  globalMasterRoles.value.forEach((masterRole) => {
+    let indexToSplice = 0;
+
+    sheetRoles.value.forEach((sheetRole) => {
+      const index = sheetRoles.value.findIndex(
+        (role) => role.roleName == masterRole.roleName
+      );
+
+      if (index >= 0 && sheetRole.roleName == masterRole.roleName) {
+        globalRoles.value.push(sheetRole);
+        indexToSplice = index;
+      }
+    });
+
+    sheetRoles.value.splice(indexToSplice, 1);
+  });
+
+  newSheetRoleLink.value = {
+    estimateSheetId: props.sheetId,
+    roleId: 0,
+  };
+};
 
 const handleCreateLocalRole = async () => {
   let role = await roleStore.createRole(newRole);
@@ -277,34 +297,33 @@ const handleCreateLocalRole = async () => {
 };
 
 const handleCreateGlobalRole = async () => {
-
   newRole.global = true;
 
   let role = await roleStore.createRole(newRole);
 
-  estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
-
+  estimateSheetStore.ESTIMATE_SHEETS.forEach(async (sheet) => {
     newSheetRoleLink.value.estimateSheetId = sheet.id;
     newSheetRoleLink.value.roleId = role.id;
-    await estimateSheetRoleStore.createEstimateSheetRole(newSheetRoleLink.value);
-
+    await estimateSheetRoleStore.createEstimateSheetRole(
+      newSheetRoleLink.value
+    );
   });
   globalRoles.value.push(role);
   globalMasterRoles.value.push(role);
 };
 
 const handleUpdateGlobalRole = async (role, originalRole) => {
-
-  estimateSheetStore.ESTIMATE_SHEETS.forEach(sheet => {
-    estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(sheetProfile => {
-      if (sheet.id == sheetProfile.sheetId) {
-        exists = false;
-      };
-    });
+  estimateSheetStore.ESTIMATE_SHEETS.forEach((sheet) => {
+    estimateSheetRiskProfileStore.ESTIMATE_SHEET_RISK_PROFILES.forEach(
+      (sheetProfile) => {
+        if (sheet.id == sheetProfile.sheetId) {
+          exists = false;
+        }
+      }
+    );
   });
 
   if (role.hourlyWage != originalRole.hourlyWage && !exists) {
-
     newRole.global = false;
     newRole.roleName = role.roleName;
     newRole.hourlyWage = originalRole.hourlyWage;
@@ -313,13 +332,15 @@ const handleUpdateGlobalRole = async (role, originalRole) => {
 
     globalRoles.value.push(createdRole);
 
-    estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
+    estimateSheetStore.ESTIMATE_SHEETS.forEach(async (sheet) => {
       newSheetRoleLink.value.estimateSheetId = sheet.id;
       newSheetRoleLink.value.roleId = createdRole.id;
-      await estimateSheetRoleStore.createEstimateSheetRole(newSheetRoleLink.value);
+      await estimateSheetRoleStore.createEstimateSheetRole(
+        newSheetRoleLink.value
+      );
     });
 
-    globalRoles.value.forEach(globalRole => {
+    globalRoles.value.forEach((globalRole) => {
       const index = globalRoles.value.findIndex(
         (role) => role.roleName == originalRole.roleName
       );
@@ -331,26 +352,20 @@ const handleUpdateGlobalRole = async (role, originalRole) => {
 
     await roleStore.updateRole(role, originalRole);
     exists = false;
-
   } else {
-
     let response = await roleStore.updateRole(role);
 
     globalRoles.value.map((updatedRole) => {
-      if (updatedRole.id === typeCheck(role.id)) Object.assign(updatedRole, response);
+      if (updatedRole.id === typeCheck(role.id))
+        Object.assign(updatedRole, response);
     });
-
   }
-
 };
 
 const handleDeleteLocalRole = (id) => {
-
   roleStore.deleteRole(id);
 
-  const profileIndex = sheetRoles.value.findIndex(
-    (obj) => obj.id === id
-  );
+  const profileIndex = sheetRoles.value.findIndex((obj) => obj.id === id);
 
   sheetRoles.value.splice(profileIndex, 1);
 };
@@ -362,10 +377,12 @@ const handleDeleteGlobalRole = async (role) => {
 
   let createdRole = await roleStore.createRole(newRole);
 
-  estimateSheetStore.ESTIMATE_SHEETS.forEach(async sheet => {
+  estimateSheetStore.ESTIMATE_SHEETS.forEach(async (sheet) => {
     newSheetRoleLink.value.estimateSheetId = sheet.id;
     newSheetRoleLink.value.roleId = createdRole.id;
-    await estimateSheetRoleStore.createEstimateSheetRole(newSheetRoleLink.value);
+    await estimateSheetRoleStore.createEstimateSheetRole(
+      newSheetRoleLink.value
+    );
 
     if (sheet.id == props.sheetId) {
       sheetRoles.value.push(newRole);
@@ -379,34 +396,30 @@ const handleDeleteGlobalRole = async (role) => {
   );
 
   globalMasterRoles.value.splice(profileIndex, 1);
-}
+};
 // #endregion
 
 // #region SheetStatus
-const globalMasterSheetStatus = ref([]);
-
-sheetStatusStore.SHEET_STATUS.forEach(status => {
-  globalMasterSheetStatus.value.push(status);
-});
-
-const newSheetStatus = {
-  global: true,
-  default: false,
-  sheetStatusName: "New Status"
-}
+const getSheetStatus = () => {
+  globalMasterSheetStatus.value = [];
+  sheetStatusStore.SHEET_STATUS.forEach((status) => {
+    globalMasterSheetStatus.value.push(status);
+  });
+};
 
 const handleCreateGlobalSheetStatus = async () => {
   let response = await sheetStatusStore.createSheetStatus(newSheetStatus);
   globalMasterSheetStatus.value.push(response);
-}
+};
 
 const handleUpdateGlobalSheetStatus = async (sheetStatus) => {
   let response = await sheetStatusStore.updateSheetStatus(sheetStatus);
 
   globalMasterSheetStatus.value.map((updatedSheetStatus) => {
-    if (updatedSheetStatus.id === typeCheck(sheetStatus.id)) Object.assign(updatedSheetStatus, response);
+    if (updatedSheetStatus.id === typeCheck(sheetStatus.id))
+      Object.assign(updatedSheetStatus, response);
   });
-}
+};
 
 const handleDeleteGlobalSheetStatus = async (SheetStatus) => {
   await sheetStatusStore.deleteSheetStatus(SheetStatus.id);
@@ -416,20 +429,15 @@ const handleDeleteGlobalSheetStatus = async (SheetStatus) => {
   );
 
   globalMasterSheetStatus.value.splice(profileIndex, 1);
-}
+};
 // #endregion
 
 // #region EpicStatus
-const globalMasterEpicStatus = ref([]);
-
-epicStatusStore.EPIC_STATUS.forEach(status => {
-  globalMasterEpicStatus.value.push(status);
-});
-
-const newEpicStatus = {
-  global: true,
-  default: false,
-  epicStatusName: "New Status"
+const getEpicStatus = () => {
+  globalMasterEpicStatus.value = [];
+  epicStatusStore.EPIC_STATUS.forEach((status) => {
+    globalMasterEpicStatus.value.push(status);
+  });
 };
 
 const handleCreateGlobalEpicStatus = async () => {
@@ -441,7 +449,8 @@ const handleUpdateGlobalEpicStatus = async (epicStatus) => {
   let response = await epicStatusStore.updateEpicStatus(epicStatus);
 
   globalMasterEpicStatus.value.map((updatedEpicStatus) => {
-    if (updatedEpicStatus.id === typeCheck(epicStatus.id)) Object.assign(updatedEpicStatus, response);
+    if (updatedEpicStatus.id === typeCheck(epicStatus.id))
+      Object.assign(updatedEpicStatus, response);
   });
 };
 
@@ -454,17 +463,23 @@ const handleDeleteGlobalEpicStatus = async (epicStatus) => {
 
   globalMasterEpicStatus.value.splice(profileIndex, 1);
 };
-// #endregion
 
+getProfiles();
+getRoles();
+getSheetStatus();
+getEpicStatus();
 </script>
 
 <template>
   <div>
-
-    <Button v-if="onSheet" text="Lokale Indstillinger" @Click="localSettingsTab = true" />
+    <Button
+      v-if="onSheet"
+      text="Lokale Indstillinger"
+      @Click="localSettingsTab = true"
+    />
     <Button text="Globale Indstillinger" @Click="localSettingsTab = false" />
 
-    <div v-if="(localSettingsTab && onSheet)">
+    <div v-if="localSettingsTab && onSheet">
       <h2>Lokal</h2>
 
       <h3>Risikoprofiler</h3>
@@ -473,7 +488,11 @@ const handleDeleteGlobalEpicStatus = async (epicStatus) => {
       </div>
       <p>-----------------------------</p>
       <div v-for="riskProfile in sheetProfiles" :key="riskProfile.id">
-        <LocalSettings :data="riskProfile" :renderForm="'riskProfile'" @delete="handleDeleteLocalProfile" />
+        <LocalSettings
+          :data="riskProfile"
+          :renderForm="'riskProfile'"
+          @delete="handleDeleteLocalProfile"
+        />
       </div>
       <Button text="Ny Profile" @Click="handleCreateLocalProfile" />
 
@@ -483,10 +502,13 @@ const handleDeleteGlobalEpicStatus = async (epicStatus) => {
       </div>
       <p>-----------------------------</p>
       <div v-for="role in sheetRoles" :key="role.id">
-        <LocalSettings :data="role" :renderForm="'role'" @delete="handleDeleteLocalRole" />
+        <LocalSettings
+          :data="role"
+          :renderForm="'role'"
+          @delete="handleDeleteLocalRole"
+        />
       </div>
       <Button text="Ny Role" @Click="handleCreateLocalRole" />
-
     </div>
 
     <div v-if="!localSettingsTab">
@@ -494,35 +516,47 @@ const handleDeleteGlobalEpicStatus = async (epicStatus) => {
 
       <h3>Risikoprofiler</h3>
       <div v-for="profile in masterGlobals" :key="profile.id">
-        <GlobalSettings :data="profile" :renderForm="'riskProfile'" @delete="handleDeleteGlobalProfile"
-          @update="handleUpdateGlobalProfile" />
+        <GlobalSettings
+          :data="profile"
+          :renderForm="'riskProfile'"
+          @delete="handleDeleteGlobalProfile"
+          @update="handleUpdateGlobalProfile"
+        />
       </div>
       <Button text="Ny Profile" @Click="handleCreateGlobalProfile" />
 
       <h3>Roller</h3>
       <div v-for="role in globalMasterRoles" :key="role.id">
-        <GlobalSettings :data="role" :renderForm="'role'" @delete="handleDeleteGlobalRole"
-          @update="handleUpdateGlobalRole" />
+        <GlobalSettings
+          :data="role"
+          :renderForm="'role'"
+          @delete="handleDeleteGlobalRole"
+          @update="handleUpdateGlobalRole"
+        />
       </div>
       <Button text="Ny Rolle" @Click="handleCreateGlobalRole" />
 
       <h3>Sheet Status</h3>
       <div v-for="status in globalMasterSheetStatus" :key="status.id">
-        <GlobalSettings :data="status" :renderForm="'sheetStatus'" @delete="handleDeleteGlobalSheetStatus"
-          @update="handleUpdateGlobalSheetStatus" />
+        <GlobalSettings
+          :data="status"
+          :renderForm="'sheetStatus'"
+          @delete="handleDeleteGlobalSheetStatus"
+          @update="handleUpdateGlobalSheetStatus"
+        />
       </div>
       <Button text="Ny Sheet Status" @Click="handleCreateGlobalSheetStatus" />
 
       <h3>Epic Status</h3>
       <div v-for="status in globalMasterEpicStatus" :key="status.id">
-        <GlobalSettings :data="status" :renderForm="'epicStatus'" @delete="handleDeleteGlobalEpicStatus"
-          @update="handleUpdateGlobalEpicStatus" />
+        <GlobalSettings
+          :data="status"
+          :renderForm="'epicStatus'"
+          @delete="handleDeleteGlobalEpicStatus"
+          @update="handleUpdateGlobalEpicStatus"
+        />
       </div>
       <Button text="Ny Epic Status" @Click="handleCreateGlobalEpicStatus" />
-
     </div>
-
-
-
   </div>
 </template>

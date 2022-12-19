@@ -16,19 +16,26 @@ export const useEstimateSheetUserStore = defineStore(
     };
 
     const getEstimateSheetUsers = async () => {
-      const response = await $fetch(
-        `${runtimeConfig.public.API_URL}/estimatesheetusers`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authStore.API_TOKEN}`,
-          },
-        }
-      );
+      try {
+        const response = await $fetch(
+          `${runtimeConfig.public.API_URL}/estimatesheetusers`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authStore.API_TOKEN}`,
+            },
+          }
+        );
 
-      setEstimateSheetUsers(response);
+        setEstimateSheetUsers(response);
+      } catch (e) {
+        console.log("ERROR", e);
+        if (e.toString().includes("FetchError: 401"))
+          return authStore.handleRelog();
+        return false;
+      }
     };
 
     const createEstimateSheetUser = async (obj) => {
