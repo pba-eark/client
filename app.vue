@@ -57,6 +57,9 @@ if (process.client) {
     }
   };
 }
+
+const runtimeConfig = useRuntimeConfig();
+console.log("API", runtimeConfig.public.API_URL);
 </script>
 
 <template>
