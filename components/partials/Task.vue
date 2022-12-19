@@ -266,8 +266,8 @@ const pricePessimistic = computed(() => {
     }
   }
   &__icon {
-    max-height: var(--width-more);
-    max-width: var(--width-more);
+    max-height: var(--width-icon);
+    max-width: var(--width-icon);
     cursor: pointer;
   }
   &__hours {

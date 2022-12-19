@@ -17,10 +17,12 @@
 
   --color-scrollbar: #60606050;
 
+  --input-padding: 10px;
   --table-columns-padding: 2px;
+  --table-gap: 1px;
+
   --table-columns-amount: 9;
   --table-columns: 1fr repeat(var(--table-columns-amount), auto);
-  --table-gap: 1px;
 
   --table-columns-amount-overview: 9;
   --table-columns-overview: auto 1fr repeat(var(--table-columns-amount-overview), auto);
@@ -33,14 +35,12 @@
   --width-hours: 45px;
   --width-price: 75px;
   --width-opt-out: 65px;
-  --width-more: 20px;
+  --width-icon: 20px;
 
   // Widths for overview table columns
   --width-hours-overview: 45px;
-  --width-price-overview: 45px;
-  --width-hours-overview: 45px;
-  --width-hours-overview: 45px;
-  --width-hours-overview: 45px;
-
-  --input-padding: 10px;
+  --width-price-overview: 75px;
+  --width-status-overview: 100px;
+  --width-responsible-overview: 200px;
+  --width-insecurity-overview: 100px;
 }

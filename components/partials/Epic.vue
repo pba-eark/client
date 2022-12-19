@@ -293,7 +293,7 @@ const tasksForEpic = computed(() => {
 
     &-header {
       padding-right: calc(
-        var(--width-more) + var(--table-columns-padding) / 2 +
+        var(--width-icon) + var(--table-columns-padding) / 2 +
           var(--input-padding) / 2
       );
 
@@ -329,7 +329,7 @@ const tasksForEpic = computed(() => {
 
     &-footer {
       padding-right: calc(
-        var(--width-more) + var(--width-opt-out) + var(--table-columns-padding) *
+        var(--width-icon) + var(--width-opt-out) + var(--table-columns-padding) *
           2.5 + var(--input-padding) / 2
       );
       padding-top: var(--table-gap);

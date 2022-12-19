@@ -88,6 +88,7 @@ const userOptions = computed(() => {
 
 <template>
   <div
+    class="overview__row" :class="{ row__open: isOpen }"
     v-bind="$attrs"
     @click="
       detailsStore.setDetails({
@@ -100,147 +101,150 @@ const userOptions = computed(() => {
       })
     "
   >
-    <div class="row" :class="{ row__open: isOpen }">
-      <div>
-        <Icon
-          @click="isOpen = !isOpen"
-          icon="icon-chevron"
-          class="row__icon"
-          :class="{ row__icon__open: isOpen }"
-        />
-      </div>
-      <div>
-        <span @click="globalStore.scrollToEpic($route.params.id, id)">
-          {{ name }}
-        </span>
-      </div>
-      <div>
-        {{
-          numberDotSeperator(totalRealisticHours.toFixed(2).replace(".", ","))
-        }}
-      </div>
-      <div>
-        {{
-          numberDotSeperator(totalRealisticPrice.toFixed(2).replace(".", ","))
-        }}
-      </div>
-      <div>
-        {{
-          numberDotSeperator(totalPessimisticHours.toFixed(2).replace(".", ","))
-        }}
-      </div>
-      <div>
-        {{
-          numberDotSeperator(totalPessimisticPrice.toFixed(2).replace(".", ","))
-        }}
-      </div>
-      <div>{{ optOuts }}</div>
-      <div>
-        <Input
-          class="input__select--task"
-          type="select"
-          :placeholder="
-            status.epicStatusName ? status.epicStatusName : 'Vælg status'
-          "
-          :options="epicStatusOptions"
-          emit="updateEpicStatus"
-          @updateEpicStatus="handleUpdateEpicStatus"
-        />
-      </div>
-      <div>
-        <Input
-          class="input__select--task"
-          type="select"
-          :placeholder="
-            userId ? `${user.firstName} ${user.lastName}` : 'Vælg ansvarsperson'
-          "
-          :options="userOptions"
-          emit="updateEpicUserId"
-          @updateEpicUserId="handleUpdateEpicUserId"
-        />
-      </div>
-      <div></div>
+    <div class="overview__col">
+      <Icon
+        @click="isOpen = !isOpen"
+        icon="icon-chevron"
+        class="overview__icon"
+        :class="{ 'overview__icon--open': isOpen }"
+      />
     </div>
+    <div>
+      <span @click="globalStore.scrollToEpic($route.params.id, id)">
+        {{ name }}
+      </span>
+    </div>
+    <div>
+      {{
+        numberDotSeperator(totalRealisticHours.toFixed(2).replace(".", ","))
+      }}
+    </div>
+    <div>
+      {{
+        numberDotSeperator(totalRealisticPrice.toFixed(2).replace(".", ","))
+      }}
+    </div>
+    <div>
+      {{
+        numberDotSeperator(totalPessimisticHours.toFixed(2).replace(".", ","))
+      }}
+    </div>
+    <div>
+      {{
+        numberDotSeperator(totalPessimisticPrice.toFixed(2).replace(".", ","))
+      }}
+    </div>
+    <div>{{ optOuts }}</div>
+    <div>
+      <Input
+        class="input__select--task"
+        type="select"
+        :placeholder="
+          status.epicStatusName ? status.epicStatusName : 'Vælg status'
+        "
+        :options="epicStatusOptions"
+        emit="updateEpicStatus"
+        @updateEpicStatus="handleUpdateEpicStatus"
+      />
+    </div>
+    <div>
+      <Input
+        class="input__select--task"
+        type="select"
+        :placeholder="
+          userId ? `${user.firstName} ${user.lastName}` : 'Vælg ansvarsperson'
+        "
+        :options="userOptions"
+        emit="updateEpicUserId"
+        @updateEpicUserId="handleUpdateEpicUserId"
+      />
+    </div>
+    <div></div>
+  </div>
 
-    <div v-for="role in roles" class="row__details" v-show="isOpen">
-      <div>{{ role.roleName }}</div>
-      <div>
-        {{ role.id > 0 ? numberDotSeperator(role.hourlyWage) : "0" }}
-        kr./t
-      </div>
-      <div>
-        {{
-          numberDotSeperator(
-            role.totalRealisticHours?.toFixed(2).replace(".", ",")
-          )
-        }}
-      </div>
-      <div>
-        {{
-          role.id > 0
-            ? numberDotSeperator(
-                role.totalRealisticPrice?.toFixed(2).replace(".", ",")
-              )
-            : "0,00"
-        }}
-      </div>
-      <div>
-        {{
-          numberDotSeperator(
-            role.totalPessimisticHours?.toFixed(2).replace(".", ",")
-          )
-        }}
-      </div>
-      <div>
-        {{
-          role.id > 0
-            ? numberDotSeperator(
-                role.totalPessimisticPrice?.toFixed(2).replace(".", ",")
-              )
-            : "0,00"
-        }}
-      </div>
-      <div>
-        {{ role.optOuts }}
-      </div>
+  <div v-for="role in roles" class="row__details" v-show="isOpen">
+    <div>{{ role.roleName }}</div>
+    <div>
+      {{ role.id > 0 ? numberDotSeperator(role.hourlyWage) : "0" }}
+      kr./t
+    </div>
+    <div>
+      {{
+        numberDotSeperator(
+          role.totalRealisticHours?.toFixed(2).replace(".", ",")
+        )
+      }}
+    </div>
+    <div>
+      {{
+        role.id > 0
+          ? numberDotSeperator(
+              role.totalRealisticPrice?.toFixed(2).replace(".", ",")
+            )
+          : "0,00"
+      }}
+    </div>
+    <div>
+      {{
+        numberDotSeperator(
+          role.totalPessimisticHours?.toFixed(2).replace(".", ",")
+        )
+      }}
+    </div>
+    <div>
+      {{
+        role.id > 0
+          ? numberDotSeperator(
+              role.totalPessimisticPrice?.toFixed(2).replace(".", ",")
+            )
+          : "0,00"
+      }}
+    </div>
+    <div>
+      {{ role.optOuts }}
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.row {
-  background: #fff;
-  align-items: center;
-  padding: 16px 8px;
-  display: grid;
-  grid-template-columns: var(--table-columns-overview);
-  user-select: none;
 
-  span {
-    cursor: pointer;
-  }
+.overview {
+  &__row {
+    background: #fff;
+    align-items: center;
+    padding: 16px 8px;
+    display: grid;
+    grid-template-columns: var(--table-columns-overview);
+    user-select: none;
 
-  &__icon {
-    height: 15px;
-    width: 15px;
-    margin: 0 auto;
-    display: block;
-    cursor: pointer;
+    span {
+      cursor: pointer;
+    }
 
-    &__open {
-      rotate: 180deg;
+
+    &__details {
+      background: #444;
+      color: #fff;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 60px 100px 108px 150px 150px 150px 125px 150px auto auto;
+
+      > div:first-child {
+        grid-column-start: 2;
+      }
     }
   }
 
-  &__details {
-    background: #444;
-    color: #fff;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 60px 100px 108px 150px 150px 150px 125px 150px auto auto;
+  &__col {
+    padding: var(--table-columns-padding);
+  }
+  &__icon {
+    height: var(--width-icon);
+    width: var(--width-icon);
+    cursor: pointer;
 
-    > div:first-child {
-      grid-column-start: 2;
+    &--open {
+      rotate: 180deg;
     }
   }
 }
