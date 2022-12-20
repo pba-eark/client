@@ -70,10 +70,11 @@ const handleSubmit = async () => {
     if (customerSelection.selected.id) {
       postData.sheet.customerId = customerSelection.selected.id;
     } else {
-      const res = await customerStore.createCustomer(
+      const newCustomer = await customerStore.createCustomer(
         customerSelection.selected
       );
-      if (!res)
+
+      if (!newCustomer)
         return $swal.fire({
           icon: "error",
           title: "Ups! Der skete en fejl.",

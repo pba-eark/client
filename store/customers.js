@@ -53,6 +53,7 @@ export const useCustomerStore = defineStore("customer-store", () => {
       );
 
       customers.value = [...customers.value, response];
+      return response;
     } catch (e) {
       console.log("Error", e);
       if (e.toString().includes("FetchError: 401"))
