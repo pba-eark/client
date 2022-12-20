@@ -351,16 +351,48 @@ const currentSheetStatus = computed(() => {
 
     <div class="table">
       <div class="table__header">
-        <div></div>
-        <div>Epic</div>
-        <div>Timer</div>
-        <div>Pris DKK</div>
-        <div>Timer</div>
-        <div>Pris DKK</div>
-        <div>Fravalgt</div>
-        <div>Status</div>
-        <div>Ansvarlig</div>
-        <div>Usikkerhed</div>
+        <div class="table__col">
+          <div class="table__heading--details"></div>
+        </div>
+
+        <div class="table__col">
+          <span class="table__heading--name"> Epic navn </span>
+        </div>
+
+        <div class="table__header--realistic">
+          <div class="table__col">
+            <span class="table__heading--hours"> Timer </span>
+          </div>
+          <div class="table__col">
+            <span class="table__heading--price"> Pris DKK </span>
+          </div>
+        </div>
+
+        <div class="table__header--pessimistic">
+          <div class="table__col">
+            <span class="table__heading--hours"> Timer </span>
+          </div>
+          <div class="table__col">
+            <span class="table__heading--price"> Pris DKK </span>
+          </div>
+        </div>
+
+        <div class="table__col">
+          <span class="table__heading--opt-out"> Fravalgt </span>
+        </div>
+
+        <div class="table__col">
+          <span class="table__heading--status"> Status </span>
+        </div>
+
+        <div class="table__col">
+          <span class="table__heading--responsible"> Ansvarlig </span>
+        </div>
+
+        <div class="table__col">
+          <span class="table__heading--insecurity"> Usikkerhed </span>
+        </div>
+
       </div>
 
       <OverviewEpic
@@ -422,10 +454,95 @@ const currentSheetStatus = computed(() => {
 
 <style lang="scss" scoped>
 .table {
+  display: grid;
+  gap: var(--table-gap);
+
+  &__col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--table-columns-padding);
+  }
+
   &__header {
     width: 100%;
     display: grid;
-    grid-template-columns: 50px 200px 150px 150px 150px 150px 125px 150px auto auto;
+    grid-template-columns: var(--table-columns-overview);
+    color: var(--font-color-primary);
+    font-weight: 600;
+    padding-right: calc(var(--width-icon) + var(--table-columns-padding) / 2 + var(--input-padding) / 2);
+
+    span {
+      display: block;
+    }
+    &--realistic,
+    &--pessimistic {
+      display: flex;
+      grid-column: span 2;
+      position: relative;
+    }
+    &--realistic {
+      &::before {
+        content: "Realistisk";
+        position: absolute;
+        bottom: 45px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        opacity: 0.5;
+      }
+    }
+    &--pessimistic {
+      &::before {
+        content: "Pessimistisk";
+        position: absolute;
+        bottom: 45px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &__heading,
+  &__sum {
+    &--details {
+      width: calc(var(--width-icon) + var(--table-columns-padding) * 12);
+    }
+    &--name  {
+      width: 100%;
+      padding-left: var(--input-padding);
+    }
+    &--hours {
+      width: var(--width-hours-overview);
+      text-align: right;
+      margin: var(--input-padding);
+    }
+    &--price {
+      width: var(--width-price-overview);
+      text-align: right;
+      margin: var(--input-padding);
+    }
+    &--opt-out {
+      width: var(--width-opt-out);
+      text-align: center;
+      margin: var(--input-padding);
+    }
+    &--status {
+      width: var(--width-status-overview);
+      padding-left: var(--input-padding);
+    }
+    &--responsible {
+      width: var(--width-responsible-overview);
+      padding-left: var(--input-padding);
+    }
+    &--insecurity {
+      width: var(--width-insecurity-overview);
+      text-align: center;
+      margin: var(--input-padding);
+    }
   }
 }
+
 </style>

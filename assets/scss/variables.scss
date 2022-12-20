@@ -9,7 +9,9 @@
   --color-tabs: #393939;
 
   --color-realistic: #3db59e;
+  --color-realistic-dark: #3B9584;
   --color-pessimistic: #3d94b5;
+  --color-pessimistic-dark: #3B7D95;
   --color-disabled: #c85d5d;
 
   --font-color-primary: #000;
@@ -38,9 +40,9 @@
   --width-icon: 20px;
 
   // Widths for overview table columns
-  --width-hours-overview: 45px;
-  --width-price-overview: 75px;
-  --width-status-overview: 100px;
-  --width-responsible-overview: 200px;
-  --width-insecurity-overview: 100px;
+  --width-hours-overview: 65px;
+  --width-price-overview: 95px;
+  --width-status-overview: 120px;
+  --width-responsible-overview: 180px;
+  --width-insecurity-overview: 80px;
 }
