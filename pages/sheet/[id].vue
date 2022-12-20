@@ -3,13 +3,16 @@ import { useEstimateSheetStore } from "~/store/estimateSheets";
 import { useEpicStore } from "~/store/epics";
 import { useTabsStore } from "~/store/tabs";
 import { useTaskStore } from "~/store/tasks";
+import { useEpicStatusStore } from "~/store/epicStatus";
 
 const sheetStore = useEstimateSheetStore();
 const epicStore = useEpicStore();
 const tabStore = useTabsStore();
 const taskStore = useTaskStore();
+const epicStatusStore = useEpicStatusStore();
 const route = useRoute();
 const sheetElement = ref(null);
+const { $swal } = useNuxtApp();
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);
@@ -69,15 +72,46 @@ const handleClick = (e) => {
 };
 
 const handleCreateEpic = async () => {
+  const firstDefaultEpicStatus = epicStatusStore.EPIC_STATUS.filter(
+    (status) => {
+      return status.default;
+    }
+  )[0];
+
+  if (!firstDefaultEpicStatus)
+    return $swal.fire(
+      "Der skete en fejl.",
+      "Der findes endnu ingen epic status. Opret en epic status og prøv igen.",
+      "warning"
+    );
+
   const obj = {
     epicName: "Ny Epic",
     estimateSheetId: parseInt(route.params.id),
-    epicStatusId: 1,
+    epicStatusId: firstDefaultEpicStatus.id,
   };
 
   const newEpic = await epicStore.createEpic(obj);
 
-  if (!newEpic) return alert("An error occured while creating the epic!");
+  if (!newEpic)
+    return $swal.fire(
+      "Ups! Der skete en fejl.",
+      "Epic blev ikke oprettet.",
+      "error"
+    );
+
+  const firstGlobalRiskProfile = riskProfileStore.RISK_PROFILES.filter(
+    (profile) => {
+      return profile;
+    }
+  )[0];
+
+  if (!firstGlobalRiskProfile)
+    return $swal.fire(
+      "Der skete en fejl.",
+      "Der findes endnu ingen globale risikoprofiler. Opret en global risikoprofil og prøv igen.",
+      "warning"
+    );
 
   const newTask = {
     parentId: 0,
@@ -88,7 +122,7 @@ const handleCreateEpic = async () => {
     taskDescription: "Beskrivelse...",
     epicId: newEpic.id,
     roleId: 0,
-    riskProfileId: 1,
+    riskProfileId: firstGlobalRiskProfile.id,
   };
 
   await taskStore.createTask(newTask);

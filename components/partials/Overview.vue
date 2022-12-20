@@ -19,6 +19,7 @@ const detailsStore = useDetailsStore();
 const sheetStatusStore = useSheetStatusStore();
 const sheetStore = useEstimateSheetStore();
 
+const { $swal } = useNuxtApp();
 const route = useRoute();
 const epics = ref([]);
 
@@ -288,15 +289,46 @@ const calculateOverview = () => {
 };
 
 const handleCreateEpic = async () => {
+  const firstDefaultEpicStatus = epicStatusStore.EPIC_STATUS.filter(
+    (status) => {
+      return status.default;
+    }
+  )[0];
+
+  if (!firstDefaultEpicStatus)
+    return $swal.fire(
+      "Der skete en fejl.",
+      "Der findes endnu ingen epic status. Opret en epic status og prøv igen.",
+      "warning"
+    );
+
   const obj = {
     epicName: "Ny Epic",
     estimateSheetId: parseInt(route.params.id),
-    epicStatusId: 1,
+    epicStatusId: firstDefaultEpicStatus.id,
   };
 
   const newEpic = await epicStore.createEpic(obj);
 
-  if (!newEpic) return alert("An error occured while creating the epic!");
+  if (!newEpic)
+    return $swal.fire(
+      "Ups! Der skete en fejl.",
+      "Epic blev ikke oprettet.",
+      "error"
+    );
+
+  const firstGlobalRiskProfile = riskProfileStore.RISK_PROFILES.filter(
+    (profile) => {
+      return profile;
+    }
+  )[0];
+
+  if (!firstGlobalRiskProfile)
+    return $swal.fire(
+      "Der skete en fejl.",
+      "Der findes endnu ingen globale risikoprofiler. Opret en global risikoprofil og prøv igen.",
+      "warning"
+    );
 
   const newTask = {
     parentId: 0,
@@ -307,7 +339,7 @@ const handleCreateEpic = async () => {
     taskDescription: "Beskrivelse...",
     epicId: newEpic.id,
     roleId: 0,
-    riskProfileId: 1,
+    riskProfileId: firstGlobalRiskProfile.id,
   };
 
   await taskStore.createTask(newTask);
@@ -392,7 +424,6 @@ const currentSheetStatus = computed(() => {
         <div class="table__col">
           <span class="table__heading--insecurity"> Usikkerhed </span>
         </div>
-
       </div>
 
       <OverviewEpic
@@ -470,7 +501,10 @@ const currentSheetStatus = computed(() => {
     grid-template-columns: var(--table-columns-overview);
     color: var(--font-color-primary);
     font-weight: 600;
-    padding-right: calc(var(--width-icon) + var(--table-columns-padding) / 2 + var(--input-padding) / 2);
+    padding-right: calc(
+      var(--width-icon) + var(--table-columns-padding) / 2 +
+        var(--input-padding) / 2
+    );
 
     span {
       display: block;
@@ -510,7 +544,7 @@ const currentSheetStatus = computed(() => {
     &--details {
       width: calc(var(--width-icon) + var(--table-columns-padding) * 12);
     }
-    &--name  {
+    &--name {
       width: 100%;
       padding-left: var(--input-padding);
     }
@@ -544,5 +578,4 @@ const currentSheetStatus = computed(() => {
     }
   }
 }
-
 </style>
