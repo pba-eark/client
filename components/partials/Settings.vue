@@ -471,15 +471,91 @@ getEpicStatus();
 </script>
 
 <template>
-  <div>
-    <Button
-      v-if="onSheet"
-      text="Lokale Indstillinger"
-      @Click="localSettingsTab = true"
-    />
-    <Button text="Globale Indstillinger" @Click="localSettingsTab = false" />
+  <div class="settings">
+    
+    <div class="settings__nav">
+      <Button 
+        class="settings__nav-tab" 
+        text="Globale" 
+        @Click="localSettingsTab = false" 
+      />
 
-    <div v-if="localSettingsTab && onSheet">
+      <Button
+        v-if="onSheet"
+        class="settings__nav-tab"
+        text="For ark"
+        @Click="localSettingsTab = true"
+      />
+    </div>
+
+    <div v-if="!localSettingsTab" class="settings__main">
+
+      <h3>Risikoprofiler</h3>
+      <GlobalSettings
+        v-for="profile in masterGlobals" :key="profile.id"
+        class="settings__setting"
+        :data="profile"
+        :renderForm="'riskProfile'"
+        @delete="handleDeleteGlobalProfile"
+        @update="handleUpdateGlobalProfile"
+      />
+      <Button
+        class="new-setting"
+        text="Tilføj risikoprofil"
+        icon="icon-plus"
+        @click="handleCreateGlobalProfile"
+      />
+
+      <h3>Roller</h3>
+      <GlobalSettings
+        v-for="role in globalMasterRoles" :key="role.id"
+        class="settings__setting"
+        :data="role"
+        :renderForm="'role'"
+        @delete="handleDeleteGlobalRole"
+        @update="handleUpdateGlobalRole"
+      />
+      <Button
+        class="new-setting"
+        text="Tilføj rolle"
+        icon="icon-plus"
+        @click="handleCreateGlobalRole"
+      />
+
+      <h3>Sheet Status</h3>
+      <GlobalSettings
+        v-for="status in globalMasterSheetStatus" :key="status.id"
+        class="settings__setting" 
+        :data="status"
+        :renderForm="'sheetStatus'"
+        @delete="handleDeleteGlobalSheetStatus"
+        @update="handleUpdateGlobalSheetStatus"
+      />
+      <Button
+        class="new-setting"
+        text="Tilføj status"
+        icon="icon-plus"
+        @click="handleCreateGlobalSheetStatus"
+      />
+
+      <h3>Epic Status</h3>
+      <GlobalSettings
+        v-for="status in globalMasterEpicStatus" :key="status.id"
+        class="settings__setting" 
+        :data="status"
+        :renderForm="'epicStatus'"
+        @delete="handleDeleteGlobalEpicStatus"
+        @update="handleUpdateGlobalEpicStatus"
+      />
+      <Button
+        class="new-setting"
+        text="Tilføj rolle"
+        icon="icon-plus"
+        @click="handleCreateGlobalEpicStatus"
+      />
+    </div>
+
+    <div v-if="localSettingsTab && onSheet" class="settings__main">
       <h2>Lokal</h2>
 
       <h3>Risikoprofiler</h3>
@@ -487,13 +563,13 @@ getEpicStatus();
         <LocalGlobalSettings :data="riskProfile" :renderForm="'riskProfile'" />
       </div>
       <p>-----------------------------</p>
-      <div v-for="riskProfile in sheetProfiles" :key="riskProfile.id">
-        <LocalSettings
-          :data="riskProfile"
-          :renderForm="'riskProfile'"
-          @delete="handleDeleteLocalProfile"
-        />
-      </div>
+      <LocalSettings
+        v-for="riskProfile in sheetProfiles" :key="riskProfile.id"
+        class="settings__setting" 
+        :data="riskProfile"
+        :renderForm="'riskProfile'"
+        @delete="handleDeleteLocalProfile"
+      />
       <Button text="Ny Profile" @Click="handleCreateLocalProfile" />
 
       <h3>Roller</h3>
@@ -501,62 +577,45 @@ getEpicStatus();
         <LocalGlobalSettings :data="role" :renderForm="'role'" />
       </div>
       <p>-----------------------------</p>
-      <div v-for="role in sheetRoles" :key="role.id">
-        <LocalSettings
-          :data="role"
-          :renderForm="'role'"
-          @delete="handleDeleteLocalRole"
-        />
-      </div>
+      <LocalSettings
+        v-for="role in sheetRoles" :key="role.id"
+        class="settings__setting" 
+        :data="role"
+        :renderForm="'role'"
+        @delete="handleDeleteLocalRole"
+      />
       <Button text="Ny Role" @Click="handleCreateLocalRole" />
-    </div>
-
-    <div v-if="!localSettingsTab">
-      <h2>Global</h2>
-
-      <h3>Risikoprofiler</h3>
-      <div v-for="profile in masterGlobals" :key="profile.id">
-        <GlobalSettings
-          :data="profile"
-          :renderForm="'riskProfile'"
-          @delete="handleDeleteGlobalProfile"
-          @update="handleUpdateGlobalProfile"
-        />
-      </div>
-      <Button text="Ny Profile" @Click="handleCreateGlobalProfile" />
-
-      <h3>Roller</h3>
-      <div v-for="role in globalMasterRoles" :key="role.id">
-        <GlobalSettings
-          :data="role"
-          :renderForm="'role'"
-          @delete="handleDeleteGlobalRole"
-          @update="handleUpdateGlobalRole"
-        />
-      </div>
-      <Button text="Ny Rolle" @Click="handleCreateGlobalRole" />
-
-      <h3>Sheet Status</h3>
-      <div v-for="status in globalMasterSheetStatus" :key="status.id">
-        <GlobalSettings
-          :data="status"
-          :renderForm="'sheetStatus'"
-          @delete="handleDeleteGlobalSheetStatus"
-          @update="handleUpdateGlobalSheetStatus"
-        />
-      </div>
-      <Button text="Ny Sheet Status" @Click="handleCreateGlobalSheetStatus" />
-
-      <h3>Epic Status</h3>
-      <div v-for="status in globalMasterEpicStatus" :key="status.id">
-        <GlobalSettings
-          :data="status"
-          :renderForm="'epicStatus'"
-          @delete="handleDeleteGlobalEpicStatus"
-          @update="handleUpdateGlobalEpicStatus"
-        />
-      </div>
-      <Button text="Ny Epic Status" @Click="handleCreateGlobalEpicStatus" />
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+
+.settings {
+  &__nav {
+    display: flex;
+
+    &-tab {
+
+      &--active {
+
+      }
+    }
+  }
+
+  &__main {
+
+  }
+
+  &__setting {
+    margin-bottom: 5px;
+  }
+
+  h3 {
+    margin-top: 20px;
+    margin-bottom: 5px;
+  }
+}
+
+
+</style>

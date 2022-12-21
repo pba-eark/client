@@ -64,12 +64,40 @@ svg {
       background-color: #d8d8d8;
     }
   }
+
+  &-setting {
+    border: none;
+    border-radius: 3px;
+    background-color: transparent;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: var(--input-padding);
+
+    svg {
+      margin-left: 10px;
+    }
+
+    &:hover {
+      background-color: var(--color-task-input);
+    }
+
+  }
 }
 .edit {
   &-epic {
     border: none;
     background-color: transparent;
     margin-left: 10px;
+
+    &:hover {
+      scale: 1.1;
+    }
+  }
+  &-setting {
+    border: none;
+    background-color: transparent;
+    width: fit-content;
+    padding: 6px;
 
     &:hover {
       scale: 1.1;
