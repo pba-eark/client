@@ -48,16 +48,6 @@ const doneSheets = computed(() => {
   <div class="block">
     <h1>Dashboard</h1>
 
-    <div class="block__charts">
-      <div class="block__charts--customers">
-        <h1>Kunder</h1>
-        <NuxtLink to="/">Redigér kunder</NuxtLink>
-        <div class="chart">
-          <PieChart />
-        </div>
-      </div>
-    </div>
-
     <div class="block__dashboard">
       <div class="dashboard__item">
         <h2>Mine estimatark</h2>
@@ -90,6 +80,16 @@ const doneSheets = computed(() => {
         </ul>
       </div>
     </div>
+
+    <!-- <div class="block__charts">
+      <div class="block__charts--customers">
+        <h1>Kunder</h1>
+        <NuxtLink to="/">Redigér kunder</NuxtLink>
+        <div class="chart">
+          <PieChart />
+        </div>
+      </div>
+    </div> -->
   </div>
 </template>
 
