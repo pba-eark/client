@@ -248,7 +248,9 @@ const calculateOverview = () => {
         datasets.pessimisticHours.data[index] += totalPessimisticHours;
         datasets.pessimisticPrice.data[index] += totalPessimisticPrice;
       } else {
-        const color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+        const color = `#${((Math.random() * 0xffffff) << 0)
+          .toString(16)
+          .padStart(6, "0")}`;
         labels.push(role.roleName);
 
         datasets.realisticHours.backgroundColor.push(color);
