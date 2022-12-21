@@ -19,6 +19,7 @@
     "pinia": "^2.0.23",
     "sass": "^1.56.1",
     "vue-chartjs": "^5.0.1",
-    "vue-sweetalert2": "^5.0.5"
+    "vue-sweetalert2": "^5.0.5",
+    "vue3-lottie": "^2.4.0"
   }
 }

@@ -73,7 +73,8 @@ const getCustomerName = ({ customerId }) => {
         >
           <div>
             <span class="name">{{ tabStore.TEMP_TAB.sheetName }}</span>
-            <br /><small class="small">
+            <br />
+            <small class="small">
               {{ getCustomerName(tabStore.TEMP_TAB) || "Mangler kunde" }}
             </small>
           </div>
@@ -97,9 +98,10 @@ const getCustomerName = ({ customerId }) => {
         >
           <div>
             <span class="name">{{ tab.sheetName }}</span>
-            <br /><small class="small">{{
-              getCustomerName(tab) || "Mangler kunde"
-            }}</small>
+            <br />
+            <small class="small">
+              {{ getCustomerName(tab) || "Mangler kunde" }}
+            </small>
           </div>
           <Icon
             icon="icon-cross"

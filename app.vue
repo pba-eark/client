@@ -65,4 +65,6 @@ if (process.client) {
       <LazyNuxtPage />
     </NuxtLayout>
   </div>
+
+  <LoadSpinner v-else />
 </template>
