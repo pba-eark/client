@@ -343,7 +343,7 @@ const chartOptions = computed(() => {
           icon="icon-profile"
           @click="isProfileDropdownToggled = !isProfileDropdownToggled"
         />
-        <!-- Profile dropdown -->handleShowSettings
+        <!-- Profile dropdown -->
         <div
           v-show="isProfileDropdownToggled"
           ref="profileDropdown"
