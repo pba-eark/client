@@ -25,22 +25,18 @@ const epics = ref([]);
 
 const labels = reactive([]);
 const datasets = reactive({
-  /* Realistic hrs */
   realisticHours: {
     backgroundColor: [],
     data: [],
   },
-  /* Realistic price */
   realisticPrice: {
     backgroundColor: [],
     data: [],
   },
-  /* Pessimistic hrs */
   pessimisticHours: {
     backgroundColor: [],
     data: [],
   },
-  /* Pessimistic hrs */
   pessimisticPrice: {
     backgroundColor: [],
     data: [],
@@ -218,7 +214,8 @@ const calculateOverview = () => {
     epic.roles.forEach((role) => {
       for (let i = 0; i < epicTasks.length; i++) {
         if (role.id == epicTasks[i].roleId) {
-          role.tasks.push(epicTasks[i]);
+          if (!role.tasks.some((task) => task.id === epicTasks[i].id))
+            role.tasks.push(epicTasks[i]);
         }
       }
     });
@@ -264,6 +261,7 @@ const calculateOverview = () => {
         datasets.pessimisticPrice.data.push(totalPessimisticPrice);
       }
     });
+    /* Chart js data structure */
     // data = {
     //   labels: ["VueJs", "EmberJs", "ReactJs", "AngularJs"],
     //   datasets: [
@@ -284,8 +282,6 @@ const calculateOverview = () => {
   });
 
   detailsStore.setDetailsChart({ labels, datasets });
-  // console.log("labels", labels);
-  // console.log("datasets", datasets);
 };
 
 const handleCreateEpic = async () => {

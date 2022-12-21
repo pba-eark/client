@@ -81,8 +81,7 @@ const handleSubmit = async () => {
           text: `Estimat blev ikke oprettet.`,
         });
 
-      postData.sheet.customerId =
-        customerStore.CUSTOMERS[customerStore.CUSTOMERS.length - 1].id;
+      postData.sheet.customerId = newCustomer.id;
     }
   }
 

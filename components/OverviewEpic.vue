@@ -89,7 +89,8 @@ const userOptions = computed(() => {
 <template>
   <div class="overview">
     <div
-      class="overview__row" :class="{ row__open: isOpen }"
+      class="overview__row"
+      :class="{ row__open: isOpen }"
       v-bind="$attrs"
       @click="
         detailsStore.setDetails({
@@ -112,7 +113,10 @@ const userOptions = computed(() => {
       </div>
 
       <div class="overview__col overview__col--name">
-        <span class="overview__name" @click="globalStore.scrollToEpic($route.params.id, id)">
+        <span
+          class="overview__name"
+          @click="globalStore.scrollToEpic($route.params.id, id)"
+        >
           {{ name }}
         </span>
       </div>
@@ -120,12 +124,20 @@ const userOptions = computed(() => {
       <div class="overview--realistic">
         <div class="overview__col">
           <span class="overview__hours">
-            {{ numberDotSeperator(totalRealisticHours.toFixed(2).replace(".", ",")) }}
+            {{
+              numberDotSeperator(
+                totalRealisticHours.toFixed(2).replace(".", ",")
+              )
+            }}
           </span>
         </div>
         <div class="overview__col">
           <span class="overview__price">
-            {{ numberDotSeperator(totalRealisticPrice.toFixed(2).replace(".", ",")) }}
+            {{
+              numberDotSeperator(
+                totalRealisticPrice.toFixed(2).replace(".", ",")
+              )
+            }}
           </span>
         </div>
       </div>
@@ -133,12 +145,20 @@ const userOptions = computed(() => {
       <div class="overview--pessimistic">
         <div class="overview__col">
           <span class="overview__hours">
-            {{ numberDotSeperator(totalPessimisticHours.toFixed(2).replace(".", ",")) }}
+            {{
+              numberDotSeperator(
+                totalPessimisticHours.toFixed(2).replace(".", ",")
+              )
+            }}
           </span>
         </div>
         <div class="overview__col">
           <span class="overview__price">
-            {{ numberDotSeperator(totalPessimisticPrice.toFixed(2).replace(".", ",")) }}
+            {{
+              numberDotSeperator(
+                totalPessimisticPrice.toFixed(2).replace(".", ",")
+              )
+            }}
           </span>
         </div>
       </div>
@@ -176,20 +196,16 @@ const userOptions = computed(() => {
       </div>
 
       <div class="overview__col">
-        <span class="overview__insecurity">
-          0%
-        </span>
+        <span class="overview__insecurity"> 0% </span>
       </div>
 
       <div class="overview__col overview__col--more">
         <Icon icon="icon-dots" class="overview__icon" />
       </div>
-
     </div>
 
     <div class="overview__details" v-show="isOpen">
       <div v-for="role in roles" class="overview__details-row">
-
         <div class="overview__role">
           <div class="overview__col">
             <span class="overview__role-name">
@@ -198,7 +214,8 @@ const userOptions = computed(() => {
           </div>
           <div class="overview__col">
             <span class="overview__role-price">
-              {{ role.id > 0 ? numberDotSeperator(role.hourlyWage) : "0" }} kr./t
+              {{ role.id > 0 ? numberDotSeperator(role.hourlyWage) : "0" }}
+              kr./t
             </span>
           </div>
         </div>
@@ -206,12 +223,22 @@ const userOptions = computed(() => {
         <div class="overview--realistic overview__details--realistic">
           <div class="overview__col">
             <span class="overview__hours">
-              {{ numberDotSeperator(role.totalRealisticHours?.toFixed(2).replace(".", ",")) }}
+              {{
+                numberDotSeperator(
+                  role.totalRealisticHours?.toFixed(2).replace(".", ",")
+                )
+              }}
             </span>
           </div>
           <div class="overview__col">
             <span class="overview__price">
-              {{ role.id > 0 ? numberDotSeperator(role.totalRealisticPrice?.toFixed(2).replace(".", ",")) : "0,00" }}
+              {{
+                role.id > 0
+                  ? numberDotSeperator(
+                      role.totalRealisticPrice?.toFixed(2).replace(".", ",")
+                    )
+                  : "0,00"
+              }}
             </span>
           </div>
         </div>
@@ -219,12 +246,22 @@ const userOptions = computed(() => {
         <div class="overview--pessimistic overview__details--pessimistic">
           <div class="overview__col">
             <span class="overview__hours">
-              {{ numberDotSeperator(role.totalPessimisticHours?.toFixed(2).replace(".", ",")) }}
+              {{
+                numberDotSeperator(
+                  role.totalPessimisticHours?.toFixed(2).replace(".", ",")
+                )
+              }}
             </span>
           </div>
           <div class="overview__col">
             <span class="overview__price">
-              {{ role.id > 0 ? numberDotSeperator(role.totalPessimisticPrice?.toFixed(2).replace(".", ",")) : "0,00" }}
+              {{
+                role.id > 0
+                  ? numberDotSeperator(
+                      role.totalPessimisticPrice?.toFixed(2).replace(".", ",")
+                    )
+                  : "0,00"
+              }}
             </span>
           </div>
         </div>
@@ -234,14 +271,12 @@ const userOptions = computed(() => {
             {{ role.optOuts }}
           </span>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-
 .overview {
   &__row {
     display: grid;
@@ -266,7 +301,9 @@ const userOptions = computed(() => {
       justify-content: left;
     }
     &--more {
-      padding-right: calc(var(--table-columns-padding) / 2 + var(--input-padding) / 2);
+      padding-right: calc(
+        var(--table-columns-padding) / 2 + var(--input-padding) / 2
+      );
       padding-left: 0;
     }
   }
@@ -299,7 +336,7 @@ const userOptions = computed(() => {
     margin: var(--input-padding);
     font-weight: 600;
     color: var(--color-disabled);
-    }
+  }
   &__insecurity {
     text-align: center;
     width: var(--width-insecurity-overview);
