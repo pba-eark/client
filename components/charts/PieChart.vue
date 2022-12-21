@@ -49,6 +49,11 @@ const roles = computed(() => {
 
   return roles;
 });
+
+const numberDotSeperator = (x) => {
+  if (!x) return "0,00";
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
 </script>
 
 <template>
@@ -60,7 +65,16 @@ const roles = computed(() => {
     <ul class="chart__roles">
       <li v-for="role in roles">
         <b :style="{ color: role.color }">{{ role.name }}</b>
-        <i>{{ `${role.value} ${unit.length ? unit : ""}` }}</i>
+        <i>
+          {{
+            `${
+              !isNaN(role.value)
+                ? numberDotSeperator(role.value.toFixed(2).replace(".", ","))
+                : "0,00"
+            }
+          ${unit.length ? unit : ""}`
+          }}
+        </i>
       </li>
     </ul>
   </div>

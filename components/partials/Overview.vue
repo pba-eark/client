@@ -49,6 +49,7 @@ const totalEpicsPessimisticHours = ref(0);
 const totalEpicsPessimisticPrice = ref(0);
 
 onMounted(() => {
+  detailsStore.setDetails(null);
   calculateOverview();
 });
 
