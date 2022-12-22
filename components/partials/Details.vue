@@ -327,7 +327,6 @@ const chartOptions = computed(() => {
 
 <template>
   <div class="meta" ref="sidebar">
-
     <div class="meta__settings">
       <div class="filter">
         <Icon icon="icon-filter" />
@@ -359,10 +358,7 @@ const chartOptions = computed(() => {
       </div>
     </div>
 
-    <div class="meta__content">
-
-      <Settings v-if="showSettings" :sheetId="parseInt(route.params.id)" />
-
+    <div>
       <!-- Chart -->
       <div
         v-if="
@@ -390,43 +386,34 @@ const chartOptions = computed(() => {
       <div v-if="item.isToggled">
         <div class="meta__header">
           <div class="flex">
-            <h1>Detaljer</h1>
+            <div>
+              <h1>
+                Detaljer -
+                <span>
+                  {{ item.type === "epic" ? "Epic" : "Task" }}
+                </span>
+              </h1>
+            </div>
             <Button text="X" @click="detailsStore.setDetails(null)" />
           </div>
 
           <h2 v-if="item.type === 'epic'">
-            {{ detailsStore.DETAILS.epicName }} - Epic
+            {{ detailsStore.DETAILS.epicName }}
           </h2>
           <h2 v-else>
-            {{ detailsStore.DETAILS.taskName }} - Task ({{
-              detailsStore.DETAILS.id
-            }})
+            {{ detailsStore.DETAILS.taskName }}
           </h2>
         </div>
 
         <div class="meta__body">
-          <Button
-            v-if="item.type === 'epic'"
-            text="Kopiér epic"
-            @click="handleCopyEpic(detailsStore.DETAILS)"
-          />
-          <Button
-            v-if="item.type === 'epic'"
-            text="Paste task"
-            @click="handlePasteTask"
-          />
-          <Button
-            v-if="item.type === 'task'"
-            text="Kopiér task"
-            @click="handleCopyTask(detailsStore.DETAILS)"
-          />
-
+          <Settings v-if="showSettings" :sheetId="parseInt(route.params.id)" />
           <div v-if="item.type === 'epic'">
             <Input
               label="Epic titel"
               :default="detailsStore.DETAILS.epicName"
               emit="updateEpicName"
               @updateEpicName="handleUpdateEpicName"
+              class="input__text--details"
             />
 
             <Input
@@ -435,6 +422,7 @@ const chartOptions = computed(() => {
               :default="detailsStore.DETAILS.comment"
               emit="updateEpicComment"
               @updateEpicComment="handleUpdateEpicComment"
+              class="input__textarea--details"
             />
           </div>
 
@@ -445,6 +433,7 @@ const chartOptions = computed(() => {
               :default="detailsStore.DETAILS.taskDescription"
               emit="updateTaskDescription"
               @updateTaskDescription="handleUpdateTaskDescription"
+              class="input__textarea--details"
             />
           </div>
 
@@ -455,6 +444,7 @@ const chartOptions = computed(() => {
               :default="detailsStore.DETAILS.estimateReasoning"
               emit="updateEstimateReasoning"
               @updateEstimateReasoning="handleUpdateEstimateReasoning"
+              class="input__textarea--details"
             />
           </div>
 
@@ -466,14 +456,38 @@ const chartOptions = computed(() => {
             :options="epicOptions.value"
             emit="updateTaskEpicId"
             @updateTaskEpicId="handleUpdateTaskEpicId"
+            class="input__select--details"
           />
 
+          <!-- Copy epic -->
+          <Button
+            v-if="item.type === 'epic'"
+            text="Kopiér epic"
+            @click="handleCopyEpic(detailsStore.DETAILS)"
+          />
+
+          <!-- Paste task -->
+          <Button
+            v-if="item.type === 'epic'"
+            text="Paste task"
+            @click="handlePasteTask"
+          />
+
+          <!-- Copy task -->
+          <Button
+            v-if="item.type === 'task'"
+            text="Kopiér task"
+            @click="handleCopyTask(detailsStore.DETAILS)"
+          />
+
+          <!-- Delete task -->
           <Button
             v-if="item.type === 'task'"
             text="Slet task"
             @click="handleDeleteTask"
           />
 
+          <!-- Delete epic -->
           <Button
             v-if="item.type === 'epic'"
             text="Slet epic"
@@ -491,14 +505,14 @@ const chartOptions = computed(() => {
   padding: 15px;
   color: var(--font-color-primary);
 
-  &__content {
-    overflow-y: auto;
+  &__body {
     overflow-y: overlay;
+    max-height: calc(100vh - 100px);
 
-      /* width */
+    /* width */
     &::-webkit-scrollbar {
       width: 5px;
-    } 
+    }
     /* Handle */
     &::-webkit-scrollbar-thumb {
       background: var(--color-scrollbar);
