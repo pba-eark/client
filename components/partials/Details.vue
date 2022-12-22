@@ -380,8 +380,6 @@ const chartOptions = computed(() => {
         </ClientOnly>
       </div>
 
-      {{ showSettings }}
-      {{ item.isToggled }}
       <div v-if="item.isToggled">
         <div
           v-if="!showSettings && detailsStore.DETAILS !== null"
@@ -513,7 +511,7 @@ const chartOptions = computed(() => {
   &__body {
     overflow-y: overlay;
     max-height: calc(100vh - 120px);
-    
+
     /* width */
     &::-webkit-scrollbar {
       width: 5px;
