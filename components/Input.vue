@@ -286,12 +286,12 @@ select {
           outline: none;
         }
       }
-      &--details {
-        display: block;
+    }
+    &--details {
+      display: block;
 
-        select {
-          border-radius: 4px;
-        }
+      select {
+        border-radius: 4px;
       }
     }
   }
