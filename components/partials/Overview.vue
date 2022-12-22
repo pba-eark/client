@@ -366,10 +366,11 @@ const currentSheetStatus = computed(() => {
 </script>
 
 <template>
-  <div>
+  <div class="overview">
     <div class="overview__header">
       <h1>Overblik</h1>
       <Input
+        class="input__select--overview-status"
         type="select"
         :placeholder="
           currentSheetStatus?.sheetStatusName
@@ -381,49 +382,47 @@ const currentSheetStatus = computed(() => {
         @updateSheetStatusId="handleUpdateSheetStatusId"
       />
 
-      <div class="table">
-        <div class="table__header">
+      <div class="table__header">
+        <div class="table__col">
+          <div class="table__heading--details"></div>
+        </div>
+
+        <div class="table__col">
+          <span class="table__heading--name"> Epic navn </span>
+        </div>
+
+        <div class="table__header--realistic">
           <div class="table__col">
-            <div class="table__heading--details"></div>
+            <span class="table__heading--hours"> Timer </span>
           </div>
-
           <div class="table__col">
-            <span class="table__heading--name"> Epic navn </span>
+            <span class="table__heading--price"> Pris DKK </span>
           </div>
+        </div>
 
-          <div class="table__header--realistic">
-            <div class="table__col">
-              <span class="table__heading--hours"> Timer </span>
-            </div>
-            <div class="table__col">
-              <span class="table__heading--price"> Pris DKK </span>
-            </div>
-          </div>
-
-          <div class="table__header--pessimistic">
-            <div class="table__col">
-              <span class="table__heading--hours"> Timer </span>
-            </div>
-            <div class="table__col">
-              <span class="table__heading--price"> Pris DKK </span>
-            </div>
-          </div>
-
+        <div class="table__header--pessimistic">
           <div class="table__col">
-            <span class="table__heading--opt-out"> Fravalgt </span>
+            <span class="table__heading--hours"> Timer </span>
           </div>
-
           <div class="table__col">
-            <span class="table__heading--status"> Status </span>
+            <span class="table__heading--price"> Pris DKK </span>
           </div>
+        </div>
 
-          <div class="table__col">
-            <span class="table__heading--responsible"> Ansvarlig </span>
-          </div>
+        <div class="table__col">
+          <span class="table__heading--opt-out"> Fravalgt </span>
+        </div>
 
-          <div class="table__col">
-            <span class="table__heading--insecurity"> Usikkerhed </span>
-          </div>
+        <div class="table__col">
+          <span class="table__heading--status"> Status </span>
+        </div>
+
+        <div class="table__col">
+          <span class="table__heading--responsible"> Ansvarlig </span>
+        </div>
+
+        <div class="table__col">
+          <span class="table__heading--insecurity"> Usikkerhed </span>
         </div>
       </div>
     </div>
@@ -449,7 +448,7 @@ const currentSheetStatus = computed(() => {
       />
     </div>
 
-    <div class="table__footer">
+    <div class="table__footer overview__footer">
 
       <div class="table__col table__col--button">
         <Button
@@ -499,14 +498,18 @@ const currentSheetStatus = computed(() => {
 
 <style lang="scss" scoped>
 .overview {
+  h1 {
+    padding-left: 10px;
+  }
   &__header {
-    // padding-top: 20px;
-    // position: sticky;
-    // top: -20px;
-    // background: var(--color-background);
-    // z-index: 1;
+    padding-top: 20px;
+    position: sticky;
+    top: -20px;
+    background: var(--color-background);
+    z-index: 1;
   }
   &__footer {
+    padding-bottom: 20px;
     position: sticky;
     bottom: -20px;
     background: var(--color-background);
@@ -530,11 +533,6 @@ const currentSheetStatus = computed(() => {
   }
 
   &__header {
-    padding-top: 20px;
-    position: sticky;
-    top: -20px;
-    background: var(--color-background);
-    z-index: 1;
     width: 100%;
     display: grid;
     grid-template-columns: var(--table-columns-overview);
@@ -544,6 +542,7 @@ const currentSheetStatus = computed(() => {
       var(--width-icon) + var(--table-columns-padding) / 2 +
         var(--input-padding) / 2
     );
+    padding-top: 15px;
 
     span {
       display: block;
@@ -634,7 +633,8 @@ const currentSheetStatus = computed(() => {
       grid-column: span 2;
       position: relative;
       color: var(--font-color-secondary);
-      font-weight: 800;
+      font-weight: 600;
+      text-decoration: underline;
     }
     &--realistic {
       background-color: var(--color-realistic);

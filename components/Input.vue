@@ -249,6 +249,29 @@ select {
         }
       }
     }
+    &--overview-status {
+      width: 130px;
+      select {
+        width: 100%;
+        border: none;
+        background-color: transparent;
+        border-radius: 3px;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+        font-style: inherit;
+        padding: var(--input-padding);
+
+        &:hover,
+        &:focus-visible {
+          background-color: var(--color-task-input);
+          color: var(--font-color-primary);
+        }
+        &:focus-visible {
+          outline: none;
+        }
+      }
+    }
   }
 
   &__checkbox {
