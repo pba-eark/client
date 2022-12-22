@@ -328,6 +328,16 @@ select {
 
       select {
         border-radius: 4px;
+        background-color: var(--color-background);
+
+        &:hover,
+        &:focus-visible {
+          background-color: var(--color-task-input);
+          color: var(--font-color-primary);
+        }
+        &:focus-visible {
+          outline: none;
+        }
       }
     }
   }

@@ -47,6 +47,16 @@ svg {
   transition: all 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.exit {
+  border: none;
+  background-color: transparent;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
 .new {
   &-epic {
     border: none;

@@ -392,7 +392,7 @@ const chartOptions = computed(() => {
                 </span>
               </h1>
             </div>
-            <Button text="X" @click="detailsStore.setDetails(null)" />
+            <Button class="exit" icon="icon-cross" @click="detailsStore.setDetails(null)" />
           </div>
 
           <h2 v-if="item.type === 'epic'">
@@ -590,8 +590,16 @@ const chartOptions = computed(() => {
   justify-content: space-between;
 }
 
+h1 {
+  font-size: 20px;
+}
+h2 {
+  font-size: 15px;
+}
+
 .input__text--details,
-.input__textarea--details {
+.input__textarea--details,
+.input__select--details {
   margin-top: 20px;
 }
 </style>
