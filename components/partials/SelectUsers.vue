@@ -48,21 +48,49 @@ const handleRemoveSelectedUser = (user) => {
 </script>
 
 <template>
-  <ul v-if="userOptions.selected.length > 0">
-    <li v-for="user in userOptions.selected">
-      {{ `${user.firstName} ${user.lastName}` }}
-      <Button text="X" @click="handleRemoveSelectedUser(user)" />
-    </li>
-  </ul>
-
-  <Input
-    class="input__default"
-    :required="required"
-    type="select"
-    :options="userOptions.available"
-    emit="selectedUser"
-    :label="label"
-    placeholder="Vælg brugere"
-    @selectedUser="handleSelectUser"
-  />
+  <div>
+    <Input
+      class="input__default"
+      :required="required"
+      type="select"
+      :options="userOptions.available"
+      emit="selectedUser"
+      :label="label"
+      placeholder="Vælg brugere"
+      @selectedUser="handleSelectUser"
+    />
+    <ul v-if="userOptions.selected.length > 0">
+      <li v-for="user in userOptions.selected">
+        <Button text="X" @click="handleRemoveSelectedUser(user)" />
+        {{ `${user.firstName} ${user.lastName}` }}
+      </li>
+    </ul>
+  </div>
 </template>
+
+<style lang="scss" scoped>
+div {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+  ul {
+    padding: 15px;
+
+    li {
+      display: flex;
+      width: 100%;
+      margin: 5px 0;
+    }
+  }
+}
+
+button {
+  border: none;
+  background: var(--color-disabled);
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  margin: 0 5px;
+  line-height: 0;
+}
+</style>

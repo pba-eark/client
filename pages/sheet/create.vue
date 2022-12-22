@@ -398,7 +398,7 @@ const validateNewCustomer = computed(() => {
           :class="{ active: selectType.selected === 'empty' }"
           @click="handleSelectEmptySheet"
         >
-          Tomt estimat
+          Ingen skabelon
         </div>
         <div
           :class="{ active: selectType.selected === 'template' }"
@@ -410,7 +410,7 @@ const validateNewCustomer = computed(() => {
           :class="{ active: selectType.selected === 'copy' }"
           @click="handleSelectCopySheet"
         >
-          Kopiér estimat
+          Kopiér estimat ark
         </div>
       </div>
 
@@ -421,7 +421,7 @@ const validateNewCustomer = computed(() => {
 
       <!-- Copy existing estimate sheet -->
       <div class="copy" v-show="selectType.selected === 'copy'">
-        <h3>Kopiér eksisterende estimat:</h3>
+        <h3>Vælg estimat at kopiére fra:</h3>
         <ul class="copy__customers">
           <li class="copy__customer" v-for="customer in customers">
             <b>{{ customer.customerName }}</b>
@@ -445,7 +445,7 @@ const validateNewCustomer = computed(() => {
           </li>
           <Button
             v-show="copyFromCustomer !== null"
-            text="Fjern valgt estimat"
+            text="Nulstil"
             @click="handleClearCopyCustomer"
           />
         </ul>
