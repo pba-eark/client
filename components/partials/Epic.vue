@@ -405,7 +405,7 @@ const tasksForEpic = computed(() => {
   }
 
   &__header {
-    padding-top: 25px;
+    padding-top: 20px;
     position: sticky;
     top: -20px;
     background: var(--color-background);

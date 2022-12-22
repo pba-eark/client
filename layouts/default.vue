@@ -39,6 +39,21 @@
 main {
   grid-area: main;
   overflow-y: auto;
+  overflow-y: overlay;
+  
+  /* width */
+  &::-webkit-scrollbar {
+    width: 10px;
+  } 
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar);
+    border-radius: 10px;
+  }
+  /* Handle on hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-tabs);
+  }
 }
 
 .sidebar-right {

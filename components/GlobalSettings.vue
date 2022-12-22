@@ -47,10 +47,10 @@ let disabled = ref(true);
                 <input class="setting__input setting__input--right" type="text" :disabled=disabled v-model="props.data.hourlyWage">
             </div>
             <!-- <Button v-if="disabled" text="Edit" @click="(disabled = false)" /> -->
-            <div v-if="!disabled">
-                <Button text="Save" @click="(($emit('update', props.data, originalData)), disabled = true)" />
-                <Button text="Unsave" @click="(disabled = true)" />
-                <Button text="Delete" @click="($emit('delete', props.data))"/>
+            <div v-if="!disabled" class="setting__buttons">
+                <Button class="edit-setting" icon="icon-check" @click="(($emit('update', props.data, originalData)), disabled = true)" />
+                <Button class="edit-setting" icon="icon-cross" @click="(disabled = true)" />
+                <Button class="edit-setting" icon="icon-trash" @click="($emit('delete', props.data))"/>
             </div>
         </form>
 
@@ -60,10 +60,10 @@ let disabled = ref(true);
                 <input class="setting__input" type="text" :disabled=disabled v-model="props.data.sheetStatusName">
             </div>
             <!-- <Button v-if="disabled" text="Edit" @click="(disabled = false)" /> -->
-            <div v-if="!disabled">
-                <Button text="Save" @click="(($emit('update', props.data)), disabled = true)" />
-                <Button text="Unsave" @click="(disabled = true)" />
-                <Button text="Delete" @click="($emit('delete', props.data))"/>
+            <div v-if="!disabled" class="setting__buttons">
+                <Button class="edit-setting" icon="icon-check" @click="(($emit('update', props.data)), disabled = true)" />
+                <Button class="edit-setting" icon="icon-cross" @click="(disabled = true)" />
+                <Button class="edit-setting" icon="icon-trash" @click="($emit('delete', props.data))"/>
             </div>
         </form>
 
@@ -73,10 +73,10 @@ let disabled = ref(true);
                 <input class="setting__input" type="text" :disabled=disabled v-model="props.data.epicStatusName">
             </div>
             <!-- <Button v-if="disabled" text="Edit" @click="(disabled = false)" /> -->
-            <div v-if="!disabled">
-                <Button text="Save" @click="(($emit('update', props.data)), disabled = true)" />
-                <Button text="Unsave" @click="(disabled = true)" />
-                <Button text="Delete" @click="($emit('delete', props.data))"/>
+            <div v-if="!disabled" class="setting__buttons">
+                <Button class="edit-setting" icon="icon-check" @click="(($emit('update', props.data)), disabled = true)" />
+                <Button class="edit-setting" icon="icon-cross" @click="(disabled = true)" />
+                <Button class="edit-setting" icon="icon-trash" @click="($emit('delete', props.data))"/>
             </div>
         </form>
     </div>

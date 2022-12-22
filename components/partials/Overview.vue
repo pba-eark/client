@@ -367,64 +367,68 @@ const currentSheetStatus = computed(() => {
 
 <template>
   <div>
-    <h1>Overblik</h1>
-    <Input
-      type="select"
-      :placeholder="
-        currentSheetStatus?.sheetStatusName
-          ? currentSheetStatus.sheetStatusName
-          : 'Vælg status'
-      "
-      :options="sheetStatusOption"
-      emit="updateSheetStatusId"
-      @updateSheetStatusId="handleUpdateSheetStatusId"
-    />
+    <div class="overview__header">
+      <h1>Overblik</h1>
+      <Input
+        type="select"
+        :placeholder="
+          currentSheetStatus?.sheetStatusName
+            ? currentSheetStatus.sheetStatusName
+            : 'Vælg status'
+        "
+        :options="sheetStatusOption"
+        emit="updateSheetStatusId"
+        @updateSheetStatusId="handleUpdateSheetStatusId"
+      />
 
-    <div class="table">
-      <div class="table__header">
-        <div class="table__col">
-          <div class="table__heading--details"></div>
-        </div>
-
-        <div class="table__col">
-          <span class="table__heading--name"> Epic navn </span>
-        </div>
-
-        <div class="table__header--realistic">
+      <div class="table">
+        <div class="table__header">
           <div class="table__col">
-            <span class="table__heading--hours"> Timer </span>
+            <div class="table__heading--details"></div>
           </div>
+
           <div class="table__col">
-            <span class="table__heading--price"> Pris DKK </span>
+            <span class="table__heading--name"> Epic navn </span>
           </div>
-        </div>
 
-        <div class="table__header--pessimistic">
+          <div class="table__header--realistic">
+            <div class="table__col">
+              <span class="table__heading--hours"> Timer </span>
+            </div>
+            <div class="table__col">
+              <span class="table__heading--price"> Pris DKK </span>
+            </div>
+          </div>
+
+          <div class="table__header--pessimistic">
+            <div class="table__col">
+              <span class="table__heading--hours"> Timer </span>
+            </div>
+            <div class="table__col">
+              <span class="table__heading--price"> Pris DKK </span>
+            </div>
+          </div>
+
           <div class="table__col">
-            <span class="table__heading--hours"> Timer </span>
+            <span class="table__heading--opt-out"> Fravalgt </span>
           </div>
+
           <div class="table__col">
-            <span class="table__heading--price"> Pris DKK </span>
+            <span class="table__heading--status"> Status </span>
           </div>
-        </div>
 
-        <div class="table__col">
-          <span class="table__heading--opt-out"> Fravalgt </span>
-        </div>
+          <div class="table__col">
+            <span class="table__heading--responsible"> Ansvarlig </span>
+          </div>
 
-        <div class="table__col">
-          <span class="table__heading--status"> Status </span>
-        </div>
-
-        <div class="table__col">
-          <span class="table__heading--responsible"> Ansvarlig </span>
-        </div>
-
-        <div class="table__col">
-          <span class="table__heading--insecurity"> Usikkerhed </span>
+          <div class="table__col">
+            <span class="table__heading--insecurity"> Usikkerhed </span>
+          </div>
         </div>
       </div>
+    </div>
 
+    <div class="table">
       <OverviewEpic
         v-for="epic in epics"
         :key="epic.id"
@@ -445,44 +449,70 @@ const currentSheetStatus = computed(() => {
       />
     </div>
 
-    i allah:
-    <p>
-      realistisk timer:
-      {{
-        numberDotSeperator(
-          totalEpicsRealisticHours.toFixed(2).replace(".", ",")
-        )
-      }}
-    </p>
-    <p>
-      realistisk pris:
-      {{
-        numberDotSeperator(
-          totalEpicsRealisticPrice.toFixed(2).replace(".", ",")
-        )
-      }}
-    </p>
-    <p>
-      pessimistisk timer:
-      {{
-        numberDotSeperator(
-          totalEpicsPessimisticHours.toFixed(2).replace(".", ",")
-        )
-      }}
-    </p>
-    <p>
-      pessimistisk pris:
-      {{
-        numberDotSeperator(
-          totalEpicsPessimisticPrice.toFixed(2).replace(".", ",")
-        )
-      }}
-    </p>
-    <Button text="Ny epic" @click="handleCreateEpic"></Button>
+    <div class="table__footer">
+
+      <div class="table__col table__col--button">
+        <Button
+          class="new-epic"
+          text="Tilføj epic"
+          icon="icon-plus"
+          @click="handleCreateEpic"
+        />
+      </div>
+
+      <div class="table__footer--realistic">
+        <div class="table__col">
+          <span class="table__sum--hours">
+            {{ numberDotSeperator(totalEpicsRealisticHours.toFixed(2).replace(".", ",")) }}
+          </span>
+        </div>
+        <div class="table__col">
+          <span class="table__sum--price">
+            {{ numberDotSeperator(totalEpicsRealisticPrice.toFixed(2).replace(".", ",")) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table__footer--pessimistic">
+        <div class="table__col">
+          <span class="table__sum--hours">
+            {{ numberDotSeperator(totalEpicsPessimisticHours.toFixed(2).replace(".", ",")) }}
+          </span>
+        </div>
+        <div class="table__col">
+          <span class="table__sum--price">
+            {{ numberDotSeperator(totalEpicsPessimisticPrice.toFixed(2).replace(".", ",")) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="table__col">
+        <span class="table__sum--opt-out">
+          0
+        </span>
+      </div>
+      
+    </div>
+
   </div>
 </template>
 
 <style lang="scss" scoped>
+.overview {
+  &__header {
+    // padding-top: 20px;
+    // position: sticky;
+    // top: -20px;
+    // background: var(--color-background);
+    // z-index: 1;
+  }
+  &__footer {
+    position: sticky;
+    bottom: -20px;
+    background: var(--color-background);
+    z-index: 2;
+  }
+}
 .table {
   display: grid;
   gap: var(--table-gap);
@@ -492,9 +522,19 @@ const currentSheetStatus = computed(() => {
     justify-content: center;
     align-items: center;
     padding: var(--table-columns-padding);
+
+    &--button {
+      display: block;
+      grid-column: span 2;
+    }
   }
 
   &__header {
+    padding-top: 20px;
+    position: sticky;
+    top: -20px;
+    background: var(--color-background);
+    z-index: 1;
     width: 100%;
     display: grid;
     grid-template-columns: var(--table-columns-overview);
@@ -574,6 +614,33 @@ const currentSheetStatus = computed(() => {
       width: var(--width-insecurity-overview);
       text-align: center;
       margin: var(--input-padding);
+    }
+  }
+  &__footer {
+    width: 100%;
+    display: grid;
+    grid-template-columns: var(--table-columns-overview);
+    color: var(--font-color-primary);
+    font-weight: 600;
+    padding-right: calc(
+      var(--width-icon) + var(--table-columns-padding) / 2 +
+        var(--input-padding) / 2 +  412px
+    );
+    margin-top: var(--table-gap);
+
+    &--realistic,
+    &--pessimistic {
+      display: flex;
+      grid-column: span 2;
+      position: relative;
+      color: var(--font-color-secondary);
+      font-weight: 800;
+    }
+    &--realistic {
+      background-color: var(--color-realistic);
+    }
+    &--pessimistic {
+      background-color: var(--color-pessimistic);
     }
   }
 }

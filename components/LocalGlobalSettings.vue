@@ -133,72 +133,153 @@ const useGlobalValue = () => {
 </script>
 
 <template>
-    <div>
-        <div>
 
-            <br>
+    <div class="setting">
+        <div v-if="disabled" class="setting__open-overlay" @click="(disabled = false)"></div>
 
-            <form v-if="props.renderForm == 'riskProfile'">
-                <p>"icon" Profil Navn</p>
-                <p>{{ props.data.profileName }}</p>
-                <p>{{ props.data.percentage }}</p>
-                <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
-                <div v-if="!disabled">
-                    <p>Benyt Global Værdi</p>
-                    <p>{{ props.data.percentage }}%</p>
-                    <input type="checkbox" @change="useGlobalValue">
-                    <input type="text" :disabled=writePercentageField v-model="writePercentage">
-                    <Button text="Save" @click="handleCreateProfile(props.data)"/>
-                    <Button text="Unsave" @click="(disabled = true)"/>
+        <form v-if="props.renderForm == 'riskProfile'">
+            <!-- <p>"icon" Profil Navn</p> -->
+            <div class="setting__content">
+                <div class="setting__row">
+                    <p class="setting__input setting__input--disabled">
+                        <Icon icon="icon-globe" class="setting__icon" />
+                        {{ props.data.profileName }}
+                    </p>
+                    <p class="setting__input setting__input--disabled">{{ props.data.percentage }} %</p>
                 </div>
-            </form>
-
-            <br>
-
-            <form v-if="props.renderForm == 'role'">
-                <p>"icon" Rolle Navn</p>
-                <p>{{ props.data.roleName }}</p>
-                <p>{{ props.data.hourlyWage }}</p>
-                <Button v-if="disabled" text="Edit" @click="(disabled = false)" />
-                <div v-if="!disabled">
-                    <p>Benyt Global Værdi</p>
-                    <p>{{ props.data.hourlyWage }}kr</p>
-                    <input type="checkbox" @change="useGlobalValue">
-                    <input type="text" :disabled=writePercentageField v-model="writePercentage">
-                    <Button text="Save" @click="handleCreateRole(props.data)"/>
-                    <Button text="Unsave" @click="(disabled = true)"/>
+                <div v-if="!disabled" class="setting__relation">
+                    <div class="setting__row">
+                        <p class="setting__input setting__input--disabled">Benyt Global Værdi</p>
+                        <input class="setting__input setting__input--checkbox" type="checkbox" @change="useGlobalValue">
+                    </div>
+                    <div class="setting__row">
+                        <p class="setting__input setting__input--disabled">Værdi for ark:</p>
+                        <input class="setting__input setting__input--text" type="text" :disabled=writePercentageField v-model="writePercentage">
+                    </div>
                 </div>
-            </form>
-
-            <br>
-
-            <form v-if="props.renderForm == 'sheetStatus'">
-                <p>Status Navn</p>
-                <p>{{ props.data.sheetStatusName }}</p>
-            </form>
+            </div>
+            <div v-if="!disabled" class="setting__buttons">
+                <Button class="edit-setting" icon="icon-check" @click="handleCreateProfile(props.data)"/>
+                <Button class="edit-setting" icon="icon-cross" @click="(disabled = true)"/>
+            </div>
+        </form>
 
 
-            <!-- <Input @change="handleUpdateProfile(props.data, 'name')" v-model="input"
-                :default="props.data.profileName" />
-            <Input @change="handleUpdateProfile(props.data, 'percentage')" v-model="input"
-                :default="props.data.percentage || '0'" />
-            <Input type="checkbox" @change="handleUpdateProfile(props.data, 'global')" v-model="input"
-                :default="props.data.global" />
-            <Input type="checkbox" @change="handleUpdateProfile(props.data, 'default')" v-model="input"
-                :default="props.data.default" />
-            <Button text="Save Profil" @Click="handleUpdateProfile(props.data)" /> -->
-        </div>
-        <!-- <br>
-        <Button text="Ny Profil" @Click="handleCreateProfile(newRiskProfile, 'globalSetting')" />
-        <br>
+        <form v-if="props.renderForm == 'role'">
+            <!-- <p>"icon" Rolle Navn</p> -->
+            <div class="setting__content">
+                <div class="setting__row">
+                    <p class="setting__input setting__input--disabled">
+                        <Icon icon="icon-globe" class="setting__icon" />
+                        {{ props.data.roleName }}
+                    </p>
+                    <p class="setting__input setting__input--disabled">{{ props.data.hourlyWage }} kr/t</p>
+                </div>
+                <div v-if="!disabled">
+                    <div class="setting__row">
+                        <p class="setting__input setting__input--disabled">Benyt Global Værdi</p>
+                        <input class="setting__input setting__input--checkbox" type="checkbox" @change="useGlobalValue">
+                    </div>
+                    <div class="setting__row">
+                        <p class="setting__input setting__input--disabled">Værdi for ark:</p>
+                        <input class="setting__input setting__input--text" type="text" :disabled=writePercentageField v-model="writePercentage">
+                    </div>
+                </div>
+            </div>
+            <div v-if="!disabled" class="setting__buttons">
+                <Button class="edit-setting" icon="icon-check" @click="handleCreateRole(props.data)"/>
+                <Button class="edit-setting" icon="icon-cross" @click="(disabled = true)"/>
+            </div>
+        </form>
 
-        <div>
-            <Input @change="handleUpdateRole(role, 'name')" v-model="input" :default="role.roleName" />
-            <Input @change="handleUpdateRole(role, 'wage')" v-model="input" :default="role.hourlyWage || '0'" />
-            <Input type="checkbox" @change="handleUpdateRole(role, 'global')" v-model="input" :default="role.global" />
-            <Input type="checkbox" @change="handleUpdateRole(role, 'default')" v-model="input"
-                :default="role.default" />
-            <Button text="Edit Rolle" @Click="handleUpdateRole(props.data, 'name')" />
-        </div> -->
+        
     </div>
 </template>
+
+<style lang="scss" scoped>
+
+.setting {
+    position: relative;
+    margin-bottom: 100px;
+
+    &__open-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+
+    &__content {
+        width: 100%;
+        background-color: var(--color-task-input);
+        border-radius: 4px;
+        padding: 6px;
+    }
+
+    &__row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 15px;
+    }
+
+    &__relation {
+        grid-column: span 2;
+    }
+
+    &__input {
+        width: 100%;
+        font-size: 1rem;
+        line-height: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        border-radius: 3px;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+        font-style: inherit;
+        padding: var(--input-padding);
+
+        &:focus-visible {
+          outline: none;
+        }
+
+        &--right {
+            text-align: right;
+        }
+
+        &--disabled {
+            width: auto;
+        }
+
+        &--checkbox {
+            width: 25px;
+            height: 25px;
+        }
+
+        &--text {
+            width: 50px;
+        }
+    }
+
+    &__buttons {
+        display: grid;
+        grid-template-columns: auto auto 1fr;
+        justify-items: end;
+        gap: 4px;
+        margin-bottom: 20px;
+    }
+}
+
+
+</style>

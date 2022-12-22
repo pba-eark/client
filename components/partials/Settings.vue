@@ -556,13 +556,16 @@ getEpicStatus();
     </div>
 
     <div v-if="localSettingsTab && onSheet" class="settings__main">
-      <h2>Lokal</h2>
 
       <h3>Risikoprofiler</h3>
-      <div v-for="riskProfile in globals" :key="riskProfile.id">
-        <LocalGlobalSettings :data="riskProfile" :renderForm="'riskProfile'" />
-      </div>
-      <p>-----------------------------</p>
+      <LocalGlobalSettings 
+        v-for="riskProfile in globals" 
+        class="settings__setting" 
+        :key="riskProfile.id" 
+        :data="riskProfile" 
+        :renderForm="'riskProfile'" 
+      />
+      <p>----------------------------------------------------------------</p>
       <LocalSettings
         v-for="riskProfile in sheetProfiles" :key="riskProfile.id"
         class="settings__setting" 
@@ -570,13 +573,21 @@ getEpicStatus();
         :renderForm="'riskProfile'"
         @delete="handleDeleteLocalProfile"
       />
-      <Button text="Ny Profile" @Click="handleCreateLocalProfile" />
+      <Button
+        class="new-setting"
+        text="Tilføj profil"
+        icon="icon-plus"
+        @click="handleCreateLocalProfile"
+      />
 
       <h3>Roller</h3>
-      <div v-for="role in globalRoles" :key="role.id">
-        <LocalGlobalSettings :data="role" :renderForm="'role'" />
-      </div>
-      <p>-----------------------------</p>
+      <LocalGlobalSettings 
+        v-for="role in globalRoles" 
+        class="settings__setting" 
+        :key="role.id" :data="role" 
+        :renderForm="'role'" 
+      />
+      <p>----------------------------------------------------------------</p>
       <LocalSettings
         v-for="role in sheetRoles" :key="role.id"
         class="settings__setting" 
@@ -584,7 +595,12 @@ getEpicStatus();
         :renderForm="'role'"
         @delete="handleDeleteLocalRole"
       />
-      <Button text="Ny Role" @Click="handleCreateLocalRole" />
+      <Button
+        class="new-setting"
+        text="Tilføj rolle"
+        icon="icon-plus"
+        @click="handleCreateLocalRole"
+      />
     </div>
   </div>
 </template>

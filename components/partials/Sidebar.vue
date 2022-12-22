@@ -255,10 +255,11 @@ const sheetEpics = computed(() => {
   &__wrapper {
     max-height: calc(100vh - 60px);
     overflow-y: overlay;
+
     /* width */
     &::-webkit-scrollbar {
       width: 5px;
-    }
+    } 
     /* Handle */
     &::-webkit-scrollbar-thumb {
       background: var(--color-scrollbar);
@@ -266,7 +267,7 @@ const sheetEpics = computed(() => {
     }
     /* Handle on hover */
     &::-webkit-scrollbar-thumb:hover {
-      background: #b30000;
+      background: var(--color-tabs);
     }
   }
 

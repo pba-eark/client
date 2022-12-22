@@ -327,13 +327,14 @@ const chartOptions = computed(() => {
 
 <template>
   <div class="meta" ref="sidebar">
+
     <div class="meta__settings">
       <div class="filter">
         <Icon icon="icon-filter" />
         <span>Filtrér</span>
       </div>
 
-      <div class="settings">
+      <div class="settings" @click="handleShowSettings">
         <Icon icon="icon-cog" />
         <span> Indstillinger </span>
       </div>
@@ -358,125 +359,127 @@ const chartOptions = computed(() => {
       </div>
     </div>
 
-    <Button text="Indstillinger" @click="handleShowSettings" />
-    <Settings v-if="showSettings" :sheetId="parseInt(route.params.id)" />
+    <div class="meta__content">
 
-    <!-- Chart -->
-    <div
-      v-if="
-        detailsStore.DETAILS == null &&
-        detailsStore.DETAILS_CHART.labels.length > 0 &&
-        !showSettings
-      "
-    >
-      <Input
-        type="select"
-        :options="chartOptions"
-        :placeholder="chartOptions[currentChartIndex]?.name"
-        emit="updateChart"
-        @updateChart="handleUpdateChart"
-      />
-      <ClientOnly>
-        <PieChart
-          :labels="detailsStore.DETAILS_CHART.labels"
-          :datasets="[{ ...currentChart }]"
-          :unit="currentChartUnit"
+      <Settings v-if="showSettings" :sheetId="parseInt(route.params.id)" />
+
+      <!-- Chart -->
+      <div
+        v-if="
+          detailsStore.DETAILS == null &&
+          detailsStore.DETAILS_CHART.labels.length > 0 &&
+          !showSettings
+        "
+      >
+        <Input
+          type="select"
+          :options="chartOptions"
+          :placeholder="chartOptions[currentChartIndex]?.name"
+          emit="updateChart"
+          @updateChart="handleUpdateChart"
         />
-      </ClientOnly>
-    </div>
-
-    <div v-if="item.isToggled">
-      <div class="meta__header">
-        <div class="flex">
-          <h1>Detaljer</h1>
-          <Button text="X" @click="detailsStore.setDetails(null)" />
-        </div>
-
-        <h2 v-if="item.type === 'epic'">
-          {{ detailsStore.DETAILS.epicName }} - Epic
-        </h2>
-        <h2 v-else>
-          {{ detailsStore.DETAILS.taskName }} - Task ({{
-            detailsStore.DETAILS.id
-          }})
-        </h2>
+        <ClientOnly>
+          <PieChart
+            :labels="detailsStore.DETAILS_CHART.labels"
+            :datasets="[{ ...currentChart }]"
+            :unit="currentChartUnit"
+          />
+        </ClientOnly>
       </div>
 
-      <div class="meta__body">
-        <Button
-          v-if="item.type === 'epic'"
-          text="Kopiér epic"
-          @click="handleCopyEpic(detailsStore.DETAILS)"
-        />
-        <Button
-          v-if="item.type === 'epic'"
-          text="Paste task"
-          @click="handlePasteTask"
-        />
-        <Button
-          v-if="item.type === 'task'"
-          text="Kopiér task"
-          @click="handleCopyTask(detailsStore.DETAILS)"
-        />
+      <div v-if="item.isToggled">
+        <div class="meta__header">
+          <div class="flex">
+            <h1>Detaljer</h1>
+            <Button text="X" @click="detailsStore.setDetails(null)" />
+          </div>
 
-        <div v-if="item.type === 'epic'">
-          <Input
-            label="Epic titel"
-            :default="detailsStore.DETAILS.epicName"
-            emit="updateEpicName"
-            @updateEpicName="handleUpdateEpicName"
-          />
-
-          <Input
-            type="textarea"
-            label="episk beskrivelse"
-            :default="detailsStore.DETAILS.comment"
-            emit="updateEpicComment"
-            @updateEpicComment="handleUpdateEpicComment"
-          />
+          <h2 v-if="item.type === 'epic'">
+            {{ detailsStore.DETAILS.epicName }} - Epic
+          </h2>
+          <h2 v-else>
+            {{ detailsStore.DETAILS.taskName }} - Task ({{
+              detailsStore.DETAILS.id
+            }})
+          </h2>
         </div>
 
-        <div v-if="item.type === 'task'">
+        <div class="meta__body">
+          <Button
+            v-if="item.type === 'epic'"
+            text="Kopiér epic"
+            @click="handleCopyEpic(detailsStore.DETAILS)"
+          />
+          <Button
+            v-if="item.type === 'epic'"
+            text="Paste task"
+            @click="handlePasteTask"
+          />
+          <Button
+            v-if="item.type === 'task'"
+            text="Kopiér task"
+            @click="handleCopyTask(detailsStore.DETAILS)"
+          />
+
+          <div v-if="item.type === 'epic'">
+            <Input
+              label="Epic titel"
+              :default="detailsStore.DETAILS.epicName"
+              emit="updateEpicName"
+              @updateEpicName="handleUpdateEpicName"
+            />
+
+            <Input
+              type="textarea"
+              label="episk beskrivelse"
+              :default="detailsStore.DETAILS.comment"
+              emit="updateEpicComment"
+              @updateEpicComment="handleUpdateEpicComment"
+            />
+          </div>
+
+          <div v-if="item.type === 'task'">
+            <Input
+              label="Beskrivelse"
+              type="textarea"
+              :default="detailsStore.DETAILS.taskDescription"
+              emit="updateTaskDescription"
+              @updateTaskDescription="handleUpdateTaskDescription"
+            />
+          </div>
+
+          <div v-if="item.type === 'task'">
+            <Input
+              label="Begrundelse for estimat"
+              type="textarea"
+              :default="detailsStore.DETAILS.estimateReasoning"
+              emit="updateEstimateReasoning"
+              @updateEstimateReasoning="handleUpdateEstimateReasoning"
+            />
+          </div>
+
           <Input
-            label="Beskrivelse"
-            type="textarea"
-            :default="detailsStore.DETAILS.taskDescription"
-            emit="updateTaskDescription"
-            @updateTaskDescription="handleUpdateTaskDescription"
+            label="Flyt til anden epic"
+            v-if="item.type === 'task'"
+            :placeholder="currentEpic[0].epicName"
+            type="select"
+            :options="epicOptions.value"
+            emit="updateTaskEpicId"
+            @updateTaskEpicId="handleUpdateTaskEpicId"
+          />
+
+          <Button
+            v-if="item.type === 'task'"
+            text="Slet task"
+            @click="handleDeleteTask"
+          />
+
+          <Button
+            v-if="item.type === 'epic'"
+            text="Slet epic"
+            @click="handleDeleteEpic"
           />
         </div>
-
-        <div v-if="item.type === 'task'">
-          <Input
-            label="Begrundelse for estimat"
-            type="textarea"
-            :default="detailsStore.DETAILS.estimateReasoning"
-            emit="updateEstimateReasoning"
-            @updateEstimateReasoning="handleUpdateEstimateReasoning"
-          />
-        </div>
-
-        <Input
-          label="Flyt til anden epic"
-          v-if="item.type === 'task'"
-          :placeholder="currentEpic[0].epicName"
-          type="select"
-          :options="epicOptions.value"
-          emit="updateTaskEpicId"
-          @updateTaskEpicId="handleUpdateTaskEpicId"
-        />
-
-        <Button
-          v-if="item.type === 'task'"
-          text="Slet task"
-          @click="handleDeleteTask"
-        />
-
-        <Button
-          v-if="item.type === 'epic'"
-          text="Slet epic"
-          @click="handleDeleteEpic"
-        />
       </div>
     </div>
   </div>
@@ -487,6 +490,25 @@ const chartOptions = computed(() => {
   background-color: var(--color-sidebar);
   padding: 15px;
   color: var(--font-color-primary);
+
+  &__content {
+    overflow-y: auto;
+    overflow-y: overlay;
+
+      /* width */
+    &::-webkit-scrollbar {
+      width: 5px;
+    } 
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-scrollbar);
+      border-radius: 10px;
+    }
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+      background: var(--color-tabs);
+    }
+  }
 
   &__settings {
     display: grid;
