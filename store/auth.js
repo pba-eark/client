@@ -14,11 +14,13 @@ export const useAuthStore = defineStore("auth-store", () => {
 
   /* Actions */
   const setJwt = async (token) => {
+    globalStore.setLoaded(false);
     localStorage.setItem("jwt", token);
     jwt.value = token;
     /* Fetch data */
     await globalStore.fetchData();
     isAuthorized.value = true;
+    globalStore.setLoaded(true);
   };
 
   const handleLogin = async (email, password) => {
