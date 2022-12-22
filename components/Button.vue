@@ -47,6 +47,16 @@ svg {
   transition: all 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.exit {
+  border: none;
+  background-color: transparent;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
 .new {
   &-epic {
     border: none;
@@ -118,6 +128,22 @@ svg {
       scale: 1.1;
     }
   }
+}
+
+.delete {
+  border: none;
+  background-color: transparent;
+  gap: 10px;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.copy {
+  border: none;
+  background-color: transparent;
+  gap: 10px;
+  margin-top: 20px;
+  font-weight: 600;
 }
 
 .paste {

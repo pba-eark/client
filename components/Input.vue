@@ -198,16 +198,52 @@ select {
 
     &--details {
       display: block;
+      input {
+        width: 100%;
+        background-color: var(--color-background);
+        border: none;
+        border-radius: 3px;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+        font-style: inherit;
+        padding: var(--input-padding);
+
+        &:hover,
+        &:focus-visible {
+          background-color: var(--color-task-input);
+          color: var(--font-color-primary);
+        }
+        &:focus-visible {
+          outline: none;
+        }
+      }
     }
   }
 
   &__textarea {
     &--details {
       display: block;
-
       textarea {
         width: 100%;
-        height: 50px;
+        background-color: var(--color-background);
+        border: none;
+        border-radius: 3px;
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
+        font-style: inherit;
+        padding: var(--input-padding);
+        min-height: 100px;
+
+        &:hover,
+        &:focus-visible {
+          background-color: var(--color-task-input);
+          color: var(--font-color-primary);
+        }
+        &:focus-visible {
+          outline: none;
+        }
       }
     }
   }
@@ -292,6 +328,16 @@ select {
 
       select {
         border-radius: 4px;
+        background-color: var(--color-background);
+
+        &:hover,
+        &:focus-visible {
+          background-color: var(--color-task-input);
+          color: var(--font-color-primary);
+        }
+        &:focus-visible {
+          outline: none;
+        }
       }
     }
   }
