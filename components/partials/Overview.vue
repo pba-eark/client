@@ -47,6 +47,7 @@ const totalEpicsRealisticHours = ref(0);
 const totalEpicsRealisticPrice = ref(0);
 const totalEpicsPessimisticHours = ref(0);
 const totalEpicsPessimisticPrice = ref(0);
+const totalOptOuts = ref(0);
 
 onMounted(() => {
   detailsStore.setDetails(null);
@@ -206,6 +207,8 @@ const calculateOverview = () => {
         totalEpicsRealisticPrice.value += task.realisticPrice ?? 0;
         totalEpicsPessimisticHours.value += task.pessimisticHours ?? 0;
         totalEpicsPessimisticPrice.value += task.pessimisticPrice ?? 0;
+      } else {
+        totalOptOuts.value++;
       }
 
       epicTasks.push(task);
@@ -449,7 +452,6 @@ const currentSheetStatus = computed(() => {
     </div>
 
     <div class="table__footer overview__footer">
-
       <div class="table__col table__col--button">
         <Button
           class="new-epic"
@@ -462,12 +464,20 @@ const currentSheetStatus = computed(() => {
       <div class="table__footer--realistic">
         <div class="table__col">
           <span class="table__sum--hours">
-            {{ numberDotSeperator(totalEpicsRealisticHours.toFixed(2).replace(".", ",")) }}
+            {{
+              numberDotSeperator(
+                totalEpicsRealisticHours.toFixed(2).replace(".", ",")
+              )
+            }}
           </span>
         </div>
         <div class="table__col">
           <span class="table__sum--price">
-            {{ numberDotSeperator(totalEpicsRealisticPrice.toFixed(2).replace(".", ",")) }}
+            {{
+              numberDotSeperator(
+                totalEpicsRealisticPrice.toFixed(2).replace(".", ",")
+              )
+            }}
           </span>
         </div>
       </div>
@@ -475,24 +485,28 @@ const currentSheetStatus = computed(() => {
       <div class="table__footer--pessimistic">
         <div class="table__col">
           <span class="table__sum--hours">
-            {{ numberDotSeperator(totalEpicsPessimisticHours.toFixed(2).replace(".", ",")) }}
+            {{
+              numberDotSeperator(
+                totalEpicsPessimisticHours.toFixed(2).replace(".", ",")
+              )
+            }}
           </span>
         </div>
         <div class="table__col">
           <span class="table__sum--price">
-            {{ numberDotSeperator(totalEpicsPessimisticPrice.toFixed(2).replace(".", ",")) }}
+            {{
+              numberDotSeperator(
+                totalEpicsPessimisticPrice.toFixed(2).replace(".", ",")
+              )
+            }}
           </span>
         </div>
       </div>
 
       <div class="table__col">
-        <span class="table__sum--opt-out">
-          0
-        </span>
+        <span class="table__sum--opt-out"> {{ totalOptOuts }} </span>
       </div>
-      
     </div>
-
   </div>
 </template>
 
@@ -623,7 +637,7 @@ const currentSheetStatus = computed(() => {
     font-weight: 600;
     padding-right: calc(
       var(--width-icon) + var(--table-columns-padding) / 2 +
-        var(--input-padding) / 2 +  412px
+        var(--input-padding) / 2 + 412px
     );
     margin-top: var(--table-gap);
 
