@@ -23,6 +23,7 @@ let item = reactive({
 const isProfileDropdownToggled = ref(false);
 const sidebar = ref(null);
 const currentChartIndex = ref(0);
+const showSettings = ref(false);
 
 onBeforeMount(() => {
   window.addEventListener("click", handleClick);
@@ -35,11 +36,13 @@ onBeforeUnmount(() => {
 
 watch(
   () => detailsStore.DETAILS,
-  () => {
-    if (detailsStore.DETAILS === null) return (item.isToggled = false);
+  (newDetails, oldDetails) => {
+    if (detailsStore.DETAILS === null && !showSettings.value)
+      return (item.isToggled = false);
     item.isToggled = true;
 
-    showSettings.value = false;
+    if (newDetails !== oldDetails && showSettings.value)
+      showSettings.value = false;
 
     if (detailsStore.DETAILS.epicName === undefined) {
       item.type = "task";
@@ -260,23 +263,17 @@ const handleClick = (e) => {
     return (isProfileDropdownToggled.value = false);
 };
 
+const handleShowSettings = () => {
+  showSettings.value = !showSettings.value;
+  if (showSettings.value && !item.isToggled) return (item.isToggled = true);
+};
+
 /* Computed */
 const currentEpic = computed(() => {
   return epicStore.EPICS.filter((epic) => {
     return epic.id == detailsStore.DETAILS.epicId;
   });
 });
-
-let showSettings = ref(false);
-
-const show = () => {
-  showSettings.value = !showSettings.value;
-};
-
-const handleShowSettings = () => {
-  show();
-  detailsStore.setDetails(null);
-};
 
 /* Chart */
 const handleUpdateChart = ({ value }) => {
@@ -383,8 +380,13 @@ const chartOptions = computed(() => {
         </ClientOnly>
       </div>
 
+      {{ showSettings }}
+      {{ item.isToggled }}
       <div v-if="item.isToggled">
-        <div class="meta__header">
+        <div
+          v-if="!showSettings && detailsStore.DETAILS !== null"
+          class="meta__header"
+        >
           <div class="flex">
             <div>
               <h1>
@@ -398,101 +400,104 @@ const chartOptions = computed(() => {
           </div>
 
           <h2 v-if="item.type === 'epic'">
-            {{ detailsStore.DETAILS.epicName }}
+            {{ detailsStore.DETAILS?.epicName }}
           </h2>
           <h2 v-else>
-            {{ detailsStore.DETAILS.taskName }}
+            {{ detailsStore.DETAILS?.taskName }}
           </h2>
         </div>
 
         <div class="meta__body">
           <Settings v-if="showSettings" :sheetId="parseInt(route.params.id)" />
-          <div v-if="item.type === 'epic'">
-            <Input
-              label="Epic titel"
-              :default="detailsStore.DETAILS.epicName"
-              emit="updateEpicName"
-              @updateEpicName="handleUpdateEpicName"
-              class="input__text--details"
-            />
+
+          <div v-if="!showSettings && detailsStore.DETAILS !== null">
+            <div v-if="item.type === 'epic'">
+              <Input
+                label="Epic titel"
+                :default="detailsStore.DETAILS.epicName"
+                emit="updateEpicName"
+                @updateEpicName="handleUpdateEpicName"
+                class="input__text--details"
+              />
+
+              <Input
+                type="textarea"
+                label="episk beskrivelse"
+                :default="detailsStore.DETAILS.comment"
+                emit="updateEpicComment"
+                @updateEpicComment="handleUpdateEpicComment"
+                class="input__textarea--details"
+              />
+            </div>
+
+            <div v-if="item.type === 'task'">
+              <Input
+                label="Beskrivelse"
+                type="textarea"
+                :default="detailsStore.DETAILS.taskDescription"
+                emit="updateTaskDescription"
+                @updateTaskDescription="handleUpdateTaskDescription"
+                class="input__textarea--details"
+              />
+            </div>
+
+            <div v-if="item.type === 'task'">
+              <Input
+                label="Begrundelse for estimat"
+                type="textarea"
+                :default="detailsStore.DETAILS.estimateReasoning"
+                emit="updateEstimateReasoning"
+                @updateEstimateReasoning="handleUpdateEstimateReasoning"
+                class="input__textarea--details"
+              />
+            </div>
 
             <Input
-              type="textarea"
-              label="episk beskrivelse"
-              :default="detailsStore.DETAILS.comment"
-              emit="updateEpicComment"
-              @updateEpicComment="handleUpdateEpicComment"
-              class="input__textarea--details"
+              label="Flyt til anden epic"
+              v-if="item.type === 'task'"
+              :placeholder="currentEpic[0].epicName"
+              type="select"
+              :options="epicOptions.value"
+              emit="updateTaskEpicId"
+              @updateTaskEpicId="handleUpdateTaskEpicId"
+              class="input__select--details"
+            />
+
+            <!-- Copy epic -->
+            <Button
+              v-if="item.type === 'epic'"
+              text="Kopiér epic"
+              @click="handleCopyEpic(detailsStore.DETAILS)"
+            />
+
+            <!-- Paste task -->
+            <Button
+              v-if="item.type === 'epic'"
+              text="Paste task"
+              @click="handlePasteTask"
+            />
+
+            <!-- Copy task -->
+            <Button
+              v-if="item.type === 'task'"
+              text="Kopiér task"
+              @click="handleCopyTask(detailsStore.DETAILS)"
+            />
+
+            <!-- Delete task -->
+            <Button
+              v-if="item.type === 'task'"
+              text="Slet task"
+              @click="handleDeleteTask"
+            />
+
+            <!-- Delete epic -->
+            <Button
+              v-if="item.type === 'epic'"
+              text="Slet epic"
+              @click="handleDeleteEpic"
             />
           </div>
-
-          <div v-if="item.type === 'task'">
-            <Input
-              label="Beskrivelse"
-              type="textarea"
-              :default="detailsStore.DETAILS.taskDescription"
-              emit="updateTaskDescription"
-              @updateTaskDescription="handleUpdateTaskDescription"
-              class="input__textarea--details"
-            />
-          </div>
-
-          <div v-if="item.type === 'task'">
-            <Input
-              label="Begrundelse for estimat"
-              type="textarea"
-              :default="detailsStore.DETAILS.estimateReasoning"
-              emit="updateEstimateReasoning"
-              @updateEstimateReasoning="handleUpdateEstimateReasoning"
-              class="input__textarea--details"
-            />
-          </div>
-
-          <Input
-            label="Flyt til anden epic"
-            v-if="item.type === 'task'"
-            :placeholder="currentEpic[0].epicName"
-            type="select"
-            :options="epicOptions.value"
-            emit="updateTaskEpicId"
-            @updateTaskEpicId="handleUpdateTaskEpicId"
-            class="input__select--details"
-          />
-
-          <!-- Copy epic -->
-          <Button
-            v-if="item.type === 'epic'"
-            text="Kopiér epic"
-            @click="handleCopyEpic(detailsStore.DETAILS)"
-          />
-
-          <!-- Paste task -->
-          <Button
-            v-if="item.type === 'epic'"
-            text="Paste task"
-            @click="handlePasteTask"
-          />
-
-          <!-- Copy task -->
-          <Button
-            v-if="item.type === 'task'"
-            text="Kopiér task"
-            @click="handleCopyTask(detailsStore.DETAILS)"
-          />
-
-          <!-- Delete task -->
-          <Button
-            v-if="item.type === 'task'"
-            text="Slet task"
-            @click="handleDeleteTask"
-          />
-
-          <!-- Delete epic -->
-          <Button
-            v-if="item.type === 'epic'"
-            text="Slet epic"
-            @click="handleDeleteEpic"
-          />
         </div>
       </div>
     </div>
@@ -507,8 +512,8 @@ const chartOptions = computed(() => {
 
   &__body {
     overflow-y: overlay;
-    max-height: calc(100vh - 100px);
-
+    max-height: calc(100vh - 120px);
+    
     /* width */
     &::-webkit-scrollbar {
       width: 5px;
