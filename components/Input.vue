@@ -195,6 +195,21 @@ select {
         }
       }
     }
+
+    &--details {
+      display: block;
+    }
+  }
+
+  &__textarea {
+    &--details {
+      display: block;
+
+      textarea {
+        width: 100%;
+        height: 50px;
+      }
+    }
   }
 
   &__number {
@@ -269,6 +284,13 @@ select {
         }
         &:focus-visible {
           outline: none;
+        }
+      }
+      &--details {
+        display: block;
+
+        select {
+          border-radius: 4px;
         }
       }
     }
