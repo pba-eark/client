@@ -121,6 +121,22 @@ svg {
   }
 }
 
+.delete {
+  border: none;
+  background-color: transparent;
+  gap: 10px;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
+.copy {
+  border: none;
+  background-color: transparent;
+  gap: 10px;
+  margin-top: 20px;
+  font-weight: 600;
+}
+
 .paste {
   &-epic {
     border: none;

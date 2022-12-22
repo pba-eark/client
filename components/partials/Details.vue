@@ -411,7 +411,7 @@ const chartOptions = computed(() => {
           <div v-if="!showSettings && detailsStore.DETAILS !== null">
             <div v-if="item.type === 'epic'">
               <Input
-                label="Epic titel"
+                label="Navn"
                 :default="detailsStore.DETAILS.epicName"
                 emit="updateEpicName"
                 @updateEpicName="handleUpdateEpicName"
@@ -420,7 +420,7 @@ const chartOptions = computed(() => {
 
               <Input
                 type="textarea"
-                label="episk beskrivelse"
+                label="Beskrivelse"
                 :default="detailsStore.DETAILS.comment"
                 emit="updateEpicComment"
                 @updateEpicComment="handleUpdateEpicComment"
@@ -465,12 +465,14 @@ const chartOptions = computed(() => {
             <Button
               v-if="item.type === 'epic'"
               text="Kopiér epic"
+              class="copy"
               @click="handleCopyEpic(detailsStore.DETAILS)"
             />
 
             <!-- Paste task -->
             <Button
               v-if="item.type === 'epic'"
+              class="copy"
               text="Paste task"
               @click="handlePasteTask"
             />
@@ -478,6 +480,7 @@ const chartOptions = computed(() => {
             <!-- Copy task -->
             <Button
               v-if="item.type === 'task'"
+              class="delete"
               text="Kopiér task"
               @click="handleCopyTask(detailsStore.DETAILS)"
             />
@@ -485,6 +488,8 @@ const chartOptions = computed(() => {
             <!-- Delete task -->
             <Button
               v-if="item.type === 'task'"
+              class="delete"
+              icon="icon-trash"
               text="Slet task"
               @click="handleDeleteTask"
             />
@@ -492,6 +497,8 @@ const chartOptions = computed(() => {
             <!-- Delete epic -->
             <Button
               v-if="item.type === 'epic'"
+              class="delete"
+              icon="icon-trash"
               text="Slet epic"
               @click="handleDeleteEpic"
             />
@@ -582,5 +589,10 @@ const chartOptions = computed(() => {
 .flex {
   display: flex;
   justify-content: space-between;
+}
+
+.input__text--details,
+.input__textarea--details {
+  margin-top: 20px;
 }
 </style>
