@@ -6,10 +6,10 @@ import { useGlobalStore } from "~/store";
 import { useDetailsStore } from "~/store/details";
 
 const epicStatusStore = useEpicStatusStore();
+const detailsStore = useDetailsStore();
 const epicStore = useEpicStore();
 const userStore = useUserStore();
 const globalStore = useGlobalStore();
-const detailsStore = useDetailsStore();
 
 const isOpen = ref(false);
 const props = defineProps({
@@ -53,9 +53,10 @@ props.roles.forEach((role) => {
 
 const handleUpdateEpicStatus = async (val) => {
   const { id } = val;
-  const epicToUpdate = epicStore.EPICS.filter((epic) => {
+
+  const epicToUpdate = epicStore.EPICS.find((epic) => {
     return epic.id === props.id;
-  })[0];
+  });
 
   epicToUpdate.epicStatusId = id;
   return await epicStore.updateEpic(epicToUpdate);

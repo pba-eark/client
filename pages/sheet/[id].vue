@@ -4,12 +4,15 @@ import { useEpicStore } from "~/store/epics";
 import { useTabsStore } from "~/store/tabs";
 import { useTaskStore } from "~/store/tasks";
 import { useEpicStatusStore } from "~/store/epicStatus";
+import { useRiskProfileStore } from "~/store/riskProfiles";
 
 const sheetStore = useEstimateSheetStore();
 const epicStore = useEpicStore();
 const tabStore = useTabsStore();
 const taskStore = useTaskStore();
 const epicStatusStore = useEpicStatusStore();
+const riskProfileStore = useRiskProfileStore();
+
 const route = useRoute();
 const sheetElement = ref(null);
 const { $swal } = useNuxtApp();
