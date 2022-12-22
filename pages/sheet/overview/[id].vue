@@ -53,6 +53,21 @@ const handlePasteEpic = async () => {
 <template>
   <div>
     <Overview />
-    <Button text="Paste epic" @click="handlePasteEpic" />
+    <div class="button-placement">
+      <Button class="paste-epic" text="Paste epic" @click="handlePasteEpic" />
+    </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.button-placement {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  width: 100%;
+  padding-bottom: 50px;
+}
+.paste-epic {
+  
+}
+</style>

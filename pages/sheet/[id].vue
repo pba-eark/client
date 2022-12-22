@@ -151,7 +151,14 @@ const sheetEpics = computed(() => {
 <template>
   <div ref="sheetElement" class="sheet">
     <Epic v-for="epic in sheetEpics" :key="epic.id" :data="epic" />
-    <Button text="Ny epic" @click="handleCreateEpic"></Button>
+    <div class="button-placement">
+      <Button
+        class="new-epic"
+        text="Tilføj epic"
+        icon="icon-plus"
+        @click="handleCreateEpic"
+      />
+    </div>
   </div>
 </template>
 
@@ -167,5 +174,18 @@ const sheetEpics = computed(() => {
   &::-webkit-scrollbar {
     width: 10px;
   }
+}
+.button-placement {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  padding-bottom: 50px;
+}
+.new-epic {
+  position: absolute;
+  top: -22px;
+  z-index: 99;
 }
 </style>
