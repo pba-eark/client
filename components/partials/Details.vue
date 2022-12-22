@@ -326,13 +326,11 @@ const chartOptions = computed(() => {
   <div class="meta" ref="sidebar">
     <div class="meta__settings">
       <div class="filter">
-        <Icon icon="icon-filter" />
-        <span>Filtrér</span>
+        <Button text="Filtrér" icon="icon-filter" class="button__settings" />
       </div>
 
       <div class="settings" @click="handleShowSettings">
-        <Icon icon="icon-cog" />
-        <span> Indstillinger </span>
+        <Button text="Indstillinger" icon="icon-cog" class="button__settings" />
       </div>
 
       <div class="profile">
@@ -532,6 +530,7 @@ const chartOptions = computed(() => {
     grid-template-columns: auto auto 1fr;
     gap: 2rem;
     align-items: center;
+    margin-bottom: 15px;
 
     svg {
       height: 25px;

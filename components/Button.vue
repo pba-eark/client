@@ -96,7 +96,6 @@ svg {
     &:hover {
       background-color: var(--color-task-input);
     }
-
   }
 }
 .edit {
@@ -173,5 +172,15 @@ svg {
   &:disabled {
     cursor: not-allowed;
   }
+}
+
+.button__settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row-reverse;
+  border: none;
+  background: transparent;
+  gap: 5px;
 }
 </style>
