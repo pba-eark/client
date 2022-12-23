@@ -8,6 +8,7 @@ import { useUserStore } from "~/store/users";
 import { useDetailsStore } from "~/store/details";
 import { useSheetStatusStore } from "~/store/sheetStatus";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
+import { useJiraStore } from "~/store/jira";
 
 const taskStore = useTaskStore();
 const riskProfileStore = useRiskProfileStore();
@@ -18,6 +19,7 @@ const userStore = useUserStore();
 const detailsStore = useDetailsStore();
 const sheetStatusStore = useSheetStatusStore();
 const sheetStore = useEstimateSheetStore();
+const jiraStore = useJiraStore();
 
 const { $swal } = useNuxtApp();
 const route = useRoute();
@@ -375,7 +377,12 @@ const currentSheetName = computed(() => {
 
 /* CSV EXPORT */
 const exportCsv = () => {
-  // console.log(epics.value);
+  if (epics.value.length < 1)
+    return $swal.fire(
+      "Der skete en fejl.",
+      "Estimatarket er tomt. Eksportéring kræver minimum én epic. ",
+      "warning"
+    );
 
   const csvContent = [
     [
@@ -432,6 +439,46 @@ const exportCsv = () => {
     "text/csv;encoding:utf-8"
   );
 };
+
+const handleJiraSync = () => {
+  var options = {};
+  jiraStore.PROJECTS.map((o) => {
+    options[o.id] = o.name;
+  });
+
+  $swal
+    .fire({
+      title: "Vælg Jira projekt",
+      input: "select",
+      inputOptions: options,
+      showCancelButton: true,
+      confirmButtonText: "Synkronisér",
+      showLoaderOnConfirm: true,
+      preConfirm: async (option) => {
+        const project = jiraStore.PROJECTS.find((p) => p.id == option);
+        fetch(project.self, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${jiraStore.JIRA_API_TOKEN}`,
+          },
+        })
+          .then((response) => response.json())
+          .then(async (data) => {
+            jiraStore.syncJira(parseInt(route.params.id), data);
+          });
+      },
+      allowOutsideClick: () => !$swal.isLoading(),
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        $swal.fire({
+          icon: "success",
+          title: `Synkroniséring fuldført!`,
+        });
+      }
+    });
+};
 </script>
 
 <template>
@@ -439,12 +486,31 @@ const exportCsv = () => {
     <div class="overview__header">
       <div class="overview__header-flex">
         <h1>Overblik</h1>
-        <Button
-          text="Exportér CSV"
-          icon="icon-export"
-          @click="exportCsv"
-          class="cta"
-        />
+
+        <div>
+          <Button
+            text="Exportér CSV"
+            icon="icon-export"
+            @click="exportCsv"
+            class="cta"
+          />
+
+          <div>
+            <div
+              v-if="
+                jiraStore.JIRA_API_TOKEN && jiraStore.JIRA_API_TOKEN.length > 0
+              "
+            >
+              <Button text="Synkronisér med Jira" @click="handleJiraSync" />
+            </div>
+            <a
+              v-else
+              href="https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=f0rb1sOMiQ9pPK860ygqqZ87hKHfHeyx&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work&redirect_uri=https%3A%2F%2Flocalhost%3A7087%2Fapi%2Fauth%2Fatlassian&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent"
+            >
+              Forbind Jira
+            </a>
+          </div>
+        </div>
       </div>
       <Input
         class="input__select--overview-status"

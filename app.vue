@@ -9,8 +9,14 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 const jiraStore = useJiraStore();
 const globalStore = useGlobalStore();
+const route = useRoute();
 
 onMounted(async () => {
+  if (route.path.includes("/callback")) {
+    await authStore.setJwt(localStorage.getItem("jwt"));
+    userStore.setCurrentUser(JSON.parse(localStorage.getItem("user")));
+    globalStore.setLoaded(true);
+  }
   handleAuthorization();
   /* Check if user is logged in */
   if (!authStore.IS_AUTHORIZED && localStorage.getItem("jwt")) {
@@ -20,11 +26,11 @@ onMounted(async () => {
     globalStore.setLoaded(true);
   }
 
-  /* Check if user is logged in */
-  if (!authStore.IS_AUTHORIZED && localStorage.getItem("user"))
-    if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length)
-      /* Check for jira jwt in localstorage */
-      await jiraStore.setJwt(localStorage.getItem("jira"));
+  /* Check for jira jwt in localstorage */
+  if (localStorage.getItem("jira") && !jiraStore.JIRA_API_TOKEN.length) {
+    console.log("settings jira token");
+    await jiraStore.setJwt(localStorage.getItem("jira"));
+  }
 });
 
 watch(
@@ -35,7 +41,7 @@ watch(
 );
 
 const handleAuthorization = async () => {
-  if (authStore.IS_AUTHORIZED) {
+  if (authStore.IS_AUTHORIZED || route.fullPath.includes("/callback")) {
     layout.value = "default";
     await navigateTo(localStorage.getItem("lastPath") ?? "/");
   } else {
@@ -60,7 +66,7 @@ if (process.client) {
 </script>
 
 <template>
-  <div v-if="globalStore.IS_LOADED">
+  <div v-if="globalStore.IS_LOADED || route.fullPath.includes('/callback')">
     <NuxtLayout :name="layout">
       <LazyNuxtPage />
     </NuxtLayout>

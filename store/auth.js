@@ -61,6 +61,7 @@ export const useAuthStore = defineStore("auth-store", () => {
     });
 
     if (localStorage.getItem("tabs")) localStorage.removeItem("tabs");
+    if (localStorage.getItem("jira")) localStorage.removeItem("jira");
     if (localStorage.getItem("recentSheets"))
       localStorage.removeItem("recentSheets");
     if (localStorage.getItem("user")) localStorage.removeItem("user");
