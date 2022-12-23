@@ -75,7 +75,7 @@ const handleLogin = async () => {
         @updatePasswordInput="handleUpdatePassword"
       />
 
-      <Button class="auth-cta" text="Log ind" type="submit" />
+      <Button class="cta" text="Log ind" type="submit" />
     </form>
 
     <NuxtLink class="auth-secondary" to="/login/register">Opret konto</NuxtLink>

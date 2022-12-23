@@ -174,7 +174,7 @@ const handleSubmit = async () => {
   $swal.fire({
     position: "center",
     icon: "success",
-    title: `Estimatark oprettet!`,
+    title: `Estimat ark oprettet!`,
     showConfirmButton: false,
     timer: 1500,
   });
@@ -388,7 +388,7 @@ const validateNewCustomer = computed(() => {
         >Jira
       </a> -->
 
-      <Button class="auth-cta" text="Opret estimatark" type="submit" />
+      <Button class="cta" text="Opret estimat ark" type="submit" />
     </form>
 
     <div>

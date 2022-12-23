@@ -50,7 +50,7 @@ const doneSheets = computed(() => {
 
     <div class="block__dashboard">
       <div class="dashboard__item">
-        <h2>Mine estimatark</h2>
+        <h2>Mine estimat ark</h2>
         <ul>
           <li v-for="sheet in estimatedSheets">
             <NuxtLink :to="`/sheet/${sheet.id}`">

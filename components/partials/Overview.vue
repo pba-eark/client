@@ -366,12 +366,86 @@ const currentSheetStatus = computed(() => {
     return status.id === sheetStore.CURRENT_ESTIMATE_SHEET?.sheetStatusId;
   })[0];
 });
+
+const currentSheetName = computed(() => {
+  return sheetStore.ESTIMATE_SHEETS.find((sheet) => {
+    return sheet.id === parseInt(route.params.id);
+  }).sheetName;
+});
+
+/* CSV EXPORT */
+const exportCsv = () => {
+  // console.log(epics.value);
+
+  const csvContent = [
+    [
+      "Epic navn",
+      "Timer (Realistisk)",
+      "Pris (Realistisk)",
+      "Timer (Pessimistisk)",
+      "Pris (Pessimistisk)",
+    ],
+    ...epics.value.map((epic) => [
+      epic.epicName,
+      epic.totalRealisticHours,
+      epic.totalRealisticPrice,
+      epic.totalPessimisticHours,
+      epic.totalPessimisticPrice,
+    ]),
+  ]
+    .map((e) => e.join(","))
+    .join("\n");
+
+  // The download function takes a CSV string, the filename and mimeType as parameters
+  const download = (content, fileName, mimeType) => {
+    var a = document.createElement("a");
+    mimeType = mimeType || "application/octet-stream";
+
+    if (navigator.msSaveBlob) {
+      // IE10
+      navigator.msSaveBlob(
+        new Blob([content], {
+          type: mimeType,
+        }),
+        fileName
+      );
+    } else if (URL && "download" in a) {
+      //html5 A[download]
+      a.href = URL.createObjectURL(
+        new Blob([content], {
+          type: mimeType,
+        })
+      );
+      a.setAttribute("download", fileName);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      location.href =
+        "data:application/octet-stream," + encodeURIComponent(content);
+    }
+  };
+
+  download(
+    csvContent,
+    `estimat_${currentSheetName.value}.csv`,
+    "text/csv;encoding:utf-8"
+  );
+};
 </script>
 
 <template>
   <div class="overview">
     <div class="overview__header">
-      <h1>Overblik</h1>
+      <div class="overview__header-flex">
+        <h1>Overblik</h1>
+        <Button
+          text="Exportér CSV"
+          icon="icon-export"
+          @click="exportCsv"
+          class="cta"
+        />
+      </div>
       <Input
         class="input__select--overview-status"
         type="select"
@@ -521,6 +595,21 @@ const currentSheetStatus = computed(() => {
     top: -20px;
     background: var(--color-background);
     z-index: 1;
+
+    &-flex {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        border-radius: 4px;
+        outline: none;
+        border: none;
+        padding: 0 5px;
+        margin: 0;
+        display: flex;
+        gap: 10px;
+      }
+    }
   }
   &__footer {
     padding-bottom: 20px;

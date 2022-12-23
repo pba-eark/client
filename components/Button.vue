@@ -165,7 +165,7 @@ svg {
   }
 }
 
-.auth-cta {
+.cta {
   margin: 0 auto;
   padding: 0.6rem 8rem;
   border-radius: 50px;

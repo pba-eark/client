@@ -157,7 +157,7 @@ const handleUpdatePasswordRepeat = (val) => {
         @updateNewPassword="handleUpdatePasswordRepeat"
       />
 
-      <Button class="auth-cta" text="Sign up" type="submit" />
+      <Button class="cta" text="Sign up" type="submit" />
     </form>
 
     <NuxtLink class="auth-secondary" to="/login"
