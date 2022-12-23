@@ -16,50 +16,66 @@ export const useJiraStore = defineStore("jira-store", () => {
     jwt.value = token;
     localStorage.setItem("jira", token);
 
-    await getCloudIds(token);
-    await getProjects(cloudIds.value[0], token);
+    const cloudIdsRes = await getCloudIds(token);
+    if (cloudIdsRes) await getProjects(cloudIds.value[0], token);
   };
 
-  const setCloudIds = (clouds) => {
-    cloudIds.value = clouds;
-    console.log("Jira clouds set", clouds);
+  const resetJira = () => {
+    jwt.value = "";
+    cloudIds.value = [];
+    projects.value = [];
+    if (localStorage.getItem("jira")) localStorage.removeItem("jira");
   };
 
-  const setProjects = (arr) => {
-    projects.value = arr;
+  const setCloudIds = (payload) => {
+    cloudIds.value = payload;
+    console.log("Jira clouds set", payload);
+  };
+
+  const setProjects = (payload) => {
+    projects.value = payload;
     console.log("Jira projects set", projects.value);
   };
 
   const getCloudIds = async (token) => {
     if (!token) return console.log("No access token!");
 
-    const cloudIds = await $fetch(
-      "https://api.atlassian.com/oauth/token/accessible-resources",
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    return setCloudIds(cloudIds);
+    try {
+      const cloudIds = await $fetch(
+        "https://api.atlassian.com/oauth/token/accessible-resources",
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCloudIds(cloudIds);
+      return true;
+    } catch (e) {
+      console.log("ERROR", e);
+      resetJira();
+    }
   };
 
   const getProjects = async ({ id }, token) => {
-    fetch(`https://api.atlassian.com/ex/jira/${id}/rest/api/2/project`, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
+    try {
+      $fetch(`https://api.atlassian.com/ex/jira/${id}/rest/api/2/project`, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((data) => {
         setProjects(data);
+        return true;
       });
+    } catch (e) {
+      console.log("ERROROOR", e);
+      resetJira();
+    }
   };
 
   /* Sync Jira Issues */
@@ -110,7 +126,7 @@ export const useJiraStore = defineStore("jira-store", () => {
         }
       }`;
 
-      fetch(
+      $fetch(
         `https://api.atlassian.com/ex/jira/${CLOUD_ID.value.id}/rest/api/3/issue/`,
         {
           method: "POST",
@@ -121,11 +137,9 @@ export const useJiraStore = defineStore("jira-store", () => {
           },
           body: requestBody,
         }
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("added issue!", data);
-        });
+      ).then((data) => {
+        console.log("added issue!", data);
+      });
     });
 
     return true;

@@ -464,7 +464,7 @@ const handleJiraSync = () => {
           },
         })
           .then((response) => response.json())
-          .then(async (data) => {
+          .then((data) => {
             jiraStore.syncJira(parseInt(route.params.id), data);
           });
       },
