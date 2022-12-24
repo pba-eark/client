@@ -78,7 +78,73 @@ export const useJiraStore = defineStore("jira-store", () => {
     }
   };
 
-  /* Sync Jira Issues */
+  /* Get Jira user */
+  // const getUser = (userId) => {
+  //   fetch(
+  //     `https://api.atlassian.com/ex/jira/${cloudIds.value[0].id}/rest/api/3/users?accountId=${userId}`,
+  //     {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Accept: "application/json",
+  //         Authorization: `Bearer ${this.accessToken}`,
+  //       },
+  //     }
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       this.project = data;
+  //       console.log("user", data);
+  //     });
+  // };
+
+  /* Create new Jira project */
+  const createProject = async (name, key) => {
+    key = key.toUpperCase();
+    const bodyData = `{
+          "name": "${name}",
+          "key": "${key}",
+          "leadAccountId": "5e3abdfd387bb00cb2bc04eb",
+          "projectTypeKey": "software",
+          "projectTemplateKey": "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban"
+        }`;
+
+    try {
+      await $fetch(
+        `https://api.atlassian.com/ex/jira/${CLOUD_ID.value.id}/rest/api/2/project`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${JIRA_API_TOKEN.value}`,
+          },
+          body: bodyData,
+        }
+      ).then(async (data) => {
+        /* Add new project to projects */
+        try {
+          await $fetch(data.self, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${JIRA_API_TOKEN.value}`,
+            },
+          }).then((data) => {
+            projects.value = [...projects.value, data];
+          });
+        } catch (e) {
+          console.log("ERROR", e);
+          return false;
+        }
+      });
+    } catch (e) {
+      console.log("ERROR", e);
+      return false;
+    }
+    return true;
+  };
+
+  /* Sync Jira Issues (Create issues for each task in all epics in sheet) */
   const syncJira = (sheetId, project) => {
     const sheetEpics = epicStore.EPICS.filter((e) => {
       return e.estimateSheetId == sheetId;
@@ -97,7 +163,7 @@ export const useJiraStore = defineStore("jira-store", () => {
       });
     });
 
-    tasks.forEach((t) => {
+    tasks.forEach(async (t) => {
       const requestBody = `{
         "update": {},
         "fields": {
@@ -126,7 +192,7 @@ export const useJiraStore = defineStore("jira-store", () => {
         }
       }`;
 
-      $fetch(
+      await $fetch(
         `https://api.atlassian.com/ex/jira/${CLOUD_ID.value.id}/rest/api/3/issue/`,
         {
           method: "POST",
@@ -157,5 +223,8 @@ export const useJiraStore = defineStore("jira-store", () => {
     CLOUD_ID,
     PROJECTS,
     syncJira,
+    createProject,
+    resetJira,
+    // getUser,
   };
 });

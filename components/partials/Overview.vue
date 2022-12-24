@@ -441,7 +441,8 @@ const exportCsv = () => {
 };
 
 const handleJiraSync = () => {
-  var options = {};
+  let options = {};
+  let project;
   jiraStore.PROJECTS.map((o) => {
     options[o.id] = o.name;
   });
@@ -455,18 +456,21 @@ const handleJiraSync = () => {
       confirmButtonText: "Synkronisér",
       showLoaderOnConfirm: true,
       preConfirm: async (option) => {
-        const project = jiraStore.PROJECTS.find((p) => p.id == option);
-        fetch(project.self, {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${jiraStore.JIRA_API_TOKEN}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
+        project = jiraStore.PROJECTS.find((p) => p.id == option);
+
+        try {
+          await $fetch(project.self, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${jiraStore.JIRA_API_TOKEN}`,
+            },
+          }).then((data) => {
             jiraStore.syncJira(parseInt(route.params.id), data);
           });
+        } catch (e) {
+          return console.log("ERROR", e);
+        }
       },
       allowOutsideClick: () => !$swal.isLoading(),
     })
@@ -475,8 +479,49 @@ const handleJiraSync = () => {
         $swal.fire({
           icon: "success",
           title: `Synkroniséring fuldført!`,
+          text: `Se ændringer `,
         });
       }
+    });
+};
+
+const handleCreateJiraProject = () => {
+  $swal
+    .fire({
+      title: "Nyt Jira projekt",
+      html: `<input type="text" id="name" class="swal2-input" placeholder="Indtast projekt navn">
+  <input type="text" id="key" class="swal2-input" placeholder="Indtast projekt nøgle">`,
+      confirmButtonText: "Opret",
+      focusConfirm: false,
+      preConfirm: () => {
+        const projectName = $swal.getPopup().querySelector("#name").value;
+        const projectKey = $swal.getPopup().querySelector("#key").value;
+        if (!projectName || !projectKey) {
+          $swal.showValidationMessage(`Udfyld venligst både navn og nøgle`);
+        }
+        return { projectName, projectKey };
+      },
+    })
+    .then(async (result) => {
+      if (!result.isConfirmed) return;
+
+      const res = await jiraStore.createProject(
+        result.value.projectName,
+        result.value.projectKey
+      );
+
+      if (!res)
+        return $swal.fire({
+          icon: "error",
+          title: `Ups... Noget gik galt!`,
+          text: `Jira projektet blev ikke oprettet. Prøv igen.`,
+        });
+
+      return $swal.fire({
+        icon: "success",
+        title: `Jira projekt oprettet!`,
+        text: `Projektet '${result.value.projectName}' blev oprettet på Jira.`,
+      });
     });
 };
 </script>
@@ -502,6 +547,10 @@ const handleJiraSync = () => {
               "
             >
               <Button text="Synkronisér med Jira" @click="handleJiraSync" />
+              <Button
+                text="Nyt Jira projekt"
+                @click="handleCreateJiraProject"
+              />
             </div>
             <a
               v-else

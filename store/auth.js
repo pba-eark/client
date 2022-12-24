@@ -1,10 +1,12 @@
 import { defineStore } from "pinia";
 import { useGlobalStore } from "./index";
 import { useUserStore } from "./users";
+import { useJiraStore } from "./jira";
 
 export const useAuthStore = defineStore("auth-store", () => {
   const globalStore = useGlobalStore();
   const userStore = useUserStore();
+  const jiraStore = useJiraStore();
   const { $swal } = useNuxtApp();
 
   /* State */
@@ -42,6 +44,7 @@ export const useAuthStore = defineStore("auth-store", () => {
   const handleLogOut = async () => {
     jwt.value = "";
     isAuthorized.value = false;
+    jiraStore.resetJira();
 
     const notification = $swal.mixin({
       toast: true,
