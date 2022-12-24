@@ -375,7 +375,8 @@ const chartOptions = computed(() => {
         v-if="
           detailsStore.DETAILS == null &&
           detailsStore.DETAILS_CHART.labels.length > 0 &&
-          !showSettings
+          !showSettings &&
+          $route.fullPath.includes('/overview')
         "
       >
         <Input

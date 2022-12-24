@@ -56,18 +56,18 @@ onMounted(() => {
   calculateOverview();
 });
 
-onUnmounted(() => {
-  detailsStore.setDetailsChart({
-    labels: [],
-    datasets: {},
-  });
-}),
-  watch(
-    () => [taskStore.TASKS.length, epicStore.EPICS.length],
-    () => {
-      calculateOverview();
-    }
-  );
+// onUnmounted(() => {
+//   detailsStore.setDetailsChart({
+//     labels: [],
+//     datasets: {},
+//   });
+// }),
+watch(
+  () => [taskStore.TASKS.length, epicStore.EPICS.length],
+  () => {
+    calculateOverview();
+  }
+);
 
 /* Update epic name, if updated in details store */
 watch(
