@@ -433,11 +433,23 @@ const exportCsv = () => {
     }
   };
 
-  download(
-    csvContent,
-    `estimat_${currentSheetName.value}.csv`,
-    "text/csv;encoding:utf-8"
-  );
+  $swal
+    .fire({
+      title: "Eksportér CSV",
+      text: "Vil du downloade estimat arket som CSV?",
+      showCancelButton: true,
+      confirmButtonText: "Download",
+    })
+    .then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        download(
+          csvContent,
+          `estimat_${currentSheetName.value}.csv`,
+          "text/csv;encoding:utf-8"
+        );
+      }
+    });
 };
 
 const handleJiraSync = () => {
