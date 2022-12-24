@@ -42,14 +42,12 @@ const doneSheets = computed(() => {
     })[0];
   });
 });
-
-const runtimeConfig = useRuntimeConfig();
 </script>
 
 <template>
   <div class="block">
     <h1>Dashboard</h1>
-    <p>{{ runtimeConfig.public.API_URL }}</p>
+
     <div class="block__dashboard">
       <div class="dashboard__item">
         <h2>Mine estimat ark</h2>
