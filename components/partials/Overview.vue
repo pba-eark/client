@@ -21,6 +21,7 @@ const sheetStatusStore = useSheetStatusStore();
 const sheetStore = useEstimateSheetStore();
 const jiraStore = useJiraStore();
 
+const runtimeConfig = useRuntimeConfig();
 const { $swal } = useNuxtApp();
 const route = useRoute();
 const epics = ref([]);
@@ -581,7 +582,9 @@ const handleCreateJiraProject = () => {
             </div>
             <a
               v-else
-              href="https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=f0rb1sOMiQ9pPK860ygqqZ87hKHfHeyx&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work&redirect_uri=https%3A%2F%2Flocalhost%3A7087%2Fapi%2Fauth%2Fatlassian&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent"
+              :href="`https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=f0rb1sOMiQ9pPK860ygqqZ87hKHfHeyx&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work&redirect_uri=${encodeURIComponent(
+                runtimeConfig.public.API_URL
+              )}%2Fauth%2Fatlassian&state=${`YOUR_USER_BOUND_VALUE`}&response_type=code&prompt=consent`"
             >
               Forbind Jira
             </a>
