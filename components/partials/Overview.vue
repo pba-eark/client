@@ -504,6 +504,7 @@ const handleCreateJiraProject = () => {
       html: `<input type="text" id="name" class="swal2-input" placeholder="Indtast projekt navn">
   <input type="text" id="key" class="swal2-input" placeholder="Indtast projekt nøgle">`,
       confirmButtonText: "Opret",
+      showCancelButton: true,
       focusConfirm: false,
       preConfirm: () => {
         const projectName = $swal.getPopup().querySelector("#name").value;
