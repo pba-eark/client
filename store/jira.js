@@ -99,7 +99,6 @@ export const useJiraStore = defineStore("jira-store", () => {
 
   /* Create new Jira project */
   const createProject = async (name, key) => {
-    key = key.toUpperCase();
     const bodyData = `{
           "name": "${name}",
           "key": "${key}",
@@ -145,7 +144,7 @@ export const useJiraStore = defineStore("jira-store", () => {
   };
 
   /* Sync Jira Issues (Create issues for each task in all epics in sheet) */
-  const syncJira = (sheetId, project) => {
+  const syncJira = async (sheetId, project) => {
     const sheetEpics = epicStore.EPICS.filter((e) => {
       return e.estimateSheetId == sheetId;
     });
@@ -163,13 +162,14 @@ export const useJiraStore = defineStore("jira-store", () => {
       });
     });
 
-    tasks.forEach(async (t) => {
-      const requestBody = `{
+    await Promise.all(
+      tasks.map(async (t) => {
+        const requestBody = `{
         "update": {},
         "fields": {
           "summary": "${t.taskName}",
           "issuetype": {
-            "id": "${project.issueTypes[0].id}"
+            "id": "${project.issueTypes[0]?.id}"
           },
           "project": {
             "id": "${project.id}"
@@ -192,21 +192,27 @@ export const useJiraStore = defineStore("jira-store", () => {
         }
       }`;
 
-      await $fetch(
-        `https://api.atlassian.com/ex/jira/${CLOUD_ID.value.id}/rest/api/3/issue/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            Authorization: `Bearer ${JIRA_API_TOKEN.value}`,
-          },
-          body: requestBody,
+        try {
+          await $fetch(
+            `https://api.atlassian.com/ex/jira/${CLOUD_ID.value.id}/rest/api/3/issue/`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: `Bearer ${JIRA_API_TOKEN.value}`,
+              },
+              body: requestBody,
+            }
+          ).then((data) => {
+            console.log("added issue!", data);
+          });
+        } catch (e) {
+          console.log("ERROR", e);
+          return false;
         }
-      ).then((data) => {
-        console.log("added issue!", data);
-      });
-    });
+      })
+    );
 
     return true;
   };

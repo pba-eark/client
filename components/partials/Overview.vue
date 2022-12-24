@@ -477,8 +477,8 @@ const handleJiraSync = () => {
               Accept: "application/json",
               Authorization: `Bearer ${jiraStore.JIRA_API_TOKEN}`,
             },
-          }).then((data) => {
-            jiraStore.syncJira(parseInt(route.params.id), data);
+          }).then(async (data) => {
+            await jiraStore.syncJira(parseInt(route.params.id), data);
           });
         } catch (e) {
           return console.log("ERROR", e);
@@ -491,13 +491,15 @@ const handleJiraSync = () => {
         $swal.fire({
           icon: "success",
           title: `Synkroniséring fuldført!`,
-          text: `Se ændringer `,
+          html: `<p>Se ændringerne på <a class="sweetalert-link" href="${jiraStore.CLOUD_ID.url}/browse/${project.key}" target="_blank">${project.name}</a></p>`,
         });
       }
     });
 };
 
 const handleCreateJiraProject = () => {
+  let projectName;
+  let projectKey;
   $swal
     .fire({
       title: "Nyt Jira projekt",
@@ -507,8 +509,8 @@ const handleCreateJiraProject = () => {
       showCancelButton: true,
       focusConfirm: false,
       preConfirm: () => {
-        const projectName = $swal.getPopup().querySelector("#name").value;
-        const projectKey = $swal.getPopup().querySelector("#key").value;
+        projectName = $swal.getPopup().querySelector("#name").value;
+        projectKey = $swal.getPopup().querySelector("#key").value.toUpperCase();
         if (!projectName || !projectKey) {
           $swal.showValidationMessage(`Udfyld venligst både navn og nøgle`);
         }
@@ -518,22 +520,34 @@ const handleCreateJiraProject = () => {
     .then(async (result) => {
       if (!result.isConfirmed) return;
 
-      const res = await jiraStore.createProject(
-        result.value.projectName,
-        result.value.projectKey
-      );
+      $swal.fire({
+        title: "Opretter Jira projekt...",
+        text: "Læn dig tilbage og ta' en slapper😎",
+        allowOutsideClick: false,
+        timerProgressBar: true,
+        didOpen: async () => {
+          $swal.showLoading();
 
-      if (!res)
-        return $swal.fire({
-          icon: "error",
-          title: `Ups... Noget gik galt!`,
-          text: `Jira projektet blev ikke oprettet. Prøv igen.`,
-        });
+          const res = await jiraStore.createProject(
+            result.value.projectName,
+            result.value.projectKey
+          );
 
-      return $swal.fire({
-        icon: "success",
-        title: `Jira projekt oprettet!`,
-        text: `Projektet '${result.value.projectName}' blev oprettet på Jira.`,
+          console.log("res", res);
+
+          if (!res)
+            return $swal.fire({
+              icon: "error",
+              title: `Ups... Noget gik galt!`,
+              text: `Jira projektet blev ikke oprettet. Prøv igen.`,
+            });
+
+          return $swal.fire({
+            icon: "success",
+            title: `Jira projekt oprettet!`,
+            html: `<p>Projektet '${result.value.projectName}' blev oprettet. Se projektet <a class="sweetalert-link" href="${jiraStore.CLOUD_ID.url}/browse/${projectKey}" target="_blank">her.</a></p>`,
+          });
+        },
       });
     });
 };
