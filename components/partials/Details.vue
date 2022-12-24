@@ -113,6 +113,22 @@ const handleCopyTask = (obj) => {
   delete task.id;
   delete task.epicId;
   globalStore.copyTask(task);
+
+  const notification = $swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", $swal.stopTimer);
+      toast.addEventListener("mouseleave", $swal.resumeTimer);
+    },
+  });
+  notification.fire({
+    icon: "success",
+    title: `Task kopiéret! (${obj.taskName})`,
+  });
 };
 
 const handlePasteTask = async () => {
@@ -359,7 +375,8 @@ const chartOptions = computed(() => {
         v-if="
           detailsStore.DETAILS == null &&
           detailsStore.DETAILS_CHART.labels.length > 0 &&
-          !showSettings
+          !showSettings &&
+          $route.fullPath.includes('/overview')
         "
       >
         <Input
@@ -392,7 +409,11 @@ const chartOptions = computed(() => {
                 </span>
               </h1>
             </div>
-            <Button class="exit" icon="icon-cross" @click="detailsStore.setDetails(null)" />
+            <Button
+              class="exit"
+              icon="icon-cross"
+              @click="detailsStore.setDetails(null)"
+            />
           </div>
 
           <h2 v-if="item.type === 'epic'">

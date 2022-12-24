@@ -174,7 +174,7 @@ const handleSubmit = async () => {
   $swal.fire({
     position: "center",
     icon: "success",
-    title: `Estimatark oprettet!`,
+    title: `Estimat ark oprettet!`,
     showConfirmButton: false,
     timer: 1500,
   });
@@ -383,12 +383,8 @@ const validateNewCustomer = computed(() => {
         @wireframe="handleSetWireframe"
         placeholder="Link til wireframe"
       />
-      <!-- <a
-        href="https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=f0rb1sOMiQ9pPK860ygqqZ87hKHfHeyx&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work&redirect_uri=https%3A%2F%2Flocalhost%3A7087%2Fapi%2Fauth%2Fatlassian&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent"
-        >Jira
-      </a> -->
 
-      <Button class="auth-cta" text="Opret estimatark" type="submit" />
+      <Button class="cta" text="Opret estimat ark" type="submit" />
     </form>
 
     <div>
@@ -398,7 +394,7 @@ const validateNewCustomer = computed(() => {
           :class="{ active: selectType.selected === 'empty' }"
           @click="handleSelectEmptySheet"
         >
-          Tomt estimat
+          Ingen skabelon
         </div>
         <div
           :class="{ active: selectType.selected === 'template' }"
@@ -410,7 +406,7 @@ const validateNewCustomer = computed(() => {
           :class="{ active: selectType.selected === 'copy' }"
           @click="handleSelectCopySheet"
         >
-          Kopiér estimat
+          Kopiér estimat ark
         </div>
       </div>
 
@@ -421,7 +417,7 @@ const validateNewCustomer = computed(() => {
 
       <!-- Copy existing estimate sheet -->
       <div class="copy" v-show="selectType.selected === 'copy'">
-        <h3>Kopiér eksisterende estimat:</h3>
+        <h3>Vælg estimat at kopiére fra:</h3>
         <ul class="copy__customers">
           <li class="copy__customer" v-for="customer in customers">
             <b>{{ customer.customerName }}</b>
@@ -445,7 +441,7 @@ const validateNewCustomer = computed(() => {
           </li>
           <Button
             v-show="copyFromCustomer !== null"
-            text="Fjern valgt estimat"
+            text="Nulstil"
             @click="handleClearCopyCustomer"
           />
         </ul>

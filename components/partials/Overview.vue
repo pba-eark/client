@@ -8,6 +8,7 @@ import { useUserStore } from "~/store/users";
 import { useDetailsStore } from "~/store/details";
 import { useSheetStatusStore } from "~/store/sheetStatus";
 import { useEstimateSheetStore } from "~/store/estimateSheets";
+import { useJiraStore } from "~/store/jira";
 
 const taskStore = useTaskStore();
 const riskProfileStore = useRiskProfileStore();
@@ -18,6 +19,7 @@ const userStore = useUserStore();
 const detailsStore = useDetailsStore();
 const sheetStatusStore = useSheetStatusStore();
 const sheetStore = useEstimateSheetStore();
+const jiraStore = useJiraStore();
 
 const { $swal } = useNuxtApp();
 const route = useRoute();
@@ -54,18 +56,18 @@ onMounted(() => {
   calculateOverview();
 });
 
-onUnmounted(() => {
-  detailsStore.setDetailsChart({
-    labels: [],
-    datasets: {},
-  });
-}),
-  watch(
-    () => [taskStore.TASKS.length, epicStore.EPICS.length],
-    () => {
-      calculateOverview();
-    }
-  );
+// onUnmounted(() => {
+//   detailsStore.setDetailsChart({
+//     labels: [],
+//     datasets: {},
+//   });
+// }),
+watch(
+  () => [taskStore.TASKS.length, epicStore.EPICS.length],
+  () => {
+    calculateOverview();
+  }
+);
 
 /* Update epic name, if updated in details store */
 watch(
@@ -366,12 +368,212 @@ const currentSheetStatus = computed(() => {
     return status.id === sheetStore.CURRENT_ESTIMATE_SHEET?.sheetStatusId;
   })[0];
 });
+
+const currentSheetName = computed(() => {
+  return sheetStore.ESTIMATE_SHEETS.find((sheet) => {
+    return sheet.id === parseInt(route.params.id);
+  }).sheetName;
+});
+
+/* CSV EXPORT */
+const exportCsv = () => {
+  if (epics.value.length < 1)
+    return $swal.fire(
+      "Der skete en fejl.",
+      "Estimatarket er tomt. Eksportéring kræver minimum én epic. ",
+      "warning"
+    );
+
+  const csvContent = [
+    [
+      "Epic navn",
+      "Timer (Realistisk)",
+      "Pris (Realistisk)",
+      "Timer (Pessimistisk)",
+      "Pris (Pessimistisk)",
+    ],
+    ...epics.value.map((epic) => [
+      epic.epicName,
+      epic.totalRealisticHours,
+      epic.totalRealisticPrice,
+      epic.totalPessimisticHours,
+      epic.totalPessimisticPrice,
+    ]),
+  ]
+    .map((e) => e.join(","))
+    .join("\n");
+
+  // The download function takes a CSV string, the filename and mimeType as parameters
+  const download = (content, fileName, mimeType) => {
+    var a = document.createElement("a");
+    mimeType = mimeType || "application/octet-stream";
+
+    if (navigator.msSaveBlob) {
+      // IE10
+      navigator.msSaveBlob(
+        new Blob([content], {
+          type: mimeType,
+        }),
+        fileName
+      );
+    } else if (URL && "download" in a) {
+      //html5 A[download]
+      a.href = URL.createObjectURL(
+        new Blob([content], {
+          type: mimeType,
+        })
+      );
+      a.setAttribute("download", fileName);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      location.href =
+        "data:application/octet-stream," + encodeURIComponent(content);
+    }
+  };
+
+  $swal
+    .fire({
+      title: "Eksportér CSV",
+      text: "Vil du downloade estimat arket som CSV?",
+      showCancelButton: true,
+      confirmButtonText: "Download",
+    })
+    .then((result) => {
+      /* Read more about isConfirmed, isDenied below */
+      if (result.isConfirmed) {
+        download(
+          csvContent,
+          `estimat_${currentSheetName.value}.csv`,
+          "text/csv;encoding:utf-8"
+        );
+      }
+    });
+};
+
+const handleJiraSync = () => {
+  let options = {};
+  let project;
+  jiraStore.PROJECTS.map((o) => {
+    options[o.id] = o.name;
+  });
+
+  $swal
+    .fire({
+      title: "Vælg Jira projekt",
+      input: "select",
+      inputOptions: options,
+      showCancelButton: true,
+      confirmButtonText: "Synkronisér",
+      showLoaderOnConfirm: true,
+      preConfirm: async (option) => {
+        project = jiraStore.PROJECTS.find((p) => p.id == option);
+
+        try {
+          await $fetch(project.self, {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: `Bearer ${jiraStore.JIRA_API_TOKEN}`,
+            },
+          }).then((data) => {
+            jiraStore.syncJira(parseInt(route.params.id), data);
+          });
+        } catch (e) {
+          return console.log("ERROR", e);
+        }
+      },
+      allowOutsideClick: () => !$swal.isLoading(),
+    })
+    .then((result) => {
+      if (result.isConfirmed) {
+        $swal.fire({
+          icon: "success",
+          title: `Synkroniséring fuldført!`,
+          text: `Se ændringer `,
+        });
+      }
+    });
+};
+
+const handleCreateJiraProject = () => {
+  $swal
+    .fire({
+      title: "Nyt Jira projekt",
+      html: `<input type="text" id="name" class="swal2-input" placeholder="Indtast projekt navn">
+  <input type="text" id="key" class="swal2-input" placeholder="Indtast projekt nøgle">`,
+      confirmButtonText: "Opret",
+      showCancelButton: true,
+      focusConfirm: false,
+      preConfirm: () => {
+        const projectName = $swal.getPopup().querySelector("#name").value;
+        const projectKey = $swal.getPopup().querySelector("#key").value;
+        if (!projectName || !projectKey) {
+          $swal.showValidationMessage(`Udfyld venligst både navn og nøgle`);
+        }
+        return { projectName, projectKey };
+      },
+    })
+    .then(async (result) => {
+      if (!result.isConfirmed) return;
+
+      const res = await jiraStore.createProject(
+        result.value.projectName,
+        result.value.projectKey
+      );
+
+      if (!res)
+        return $swal.fire({
+          icon: "error",
+          title: `Ups... Noget gik galt!`,
+          text: `Jira projektet blev ikke oprettet. Prøv igen.`,
+        });
+
+      return $swal.fire({
+        icon: "success",
+        title: `Jira projekt oprettet!`,
+        text: `Projektet '${result.value.projectName}' blev oprettet på Jira.`,
+      });
+    });
+};
 </script>
 
 <template>
   <div class="overview">
     <div class="overview__header">
-      <h1>Overblik</h1>
+      <div class="overview__header-flex">
+        <h1>Overblik</h1>
+
+        <div>
+          <Button
+            text="Exportér CSV"
+            icon="icon-export"
+            @click="exportCsv"
+            class="cta"
+          />
+
+          <div>
+            <div
+              v-if="
+                jiraStore.JIRA_API_TOKEN && jiraStore.JIRA_API_TOKEN.length > 0
+              "
+            >
+              <Button text="Synkronisér med Jira" @click="handleJiraSync" />
+              <Button
+                text="Nyt Jira projekt"
+                @click="handleCreateJiraProject"
+              />
+            </div>
+            <a
+              v-else
+              href="https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=f0rb1sOMiQ9pPK860ygqqZ87hKHfHeyx&scope=read%3Ajira-work%20manage%3Ajira-project%20manage%3Ajira-configuration%20read%3Ajira-user%20write%3Ajira-work&redirect_uri=https%3A%2F%2Flocalhost%3A7087%2Fapi%2Fauth%2Fatlassian&state=${YOUR_USER_BOUND_VALUE}&response_type=code&prompt=consent"
+            >
+              Forbind Jira
+            </a>
+          </div>
+        </div>
+      </div>
       <Input
         class="input__select--overview-status"
         type="select"
@@ -521,6 +723,21 @@ const currentSheetStatus = computed(() => {
     top: -20px;
     background: var(--color-background);
     z-index: 1;
+
+    &-flex {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        border-radius: 4px;
+        outline: none;
+        border: none;
+        padding: 0 5px;
+        margin: 0;
+        display: flex;
+        gap: 10px;
+      }
+    }
   }
   &__footer {
     padding-bottom: 20px;

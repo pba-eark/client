@@ -87,9 +87,8 @@ const numberDotSeperator = (x) => {
       display: flex;
       width: 100%;
       justify-content: space-between;
-      max-width: 80%;
       gap: 5ch;
-      margin: 0 auto;
+      margin: 0 auto .5rem auto;
     }
   }
 }
