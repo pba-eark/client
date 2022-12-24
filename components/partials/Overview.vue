@@ -534,8 +534,6 @@ const handleCreateJiraProject = () => {
             result.value.projectKey
           );
 
-          console.log("res", res);
-
           if (!res)
             return $swal.fire({
               icon: "error",
