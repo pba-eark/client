@@ -34,6 +34,8 @@ const handleLogin = async () => {
     });
 
   $swal.fire({
+    title: "Logger ind... 🐱‍👤",
+    text: "",
     allowOutsideClick: false,
     timerProgressBar: true,
     didOpen: async () => {
