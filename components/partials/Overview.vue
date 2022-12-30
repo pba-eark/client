@@ -572,9 +572,14 @@ const handleCreateJiraProject = () => {
                 jiraStore.JIRA_API_TOKEN && jiraStore.JIRA_API_TOKEN.length > 0
               "
             >
-              <Button text="Synkronisér med Jira" @click="handleJiraSync" />
+              <Button
+                text="Synkronisér med Jira"
+                icon="icon-sync"
+                @click="handleJiraSync"
+              />
               <Button
                 text="Nyt Jira projekt"
+                icon="icon-new-project"
                 @click="handleCreateJiraProject"
               />
             </div>

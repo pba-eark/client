@@ -33,22 +33,30 @@ const handleLogin = async () => {
       text: `Email adresse og adgangskode passer ikke sammen. Prøv igen!`,
     });
 
-  const res = await authStore.handleLogin(data.email, data.password);
+  $swal.fire({
+    allowOutsideClick: false,
+    timerProgressBar: true,
+    didOpen: async () => {
+      $swal.showLoading();
 
-  if (res === false)
-    return $swal.fire({
-      icon: "error",
-      title: "Ups! Der skete en fejl.",
-      text: `Email adresse og adgangskode passer ikke sammen. Prøv igen!`,
-    });
+      const res = await authStore.handleLogin(data.email, data.password);
 
-  return $swal.fire({
-    position: "center",
-    icon: "success",
-    title: `Logget ind 🎉`,
-    text: `Velkommen ${userStore.CURRENT_USER.firstName}!`,
-    showConfirmButton: false,
-    timer: 1500,
+      if (!res)
+        return $swal.fire({
+          icon: "error",
+          title: "Ups! Der skete en fejl.",
+          text: `Email adresse og adgangskode passer ikke sammen. Prøv igen!`,
+        });
+
+      return $swal.fire({
+        position: "center",
+        icon: "success",
+        title: `Logget ind 🎉`,
+        text: `Velkommen ${userStore.CURRENT_USER.firstName}!`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    },
   });
 };
 </script>

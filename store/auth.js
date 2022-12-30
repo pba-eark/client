@@ -35,6 +35,7 @@ export const useAuthStore = defineStore("auth-store", () => {
       userStore.setCurrentUser(res.user);
       setJwt(res.token);
       await navigateTo("/");
+      return true;
     } catch (e) {
       console.log("ERROR", e);
       return false;
