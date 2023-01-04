@@ -119,6 +119,7 @@ const hoursRealistic = computed(() => {
 
 const priceRealistic = computed(() => {
   if (!currentRole.value?.id) return "Ingen rolle";
+
   return numberDotSeperator(
     parseFloat(
       currentRole.value?.hourlyWage *

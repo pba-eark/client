@@ -116,7 +116,7 @@ const calculateTotals = () => {
       );
     }
 
-    /* Total pessimistic price */
+    /* Total pessimistic hours */
     totalPessimisticHours.value += parseFloat(
       roundNearQtr(
         task.hourEstimate * (1 + currentRiskProfile.percentage / 100)
@@ -218,12 +218,6 @@ const tasksForEpic = computed(() => {
             @click="handleCreateTask"
           />
         </div>
-
-        <!-- <div class="epic__table-col">
-          <span class="epic__table-sum">
-            I alt:
-          </span>
-        </div> -->
 
         <div class="epic__table-col">
           <span class="epic__table-sum--estimate">

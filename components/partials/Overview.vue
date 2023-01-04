@@ -141,9 +141,8 @@ const calculateOverview = () => {
     });
 
     tasksForEpic.forEach((task) => {
-      if (task.optOut) {
-        epic.optOuts++;
-      }
+      if (task.optOut) epic.optOuts++;
+
       const currentRiskProfile = riskProfileStore.RISK_PROFILES.filter((p) => {
         return p.id === task.riskProfileId;
       })[0];
@@ -228,7 +227,6 @@ const calculateOverview = () => {
     });
 
     /* ******** CHART JS *********** */
-    /* ******** CHART JS *********** */
     epic.roles.forEach((role) => {
       role.optOuts = 0;
       let totalRealisticHours = 0;
@@ -280,8 +278,7 @@ const calculateOverview = () => {
     //     },
     //   ],
     // };
-    /* ******** CHART JS *********** */
-    /* ******** CHART JS *********** */
+    /* ******** /CHART JS *********** */
 
     epic.totalRealisticHours = totalRealisticHours;
     epic.totalPessimisticHours = totalPessimisticHours;
@@ -442,7 +439,6 @@ const exportCsv = () => {
       confirmButtonText: "Download",
     })
     .then((result) => {
-      /* Read more about isConfirmed, isDenied below */
       if (result.isConfirmed) {
         download(
           csvContent,
