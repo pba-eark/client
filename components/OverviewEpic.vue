@@ -89,21 +89,7 @@ const userOptions = computed(() => {
 
 <template>
   <div class="overview">
-    <div
-      class="overview__row"
-      :class="{ row__open: isOpen }"
-      v-bind="$attrs"
-      @click="
-        detailsStore.setDetails({
-          id,
-          epicName: name,
-          comment,
-          userId,
-          estimateSheetId: parseInt($route.params.id),
-          epicStatusId: status.id,
-        })
-      "
-    >
+    <div class="overview__row" :class="{ row__open: isOpen }" v-bind="$attrs">
       <div class="overview__col overview__col--details">
         <Icon
           @click="isOpen = !isOpen"
@@ -201,7 +187,20 @@ const userOptions = computed(() => {
       </div>
 
       <div class="overview__col overview__col--more">
-        <Icon icon="icon-dots" class="overview__icon" />
+        <Icon
+          icon="icon-dots"
+          @click="
+            detailsStore.setDetails({
+              id,
+              epicName: name,
+              comment,
+              userId,
+              estimateSheetId: parseInt($route.params.id),
+              epicStatusId: status.id,
+            })
+          "
+          class="overview__icon"
+        />
       </div>
     </div>
 
