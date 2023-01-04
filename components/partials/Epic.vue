@@ -203,7 +203,6 @@ const tasksForEpic = computed(() => {
         v-for="task in tasksForEpic"
         :key="task.id"
         :data="task"
-        @click="detailsStore.setDetails(task)"
         @update="handleTaskUpdate"
       />
     </div>

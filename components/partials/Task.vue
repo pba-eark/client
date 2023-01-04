@@ -238,7 +238,11 @@ const pricePessimistic = computed(() => {
     </div>
 
     <div class="task__col task__col--more">
-      <Icon icon="icon-dots" class="task__icon" />
+      <Icon
+        icon="icon-dots"
+        @click="detailsStore.setDetails(props.data)"
+        class="task__icon"
+      />
     </div>
   </div>
 </template>
